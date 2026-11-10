@@ -74,6 +74,9 @@ npx eas-cli@latest build --platform android --profile production
 - **Android:** EAS created and keeps the upload keystore. Google needs the **first** `.aab` uploaded by hand: Play
   Console → Test and release → Internal testing → Create release. After that, `eas submit --platform android`
   works with the service-account key.
+- **Status:** Android build 2 (1.0.0) is uploaded. Production release "1.0.0 (2)" covers all 178 countries and is
+  saved in Publishing overview, which sends it for review together with the listing and app content (managed
+  publishing is off, so it goes live once approved). The internal-testing draft holds the same build and has no testers.
 
 ### 6. App Review details (both stores)
 - **Sign-in:** both use `SEED_PASSWORD` from `server/.env`. The password field is left blank in both stores.
