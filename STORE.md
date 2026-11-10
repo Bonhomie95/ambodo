@@ -44,12 +44,10 @@ submitted *with* app version 1.0.
 `annual` (1 year, $89.00) and `monthly` (1 month, $9.99). This needs a payments profile, and it unlocks after the first `.aab` upload.
 
 **RevenueCat** (project `27c0c1e9`, "Bonhomie LLC"):
-- Done: Play app (`goog_` key is in EAS), entitlement **`family`**, Play products
-  `dev.bonhomieinc.ambodo.family:annual` / `:monthly` attached to it, and the current **default** offering
-  (`$rc_annual`, `$rc_monthly`) carrying them.
+- Done: App Store and Play apps. Entitlement **`family`** has all four products: App Store
+  `dev.bonhomieinc.ambodo.family.annual` / `.monthly` and Play `dev.bonhomieinc.ambodo.family:annual` / `:monthly`.
+  The current **default** offering (`$rc_annual`, `$rc_monthly`) carries both stores. The public keys are in `eas.json`.
 - Still to do:
-  - Save the App Store app (it needs the In-App Purchase `.p8`, Key ID and Issuer ID), then add the two App Store
-    products to `family` and to the offering.
   - Upload the service-account JSON to the Play app.
   - Create a **V1** secret key for Render's `REVENUECAT_SECRET_KEY`. The API calls `/v1/subscribers`.
 
@@ -57,24 +55,21 @@ Whichever parent buys, the API stores the plan on the family, so both unlock. Re
 automatically when the stored expiry passes. A RevenueCat outage never cancels a plan.
 
 ### 4. Build settings (EAS)
-The EAS project is linked: **@bonhomie95/ambodo** (ID in `app/app.json`). Once RevenueCat gives you the keys:
-```bash
-cd app
-npx eas-cli@latest env:set --environment production --visibility plaintext --name EXPO_PUBLIC_RC_IOS_KEY --value appl_xxx
-```
-`EXPO_PUBLIC_API_URL` is already set in the `production` profile of `eas.json`. `EXPO_PUBLIC_*` values ship inside
-the app, so they aren't secrets. Store builds refuse to start without them.
+The EAS project is linked: **@bonhomie95/ambodo** (ID in `app/app.json`). The `production` profile in `eas.json`
+carries `EXPO_PUBLIC_API_URL` and both RevenueCat public keys. They ship inside the app, so they aren't secrets.
+Store builds refuse to start without them. Build numbers are kept by EAS (`appVersionSource: remote`).
 
 ### 5. Build and submit
 ```bash
-npx eas-cli@latest build --platform all --profile production
-npx eas-cli@latest submit --platform ios --latest
+cd app
+npx eas-cli@latest build --platform ios --profile production --auto-submit   # Apple sign-in the first time; lands in TestFlight
+npx eas-cli@latest build --platform android --profile production
 ```
-- **iOS:** EAS creates the signing certificate with your Apple ID. The build lands in TestFlight. In App
-  Store Connect, attach it and both subscriptions to version 1.0, then submit.
-- **Android:** EAS creates the upload keystore and keeps it safe. Google needs the **first** `.aab`
-  uploaded by hand: Play Console → Testing → Closed testing → Create release. After that,
-  `eas submit --platform android` works with a service-account key.
+- **iOS:** EAS keeps the signing certificate. `--auto-submit` sends the build to App Store Connect app `6832982834`.
+  Then attach the build and both subscriptions to version 1.0, and submit.
+- **Android:** EAS created and keeps the upload keystore. Google needs the **first** `.aab` uploaded by hand: Play
+  Console → Test and release → Internal testing → Create release. After that, `eas submit --platform android`
+  works with the service-account key.
 
 ### 6. App Review details (both stores)
 - **Sign-in:** both use `SEED_PASSWORD` from `server/.env`. The password field is left blank in both stores.
