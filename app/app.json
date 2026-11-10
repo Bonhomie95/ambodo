@@ -150,6 +150,12 @@
     "experiments": {
       "typedRoutes": true,
       "reactCompiler": true
-    }
+    },
+    "extra": {
+      "eas": {
+        "projectId": "e2db7453-35c1-4d09-b1f2-7c59350dc4d2"
+      }
+    },
+    "owner": "bonhomie95"
   }
 }

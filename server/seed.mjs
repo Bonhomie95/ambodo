@@ -54,4 +54,4 @@ await call('/checkins', a, { kind: 'dropoff' });
 const saturday = inDays(((6 - new Date().getDay() + 7) % 7) || 7);
 await call('/swaps', b, { dates: [saturday], assignTo: boId, note: 'My parents are in town — can I have them Saturday?' });
 
-console.log(`demo family ready → ${PARENTS.map((p) => p.email).join(' / ')} (password in server/seed.mjs)`);
+console.log(`demo family ready → ${PARENTS.map((p) => p.email).join(' / ')} (password: ${process.env.SEED_PASSWORD ? 'SEED_PASSWORD' : 'the default in server/seed.mjs'})`);

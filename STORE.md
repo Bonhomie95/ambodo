@@ -19,19 +19,12 @@ Both stores are under **Bonhomie LLC**. Play is an organization account, so ther
 ### 2. The API — live at `https://ambodo-api.onrender.com`
 Render service **ambodo-api** (Frankfurt) builds `server/` from this repo on every push to `main`. `NODE_ENV`,
 `HOST`, `MONGODB_DB`, `SUPPORT_EMAIL`, `LEGAL_NAME` and `LEGAL_ADDRESS` are set. (`render.yaml` describes the same service
-as a Blueprint, in case it ever needs recreating.) Still to do, in Render → ambodo-api → Environment:
-
-| Variable | Value |
-|---|---|
-| `MONGODB_URI` | your Atlas connection string. The service won't start without it |
-| `REVENUECAT_SECRET_KEY` | from step 3 (`sk_…`) |
-
+as a Blueprint, in case it ever needs recreating.) `MONGODB_URI` is set and the pages are up.
+- Still to do in Render → ambodo-api → Environment: `REVENUECAT_SECRET_KEY` (from step 3, `sk_…`).
 - Switch the instance to **Starter** before review: the free plan sleeps, and App Review would hit a cold start.
-- In Atlas → Network Access, allow Render's outbound IPs (Render → ambodo-api → Connect → Outbound), or `0.0.0.0/0`
-  with a strong DB password.
-- Check `https://ambodo-api.onrender.com/health`, then `/privacy`, `/terms`, `/support`, `/delete-account`.
-- Seed the review account with a **new password**, since the default one in `server/seed.mjs` is public:
-  `cd server && API=https://ambodo-api.onrender.com SEED_PASSWORD='…' npm run seed`.
+- The review family is seeded on production. Its password is `SEED_PASSWORD` in `server/.env` (gitignored), not
+  the public default in `server/seed.mjs`. To reset it:
+  `cd server && API=https://ambodo-api.onrender.com node --env-file=.env seed.mjs`.
   Production has no test purchases, so the demo family starts on Free with no expenses.
 
 ### 3. Subscriptions (Ambodo Family)
@@ -61,17 +54,14 @@ Whichever parent buys, the API stores the plan on the family, so both unlock. Re
 automatically when the stored expiry passes. A RevenueCat outage never cancels a plan.
 
 ### 4. Build settings (EAS)
+The EAS project is linked: **@bonhomie95/ambodo** (ID in `app/app.json`). Once RevenueCat gives you the keys:
 ```bash
 cd app
-npx eas-cli@latest login
-npx eas-cli@latest init
 npx eas-cli@latest env:create --environment production --visibility plaintext --name EXPO_PUBLIC_RC_IOS_KEY --value appl_xxx
 npx eas-cli@latest env:create --environment production --visibility plaintext --name EXPO_PUBLIC_RC_ANDROID_KEY --value goog_xxx
 ```
 `EXPO_PUBLIC_API_URL` is already set in the `production` profile of `eas.json`. `EXPO_PUBLIC_*` values ship inside
 the app, so they aren't secrets. Store builds refuse to start without them.
-If `eas init` says it can't write the project ID to a dynamic config, put it in `app/app.json` under
-`expo.extra.eas.projectId`. `app.config.ts` passes `app.json` straight through.
 
 ### 5. Build and submit
 ```bash
@@ -85,7 +75,7 @@ npx eas-cli@latest submit --platform ios --latest
   `eas submit --platform android` works with a service-account key.
 
 ### 6. App Review details (both stores)
-- **Sign-in:** `ada@demo.ambodo.app` with the `SEED_PASSWORD` from step 2. The co-parent is `bo@demo.ambodo.app` with the same password.
+- **Sign-in:** `ada@demo.ambodo.app` with `SEED_PASSWORD` from `server/.env`. The co-parent is `bo@demo.ambodo.app` with the same password.
   In App Store Connect, the user name, contact details and notes are filled in; only the password is left blank.
 - **Notes for the reviewer:**
   > Ambodo is a co-parenting app: two parents share one private family space (joined by invite code).
@@ -107,7 +97,10 @@ Free in 175 regions; iPhone only, with Mac and Vision Pro availability off.
 - **Category:** Lifestyle (secondary: Productivity)
 - **URLs:** Support `https://ambodo-api.onrender.com/support` · Privacy policy `https://ambodo-api.onrender.com/privacy`
 - **Copyright:** 2026 Bonhomie LLC
-- **Screenshots (6.9"):** `store/ios/01…06.jpg` (1320×2868). iPhone-only app, so no iPad shots are needed.
+- **Screenshots:** App Store Connect's required slot is *iPhone with Dynamic Island (medium display)*, so upload
+  `store/ios-6.3/01…06.jpg` (1206×2622). The 6.9" originals in `store/ios/` are optional. iPhone-only app, so no iPad
+  shots are needed. To remake the 6.3" set after new art:
+  `for f in store/ios/*.jpg; do sips -z 2622 1206 "$f" --out "store/ios-6.3/${f##*/}"; done`
 - **Age rating:** answer the questionnaire honestly. The app has private messaging between co-parents and no other mature content. Ambodo's terms require users to be 18+.
 - **App Privacy** (all *linked to the user*, *not used for tracking*, purpose *App Functionality*):
   Name · Email Address · User ID · Health (kids' allergies, medications, doctor) · Emails or Text Messages ·
@@ -135,10 +128,13 @@ Privacy Policy: https://ambodo-api.onrender.com/privacy
 ```
 
 ## Google Play listing
+Already entered in Play Console (app `4975389166503960722`): the listing text and all graphics (saved as a draft; it
+needs the AI-asset answer and Save), category, contact email and website, and the privacy policy.
 - **App name:** Ambodo: Co-Parenting
 - **Short description:** Co-parent calmly: sealed messages, one custody calendar, court-ready records.
-- **Full description:** same as above, with "Google Play" in place of "Apple Account".
-- **Category:** Parenting · **Contact email:** `support@bonhomieinc.dev` · **Privacy policy:** `https://ambodo-api.onrender.com/privacy`
+- **Full description:** same as above, with a Google Play payment paragraph ("renews automatically until you cancel;
+  manage or cancel any time in Google Play → Payments & subscriptions").
+- **Category:** Parenting · **Contact email:** `support@bonhomieinc.dev` · **Website:** `https://bonhomieinc.dev/` · **Privacy policy:** `https://ambodo-api.onrender.com/privacy`
 - **Graphics:** icon `store/play-icon-512.png` · feature graphic `store/play-feature-graphic.png` · phone screenshots `store/android/01…06.jpg` (1080×1920)
 - **App content:**
   - Ads: none
