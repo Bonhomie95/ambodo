@@ -75,8 +75,9 @@ npx eas-cli@latest build --platform android --profile production
   works with the service-account key.
 - **Status (Nov 10):** Play: production release "1.0.0 (2)" for all 178 countries, the listing and all app content
   are **in review**. Managed publishing is off, so it goes live once approved. The internal-testing draft holds the
-  same build and has no testers. iOS: build 2 (1.0.0) is built, and all 6 screenshots plus both subscription review
-  screenshots are uploaded. Version 1.0 still needs the build processed and attached, and the Paid Apps agreement active.
+  same build and has no testers. iOS: version **1.0.0** (renamed from 1.0 to match the build), build 2, the
+  subscription group and both subscriptions are **Waiting for Review** (submitted 22:24 UTC). The Paid Apps agreement
+  is still pending the W-9 (Apple accepts it once the bank update clears), so reviewers may not be able to buy yet.
 
 ### 6. App Review details (both stores)
 - **Sign-in:** both use `SEED_PASSWORD` from `server/.env`. The password field is left blank in both stores.
