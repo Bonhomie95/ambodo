@@ -12,7 +12,7 @@ import { brand, font, tint, useColors } from '@/lib/theme';
 
 export default function Today() {
   const c = useColors();
-  const { user, family, meId, other, nameOf } = useSession();
+  const { user, family, meId, other, nameOf, pro } = useSession();
   const t = today();
   const { data, reload, loading } = useLoad(async () => {
     const [days, events, swaps] = await Promise.all([
@@ -127,7 +127,7 @@ export default function Today() {
         {([['New event', 'calendar.badge.plus', 'event', '/event'], ['Add expense', 'plus.circle.fill', 'add_card', '/expense'], ['Swap days', 'arrow.triangle.swap', 'swap_horiz', '/swap']] as const)
           .map(([label, ios, android, href], k) => (
             <Animated.View key={label} entering={FadeInDown.delay(200 + k * 60)} style={{ flex: 1 }}>
-              <Tap onPress={() => router.push(href)} style={[st.quick, { backgroundColor: c.card, borderColor: c.line }]}>
+              <Tap onPress={() => router.push(href === '/expense' && !pro ? '/plan' : href)} style={[st.quick, { backgroundColor: c.card, borderColor: c.line }]}>
                 <Icon ios={ios} android={android} size={24} color={[c.me, c.sun, c.them][k]} />
                 <T v="small">{label}</T>
               </Tap>

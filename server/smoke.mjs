@@ -37,6 +37,17 @@ assert.equal((await call('POST', `/swaps/${swap.id}`, a, { accept: true })).stat
 assert.equal((await call('POST', `/swaps/${swap.id}`, b, { accept: true })).data.status, 'accepted');
 assert.equal((await call('GET', '/custody?from=2026-11-09&to=2026-11-09', a)).data[0].parent, bo);
 
+// Free plan: expenses + calendar feed are Family features; ToneGuard rewrites are capped.
+assert.equal((await call('POST', '/expenses', b, { title: 'x', amount: 1 })).status, 402);
+assert.equal((await call('GET', `/ics/${joined.ics}`)).status, 402);
+for (let i = 0; i < 5; i++) assert.equal((await call('POST', '/tone/rewrite', a)).status, 200);
+assert.equal((await call('POST', '/tone/rewrite', a)).status, 402);
+assert.equal((await call('GET', '/billing', b)).data.rewritesLeft, 5, 'quota is per parent');
+// One purchase (test mode) unlocks the whole family — the other parent included.
+assert.equal((await call('POST', '/billing/dev-grant', a, { period: 'annual' })).data.plan.active, true);
+assert.equal((await call('GET', '/me', b)).data.family.plan.active, true);
+assert.equal((await call('POST', '/tone/rewrite', a)).data.left, null);
+
 const exp = (await call('POST', '/expenses', b, { title: 'Soccer cleats', amount: '64.50', category: 'activities' })).data;
 assert.equal(exp.amount, 6450);
 assert.equal((await call('POST', `/expenses/${exp.id}/settle`, a)).data.status, 'settled');
@@ -45,6 +56,10 @@ assert.match((await call('GET', `/ics/${joined.ics}`)).data, /SUMMARY:Kids with 
 assert.equal((await call('POST', '/auth/signin', null, { email: `ada.${stamp}@smoke.test`, password: 'nope' })).status, 401);
 assert.equal((await call('GET', '/me', 'not-a-token')).status, 401);
 assert.equal((await call('POST', '/messages', a, '[1]')).status, 400);
+
+// Fee waivers queue for review — one open request per family.
+assert.equal((await call('POST', '/billing/waiver', b, { reason: 'Court fee waiver granted' })).data.plan.waiver, 'pending');
+assert.equal((await call('POST', '/billing/waiver', a, { reason: 'again' })).status, 409);
 
 await call('DELETE', '/me', a);
 await call('DELETE', '/me', b);

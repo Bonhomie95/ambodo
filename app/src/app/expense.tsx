@@ -1,5 +1,5 @@
 import * as Haptics from 'expo-haptics';
-import { router } from 'expo-router';
+import { Redirect, router } from 'expo-router';
 import { useState } from 'react';
 import { TextInput, View } from 'react-native';
 import { Sheet } from '@/components/sheet';
@@ -14,7 +14,7 @@ const SPLITS = [[50, '50 / 50'], [60, '60%'], [70, '70%'], [100, 'All of it'], [
 
 export default function NewExpense() {
   const c = useColors();
-  const { other } = useSession();
+  const { other, pro } = useSession();
   const [amount, setAmount] = useState('');
   const [title, setTitle] = useState('');
   const [category, setCategory] = useState<string>('school');
@@ -22,6 +22,8 @@ export default function NewExpense() {
   const [busy, setBusy] = useState(false);
   const value = Number(amount.replace(',', '.'));
   const cents = Math.round(value * 100);
+
+  if (!pro) return <Redirect href="/plan" />;
 
   async function save() {
     setBusy(true);

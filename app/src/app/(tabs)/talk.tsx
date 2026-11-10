@@ -6,7 +6,7 @@ import Animated, { FadeInDown, FadeInUp, FadeOutDown, LinearTransition } from 'r
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Mark } from '@/components/brand';
 import { Button, Icon, Row, T, Tap, toast } from '@/components/ui';
-import { api, unreadBadge, type Message } from '@/lib/api';
+import { api, needsPlan, unreadBadge, type Message } from '@/lib/api';
 import { relative, time, ymd } from '@/lib/dates';
 import { shareInvite } from '@/lib/meta';
 import { useSession } from '@/lib/session';
@@ -17,7 +17,7 @@ const dayOf = (iso: string) => ymd(new Date(iso));
 
 export default function Talk() {
   const c = useColors();
-  const { meId, other, family, user } = useSession();
+  const { meId, other, family, user, pro } = useSession();
   const [msgs, setMsgs] = useState<Message[]>([]);
   const [loaded, setLoaded] = useState(false);
   const [text, setText] = useState('');
@@ -44,6 +44,19 @@ export default function Talk() {
     const id = setInterval(tick, 4000);
     return () => { alive = false; clearInterval(id); };
   }, [meId]));
+
+  // Free parents get a few calmer rewrites a month; the API meters them.
+  async function sendCalmer(calmer: string) {
+    try {
+      const { left } = await api<{ left: number | null }>('/tone/rewrite', { method: 'POST' });
+      await send(calmer, true);
+      if (left !== null) toast(left ? `${left} free rewrite${left === 1 ? '' : 's'} left this month` : 'That was your last free rewrite this month');
+    } catch (e) {
+      if (!needsPlan(e)) return toast((e as Error).message);
+      toast('You’ve used this month’s free rewrites');
+      router.push('/plan');
+    }
+  }
 
   async function send(body: string, force = false) {
     const t = checkTone(body);
@@ -130,6 +143,7 @@ export default function Talk() {
               <Tap onPress={() => setReview(null)} accessibilityLabel="Close"><Icon ios="xmark" android="close" size={16} color={c.muted} /></Tap>
             </Row>
             {review.issues.map((i) => <T key={i} v="small" muted>• {i}</T>)}
+            {!pro && <T v="small" color={c.sun}>Free plan · 5 calmer rewrites a month</T>}
             {!!review.calmer && (
               <View style={[st.calmer, { backgroundColor: c.soft }]}>
                 <T v="label">Calmer version</T>
@@ -137,7 +151,7 @@ export default function Talk() {
               </View>
             )}
             <Row>
-              <Button title="Send calmer" kind="accent" style={{ flex: 1, height: 46 }} disabled={!review.calmer} loading={sending} onPress={() => send(review.calmer, true)} />
+              <Button title="Send calmer" kind="accent" style={{ flex: 1, height: 46 }} disabled={!review.calmer} loading={sending} onPress={() => sendCalmer(review.calmer)} />
               <Button title="Edit" kind="soft" style={{ height: 46 }} onPress={() => { if (review.calmer) setText(review.calmer); setReview(null); }} />
             </Row>
             <Tap haptic={false} onPress={() => send(text, true)}><T v="small" muted style={{ textAlign: 'center' }}>Send mine anyway</T></Tap>

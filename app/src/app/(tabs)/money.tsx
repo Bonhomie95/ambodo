@@ -3,7 +3,7 @@ import { router } from 'expo-router';
 import { useEffect, useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import Animated, { FadeInDown, LinearTransition } from 'react-native-reanimated';
-import { Button, Card, Chip, Icon, Row, Screen, T, toast } from '@/components/ui';
+import { Button, Card, Chip, Icon, Row, Screen, T, Tap, toast } from '@/components/ui';
 import { api, type Expense } from '@/lib/api';
 import { relative, ymd } from '@/lib/dates';
 import { CATEGORY_ICON, money } from '@/lib/meta';
@@ -29,7 +29,7 @@ function useCountUp(target: number) {
 
 export default function Money() {
   const c = useColors();
-  const { meId, other, nameOf } = useSession();
+  const { meId, other, nameOf, pro } = useSession();
   const [tab, setTab] = useState<'open' | 'settled'>('open');
   const { data, reload, loading } = useLoad(() => api<Expense[]>('/expenses'));
   const list = data ?? [];
@@ -40,6 +40,7 @@ export default function Money() {
   const otherName = other?.name ?? 'your co-parent';
 
   async function settle(e: Expense) {
+    if (!pro) return router.push('/plan');
     try {
       await api(`/expenses/${e.id}/settle`, { method: 'POST' });
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
@@ -57,19 +58,32 @@ export default function Money() {
         <Text style={[st.heroLabel, { color: tint(c.bg, 0.7) }]}>
           {balance > 0 ? `${otherName.toUpperCase()} OWES YOU` : balance < 0 ? `YOU OWE ${otherName.toUpperCase()}` : 'BALANCE'}
         </Text>
-        <Text style={[st.heroAmount, { color: c.bg }]}>{balance === 0 ? 'All square' : money(shown)}</Text>
+        <Text style={[st.heroAmount, { color: c.bg }]}>{!data ? '…' : balance === 0 ? 'All square' : money(shown)}</Text>
         <Text style={[st.heroSub, { color: tint(c.bg, 0.7) }]}>
-          {list.filter((e) => e.status === 'open').length} open · splits are tracked, never charged
+          {data ? `${list.filter((e) => e.status === 'open').length} open · ` : ''}splits are tracked, never charged
         </Text>
       </Animated.View>
+
+      {!pro && (
+        <Animated.View entering={FadeInDown.delay(80).springify()}>
+          <Tap onPress={() => router.push('/plan')} style={[st.upsell, { backgroundColor: tint(c.sun, 0.14), borderColor: tint(c.sun, 0.4) }]}>
+            <Icon ios="sparkles" android="auto_awesome" size={22} color={c.sun} />
+            <View style={{ flex: 1 }}>
+              <T v="strong">Split it. Settle it. Done.</T>
+              <T v="small" muted>Expenses are part of Ambodo Family — one plan covers both homes.</T>
+            </View>
+            <Icon ios="chevron.right" android="chevron_right" size={14} color={c.muted} />
+          </Tap>
+        </Animated.View>
+      )}
 
       <Row style={{ justifyContent: 'space-between' }}>
         <Row>
           <Chip label="Open" on={tab === 'open'} onPress={() => setTab('open')} />
           <Chip label="Settled" on={tab === 'settled'} onPress={() => setTab('settled')} />
         </Row>
-        <Button title="Add" kind="accent" style={{ height: 40, paddingHorizontal: 16 }} onPress={() => router.push('/expense')}
-          icon={<Icon ios="plus" android="add" size={16} color="#fff" />} />
+        <Button title="Add" kind="accent" style={{ height: 40, paddingHorizontal: 16 }} onPress={() => router.push(pro ? '/expense' : '/plan')}
+          icon={<Icon ios={pro ? 'plus' : 'lock.fill'} android={pro ? 'add' : 'lock'} size={16} color="#fff" />} />
       </Row>
 
       {rows.map((e, i) => {
@@ -113,4 +127,5 @@ const st = StyleSheet.create({
   heroAmount: { fontFamily: font.display, fontSize: 46, lineHeight: 54, letterSpacing: -1 },
   heroSub: { fontFamily: font.semi, fontSize: 13 },
   icon: { width: 44, height: 44, borderRadius: 15, alignItems: 'center', justifyContent: 'center' },
+  upsell: { flexDirection: 'row', alignItems: 'center', gap: 14, padding: 16, borderRadius: 22, borderWidth: 1 },
 });

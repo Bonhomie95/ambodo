@@ -3,9 +3,13 @@ import http from 'node:http';
 import { createHash, randomBytes, scrypt, timingSafeEqual } from 'node:crypto';
 import { promisify } from 'node:util';
 import { MongoClient, ObjectId } from 'mongodb';
+import { FREE_REWRITES, isPro, lapsed, month, planView, revenueCat, storePlan } from './billing.mjs';
 import { PATTERNS, chainHash, custodyFor, icsFeed } from './custody.mjs';
 
-const { MONGODB_URI = 'mongodb://127.0.0.1:27017', MONGODB_DB = 'ambodo', PORT = '4000', HOST = '127.0.0.1' } = process.env;
+const { MONGODB_URI = 'mongodb://127.0.0.1:27017', MONGODB_DB = 'ambodo', PORT = '4000', HOST = '127.0.0.1', REVENUECAT_SECRET_KEY, NODE_ENV } = process.env;
+// Test purchases (no real charge) are on outside production unless BILLING_DEV=false.
+const BILLING_DEV = process.env.BILLING_DEV ? process.env.BILLING_DEV === 'true' : NODE_ENV !== 'production';
+const rcSubscriber = revenueCat(REVENUECAT_SECRET_KEY);
 const client = new MongoClient(MONGODB_URI);
 const db = client.db(MONGODB_DB);
 const [users, sessions, families, messages, events, swaps, expenses, checkins] =
@@ -50,13 +54,26 @@ async function familyView(f) {
     id: id(f), invite: f.invite, ics: f.icsToken, kids: f.kids,
     schedule: { ...f.schedule, first: f.schedule.first?.toString() ?? null },
     members: f.members.map((m) => ({ id: m.toString(), name: people.find((p) => p._id.equals(m))?.name ?? 'Co-parent' })),
+    plan: planView(f),
   };
 }
+// RevenueCat is the source of truth for store plans; dev and waiver plans are ours.
+async function syncStore(f) {
+  if (!REVENUECAT_SECRET_KEY || f.plan?.source === 'waiver') return f;
+  const plan = await storePlan(f.members.map(String), rcSubscriber).catch(() => { throw fail(503, 'Couldn’t reach the store — try again'); });
+  if (plan) await families.updateOne({ _id: f._id }, { $set: { plan } });
+  else if (f.plan?.source === 'store') await families.updateOne({ _id: f._id }, { $unset: { plan: '' } });
+  return families.findOne({ _id: f._id });
+}
+// ponytail: renewals are picked up lazily once the stored expiry passes; add RevenueCat webhooks if refunds must cut access instantly
+const fresh = async (f) => (f && lapsed(f) ? syncStore(f).catch(() => f) : f);
+const familyOf = async (user) => fresh(await families.findOne({ members: user._id }));
 async function famOf(user) {
-  const f = await families.findOne({ members: user._id });
+  const f = await familyOf(user);
   if (!f) throw fail(409, 'Set up your family first');
   return f;
 }
+const requirePro = (f) => { if (!isPro(f)) throw fail(402, 'That’s part of Ambodo Family'); };
 const msgView = (m, me) => ({
   id: id(m), author: m.authorId.toString(), text: m.text, at: m.createdAt, hash: m.hash,
   seen: m.authorId.equals(me) && m.readBy.some((r) => !r.equals(me)),
@@ -92,7 +109,7 @@ on('POST', '/auth/signin', async ({ body }) => {
 on('POST', '/auth/signout', async ({ session }) => { await sessions.deleteOne({ _id: session }); });
 
 on('GET', '/me', async ({ user }) => {
-  const f = await families.findOne({ members: user._id });
+  const f = await familyOf(user);
   return { user: pub(user), family: f ? await familyView(f) : null };
 });
 
@@ -286,6 +303,7 @@ on('GET', '/expenses', async ({ user }) => {
 });
 on('POST', '/expenses', async ({ body, user }) => {
   const f = await famOf(user);
+  requirePro(f);
   const amount = Math.round(Number(body.amount) * 100); // cents
   if (!Number.isFinite(amount) || amount <= 0 || amount > 1e9) throw fail(400, 'Enter an amount');
   const e = {
@@ -299,6 +317,7 @@ on('POST', '/expenses', async ({ body, user }) => {
 });
 on('POST', '/expenses/:id/settle', async ({ params: [eid], user }) => {
   const f = await famOf(user);
+  requirePro(f);
   const e = await expenses.findOneAndUpdate({ _id: oid(eid), familyId: f._id, status: 'open' },
     { $set: { status: 'settled', settledBy: user._id, settledAt: new Date() } }, { returnDocument: 'after' });
   if (!e) throw fail(404, 'Already settled');
@@ -317,10 +336,51 @@ on('POST', '/checkins', async ({ body, user }) => {
   return { id: insertedId.toString(), by: id(user), kind: c.kind, note: c.note, at: c.createdAt };
 });
 
+// ---------- Ambodo Family ----------
+const rewritesLeft = (user) => Math.max(0, FREE_REWRITES - (user.rewrites?.[month()] ?? 0));
+
+on('GET', '/billing', async ({ user }) => {
+  const f = await famOf(user);
+  return { plan: planView(f), rewritesLeft: isPro(f) ? null : rewritesLeft(user), testMode: BILLING_DEV && !REVENUECAT_SECRET_KEY };
+});
+
+// After a store purchase/restore the app asks us to re-check; RevenueCat is the source of truth.
+on('POST', '/billing/sync', async ({ user }) => familyView(await syncStore(await famOf(user))));
+
+// Simulator/dev purchases: no store, no charge. Disabled in production.
+on('POST', '/billing/dev-grant', async ({ body, user }) => {
+  if (!BILLING_DEV) throw fail(404, 'Not found');
+  const f = await famOf(user);
+  const days = body.period === 'monthly' ? 31 : 366;
+  if (body.period === 'off') await families.updateOne({ _id: f._id }, { $unset: { plan: '' } });
+  else await families.updateOne({ _id: f._id }, { $set: { plan: { source: 'dev', expiresAt: new Date(Date.now() + days * 864e5), by: user._id } } });
+  return familyView(await families.findOne({ _id: f._id }));
+});
+
+// ponytail: waivers are approved by hand in the DB (waiver.status = 'approved' + plan.source = 'waiver'); add an admin screen when volume needs it
+on('POST', '/billing/waiver', async ({ body, user }) => {
+  const f = await famOf(user);
+  if (f.waiver?.status === 'pending') throw fail(409, 'Your request is already being reviewed');
+  await families.updateOne({ _id: f._id }, { $set: { waiver: { status: 'pending', by: user._id, reason: str(body.reason, 'A short reason', 500), at: new Date() } } });
+  return familyView(await families.findOne({ _id: f._id }));
+});
+
+// Free parents get FREE_REWRITES ToneGuard rewrites a month; Family is unlimited.
+on('POST', '/tone/rewrite', async ({ user }) => {
+  const f = await famOf(user);
+  if (isPro(f)) return { left: null };
+  const key = `rewrites.${month()}`;
+  const u = await users.findOneAndUpdate(
+    { _id: user._id, [key]: { $not: { $gte: FREE_REWRITES } } }, { $inc: { [key]: 1 } }, { returnDocument: 'after' });
+  if (!u) throw fail(402, 'You’ve used this month’s free rewrites');
+  return { left: rewritesLeft(u) };
+});
+
 // Subscribe in Apple/Google Calendar: webcal://<host>/ics/<token>. The token is the secret.
 on('GET', '/ics/:token', async ({ params: [token] }) => {
-  const f = await families.findOne({ icsToken: token });
+  const f = await fresh(await families.findOne({ icsToken: token }));
   if (!f) throw fail(404, 'Not found');
+  requirePro(f);
   const people = await users.find({ _id: { $in: f.members } }, { projection: { name: 1 } }).toArray();
   const evs = await events.find({ familyId: f._id }).toArray();
   return { [CAL]: icsFeed(f, Object.fromEntries(people.map((p) => [id(p), p.name])), evs) };

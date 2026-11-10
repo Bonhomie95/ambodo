@@ -43,8 +43,10 @@ for (const [t, text] of [
 await call('/events', b, { title: 'Mia · dentist', date: inDays(8), time: '10:30', kind: 'health' });
 await call('/events', a, { title: 'Spring recital', date: inDays(3), time: '18:00', kind: 'activity' });
 await call('/events', a, { title: 'School picture day', date: inDays(5), kind: 'school' });
+await call('/billing/dev-grant', a, { period: 'annual' }); // expenses are a Family feature; seed some history…
 await call('/expenses', a, { title: 'Soccer cleats', amount: 64.5, category: 'activities', split: 50 });
 await call('/expenses', b, { title: 'Field trip fee', amount: 30, category: 'school', split: 50 });
+await call('/billing/dev-grant', a, { period: 'off' }); // …then drop back to Free so the paywall shows
 await call('/checkins', a, { kind: 'dropoff' });
 const saturday = inDays(((6 - new Date().getDay() + 7) % 7) || 7);
 await call('/swaps', b, { dates: [saturday], assignTo: boId, note: 'My parents are in town — can I have them Saturday?' });

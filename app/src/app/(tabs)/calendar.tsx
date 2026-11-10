@@ -14,7 +14,7 @@ import { tint, useColors } from '@/lib/theme';
 
 export default function Calendar() {
   const c = useColors();
-  const { meId, other, family, nameOf } = useSession();
+  const { meId, other, family, nameOf, pro } = useSession();
   const now = parse(today());
   const [view, setView] = useState({ y: now.getFullYear(), m: now.getMonth(), dir: 0 });
   const [selected, setSelected] = useState(today());
@@ -47,6 +47,7 @@ export default function Calendar() {
 
   async function subscribe() {
     if (!family) return;
+    if (!pro) return router.push('/plan');
     const url = calendarFeedUrl(family.ics);
     if (await Linking.canOpenURL(url).catch(() => false)) Linking.openURL(url);
     else Share.share({ message: `Subscribe to our Ambodo calendar: ${url}`, url });
@@ -118,7 +119,7 @@ export default function Calendar() {
           <Icon ios="calendar.badge.clock" android="event_repeat" size={24} color={c.them} />
           <View style={{ flex: 1 }}>
             <T v="strong">Sync to your calendar</T>
-            <T v="small" muted>Custody days & events in Apple or Google Calendar.</T>
+            <T v="small" muted>Custody days & events in Apple or Google Calendar.{pro ? '' : ' · Family'}</T>
           </View>
           <Icon ios="chevron.right" android="chevron_right" size={16} color={c.muted} />
         </Card>

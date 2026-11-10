@@ -1,11 +1,14 @@
 import { useFocusEffect } from 'expo-router';
 import { createContext, use, useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
+import { AppState } from 'react-native';
 import { api, ApiError, hasToken, setToken, type Family, type User } from './api';
+import { startBilling } from './billing';
 
 type Me = { user: User | null; family: Family | null };
 type State = Me & { ready: boolean; offline: boolean };
 type Ctx = State & {
   meId: string;
+  pro: boolean;
   other: { id: string; name: string } | null;
   nameOf: (id: string | null | undefined) => string;
   refresh: () => Promise<void>;
@@ -31,15 +34,24 @@ export function SessionProvider({ children }: { children: ReactNode }) {
     }
   }, []);
 
-  // No token → initial state is already final; otherwise fetch /me once on launch.
-  // eslint-disable-next-line react-hooks/set-state-in-effect -- state is only set after the network call resolves
-  useEffect(() => { if (hasToken()) void refresh(); }, [refresh]);
+  // No token → initial state is already final; otherwise fetch /me on launch and on every return to the app,
+  // so the co-parent's changes (their purchase, new kids, a new schedule) show up without a restart.
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- state is only set after the network call resolves
+    if (hasToken()) void refresh();
+    const sub = AppState.addEventListener('change', (st) => st === 'active' && hasToken() && refresh());
+    return () => sub.remove();
+  }, [refresh]);
+
+  // Store purchases belong to the signed-in parent; the API turns them into a family plan.
+  useEffect(() => { if (s.user) startBilling(s.user.id).catch(() => {}); }, [s.user]);
 
   const value = useMemo<Ctx>(() => {
     const meId = s.user?.id ?? '';
     return {
       ...s,
       meId,
+      pro: !!s.family?.plan?.active,
       other: s.family?.members.find((m) => m.id !== meId) ?? null,
       nameOf: (id) => (id && id === meId ? 'You' : s.family?.members.find((m) => m.id === id)?.name ?? 'Co-parent'),
       refresh,

@@ -28,5 +28,22 @@ coparenting,custody,calendar,divorce,family,parenting plan,shared,messages,expen
 ## Before submitting
 - Host the API over HTTPS and set `EXPO_PUBLIC_API_URL` (see `app/eas.json`).
 - Add a privacy-policy URL and support URL in App Store Connect / Play Console.
-- Screenshots: 6.9" iPhone + Android phone (Today, Talk with ToneGuard, Calendar, Records).
-- Subscriptions (family plan) need StoreKit / Play Billing products — not wired yet.
+- Screenshots: 6.9" iPhone + Android phone (Today, Talk with ToneGuard, Calendar, Records, the paywall).
+- Publish `https://ambodo.app/terms` and `/privacy` — the paywall links to both (App Store 3.1.2 requires it).
+
+## Ambodo Family subscription (go-live checklist)
+The app ships with it wired; until keys exist it runs in **test mode** (no charge, plan granted by the API).
+
+1. **App Store Connect** → Subscriptions → group "Ambodo Family": `ambodo_family_annual` ($89/yr) and `ambodo_family_monthly` ($9.99/mo).
+2. **Play Console** → Subscriptions: same two product IDs and prices.
+3. **RevenueCat**: add both apps, attach the products, create entitlement **`family`** and an offering whose
+   *Annual* and *Monthly* packages hold the products.
+4. Keys:
+   - `app/.env` → `EXPO_PUBLIC_RC_IOS_KEY=appl_…`, `EXPO_PUBLIC_RC_ANDROID_KEY=goog_…` (public SDK keys)
+   - `server/.env` → `REVENUECAT_SECRET_KEY=sk_…` and `BILLING_DEV=false` (turns test mode off)
+5. Rebuild the app. Whichever parent buys, the API stores the plan on the family, so both unlock.
+
+What's on Free vs Family is enforced by the API (402 = Family feature): expenses + settle-ups and the calendar
+feed are Family; ToneGuard "calmer version" sends are capped at 5 per parent per month on Free.
+Fee waivers land as `waiver.status = "pending"` on the family — approve by setting it to `approved` and
+`plan = { source: "waiver" }`.

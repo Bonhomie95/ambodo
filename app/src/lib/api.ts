@@ -18,6 +18,8 @@ export async function setToken(t: string | null) {
 export class ApiError extends Error {
   constructor(message: string, public status: number) { super(message); }
 }
+/** 402 = a Family-plan feature; callers open the paywall. */
+export const needsPlan = (e: unknown) => e instanceof ApiError && e.status === 402;
 
 export async function api<T = { ok: true }>(path: string, opts: { method?: string; body?: unknown } = {}): Promise<T> {
   let res: Response;
@@ -46,6 +48,7 @@ export type Family = {
   id: string; invite: string; ics: string; kids: Kid[];
   schedule: { pattern: string; anchor: string; first: string | null };
   members: { id: string; name: string }[];
+  plan: { active: boolean; source: 'store' | 'dev' | 'waiver' | null; expiresAt: string | null; waiver: 'pending' | 'approved' | 'declined' | null };
 };
 export type Message = { id: string; author: string; text: string; at: string; hash: string; seen: boolean };
 export type Day = { date: string; parent: string | null };
