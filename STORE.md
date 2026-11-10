@@ -43,8 +43,9 @@ Paid Apps agreement plus tax and banking (Business → Agreements).
 Descriptions: "One plan for both homes, billed yearly." / "…billed monthly." The first subscriptions must be
 submitted *with* app version 1.0.
 
-**Play Console** → Monetize → Subscriptions → product **`dev.bonhomieinc.ambodo.family`** with two auto-renewing base plans:
-`annual` (1 year, $89.00) and `monthly` (1 month, $9.99). This needs a payments profile, and it unlocks after the first `.aab` upload.
+**Play Console — set up:** product **`dev.bonhomieinc.ambodo.family`** ("Ambodo Family", four benefits and a description)
+with two active auto-renewing base plans in every region: `annual` (1 year, US $89.99, because Play enforces .99 endings)
+and `monthly` (1 month, US $9.99).
 
 **RevenueCat** (project `27c0c1e9`, "Bonhomie LLC"):
 - Done: App Store and Play apps. Entitlement **`family`** has all four products: App Store
@@ -141,7 +142,7 @@ Already entered in Play Console (app `4975389166503960722`): the listing text an
 needs the AI-asset answer and Save), category, contact email and website, and the privacy policy.
 - **App name:** Ambodo: Co-Parenting
 - **Short description:** Co-parent calmly: sealed messages, one custody calendar, court-ready records.
-- **Full description:** same as above, with a Google Play payment paragraph ("renews automatically until you cancel;
+- **Full description:** same as above but "$89.99/year", with a Google Play payment paragraph ("renews automatically until you cancel;
   manage or cancel any time in Google Play → Payments & subscriptions").
 - **Category:** Parenting · **Contact email:** `support@bonhomieinc.dev` · **Website:** `https://bonhomieinc.dev/` · **Privacy policy:** `https://ambodo-api.onrender.com/privacy`
 - **Graphics:** icon `store/play-icon-512.png` · feature graphic `store/play-feature-graphic.png` · phone screenshots `store/android/01…06.jpg` (1080×1920)

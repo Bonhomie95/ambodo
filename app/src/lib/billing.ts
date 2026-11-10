@@ -11,8 +11,10 @@ export type Period = 'annual' | 'monthly';
 export type Offer = { period: Period; price: string; amount: number | null; perMonth: string | null; pkg?: PurchasesPackage };
 
 // Shown in test mode and as a fallback if the store can't be reached. Keep in sync with the store products.
+// Yearly is $89.00 on the App Store but $89.99 on Play, which enforces .99 endings in the US.
+const yearly = Platform.OS === 'android' ? 89.99 : 89;
 const FALLBACK: Offer[] = [
-  { period: 'annual', price: '$89.00', amount: 89, perMonth: '$7.42' },
+  { period: 'annual', price: `$${yearly.toFixed(2)}`, amount: yearly, perMonth: `$${(yearly / 12).toFixed(2)}` },
   { period: 'monthly', price: '$9.99', amount: 9.99, perMonth: null },
 ];
 
