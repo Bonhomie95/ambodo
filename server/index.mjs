@@ -9,8 +9,9 @@ import { pages } from './pages.mjs';
 
 const { MONGODB_URI = 'mongodb://127.0.0.1:27017', MONGODB_DB = 'ambodo', PORT = '4000', HOST = '127.0.0.1', REVENUECAT_SECRET_KEY, NODE_ENV } = process.env;
 // Shown on the privacy, terms, support and account-deletion pages the store listings link to.
-const { SUPPORT_EMAIL = 'support@example.com', LEGAL_NAME = 'Ambodo (dev)' } = process.env;
-if (NODE_ENV === 'production' && !(process.env.SUPPORT_EMAIL && process.env.LEGAL_NAME)) throw new Error('Set SUPPORT_EMAIL and LEGAL_NAME — the store pages show them');
+const { SUPPORT_EMAIL = 'support@example.com', LEGAL_NAME = 'Ambodo (dev)', LEGAL_ADDRESS = '' } = process.env;
+const missing = ['MONGODB_URI', 'SUPPORT_EMAIL', 'LEGAL_NAME'].filter((k) => !process.env[k]);
+if (NODE_ENV === 'production' && missing.length) throw new Error(`Set ${missing.join(', ')} — production needs the database and the store pages' contact details`);
 // Test purchases (no real charge) are on outside production unless BILLING_DEV=false.
 const BILLING_DEV = process.env.BILLING_DEV ? process.env.BILLING_DEV === 'true' : NODE_ENV !== 'production';
 const rcSubscriber = revenueCat(REVENUECAT_SECRET_KEY);
@@ -93,7 +94,7 @@ const on = (method, path, fn, open = false) =>
   routes.push({ method, re: new RegExp(`^${path.replace(/:\w+/g, '([^/]+)')}$`), fn, open });
 
 on('GET', '/health', async () => ({ ok: true }), true);
-for (const [slug, html] of Object.entries(pages({ supportEmail: SUPPORT_EMAIL, legalName: LEGAL_NAME }))) {
+for (const [slug, html] of Object.entries(pages({ supportEmail: SUPPORT_EMAIL, legalName: LEGAL_NAME, address: LEGAL_ADDRESS }))) {
   on('GET', `/${slug}`, async () => ({ [RAW]: ['text/html; charset=utf-8', html] }), true);
 }
 

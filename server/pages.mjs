@@ -23,9 +23,11 @@ ${body}
 <footer>Last updated ${UPDATED}</footer>
 </main></body></html>`;
 
-export function pages({ supportEmail, legalName }) {
+export function pages({ supportEmail, legalName, address = '' }) {
   const email = `<a href="mailto:${esc(supportEmail)}">${esc(supportEmail)}</a>`;
   const us = esc(legalName);
+  // Apple's minimum EULA terms ask for the developer's name and address.
+  const contact = `<div class="card">Contact: ${us}${address ? ` · ${esc(address)}` : ''} · ${email}</div>`;
 
   const privacy = shell('Privacy Policy', `
 <h1>Privacy Policy</h1>
@@ -73,7 +75,7 @@ export function pages({ supportEmail, legalName }) {
 
 <h2>Changes</h2>
 <p>If we change this policy we will update the date below, and tell you in the app if the change is significant.</p>
-<div class="card">Contact: ${us} · ${email}</div>`);
+${contact}`);
 
   const terms = shell('Terms of Use', `
 <h1>Terms of Use</h1>
@@ -118,7 +120,7 @@ export function pages({ supportEmail, legalName }) {
 
 <h2>11. Governing law</h2>
 <p>These Terms are governed by the laws of the place where ${us} is established, except where the law where you live gives you rights that can’t be waived.</p>
-<div class="card">Contact: ${us} · ${email}</div>`);
+${contact}`);
 
   const support = shell('Support', `
 <h1>We’re here.</h1>

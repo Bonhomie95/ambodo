@@ -1,7 +1,7 @@
 // Demo family for trying the app: `npm run seed` (API must be running). Re-running resets it.
 // Sign in as either parent — both use the password below.
 const API = process.env.API ?? 'http://127.0.0.1:4000';
-const PASSWORD = 'ambodo-demo-2026';
+const PASSWORD = process.env.SEED_PASSWORD || 'ambodo-demo-2026';
 const PARENTS = [{ name: 'Ada', email: 'ada@demo.ambodo.app' }, { name: 'Bo', email: 'bo@demo.ambodo.app' }];
 
 const call = async (path, token, body, method) => {

@@ -15,7 +15,9 @@ services:
       - key: HOST
         value: 0.0.0.0
       - key: MONGODB_DB
-        value: ambodo
+        value: ambodo_prod # separate from the local test data
+      - key: NODE_VERSION
+        value: "22"
       - key: MONGODB_URI
         sync: false
       - key: REVENUECAT_SECRET_KEY
@@ -23,4 +25,6 @@ services:
       - key: SUPPORT_EMAIL
         sync: false
       - key: LEGAL_NAME
+        sync: false
+      - key: LEGAL_ADDRESS
         sync: false
