@@ -61,7 +61,19 @@ assert.equal((await call('POST', '/messages', a, '[1]')).status, 400);
 assert.equal((await call('POST', '/billing/waiver', b, { reason: 'Court fee waiver granted' })).data.plan.waiver, 'pending');
 assert.equal((await call('POST', '/billing/waiver', a, { reason: 'again' })).status, 409);
 
+// Store pages are public HTML; any parent can report a message.
+assert.match((await call('GET', '/privacy')).data, /Privacy Policy/);
+assert.match((await call('GET', '/delete-account')).data, /Delete your Ambodo account/);
+assert.equal((await call('POST', `/messages/${msgs[0].id}/report`, b, { reason: 'smoke' })).status, 200);
+assert.equal((await call('POST', `/messages/${msgs[0].id}/report`, b, { reason: 'again' })).status, 200, 'reporting twice is harmless');
+// Guessing limit: after 10 wrong passwords even the right one waits.
+for (let i = 0; i < 10; i++) await call('POST', '/auth/signin', null, { email: `bo.${stamp}@smoke.test`, password: 'nope' });
+assert.equal((await call('POST', '/auth/signin', null, { email: `bo.${stamp}@smoke.test`, password: 'password123' })).status, 429);
+
 await call('DELETE', '/me', a);
+const c = await signup('cy');
+assert.equal((await call('POST', '/family/join', c, { code: fam.invite })).status, 404, 'a departed parent\'s invite code is dead');
+await call('DELETE', '/me', c);
 await call('DELETE', '/me', b);
 assert.equal((await call('GET', '/me', b)).status, 401);
 console.log('smoke ok ✓');

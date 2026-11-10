@@ -6,7 +6,7 @@ import { Alert, StyleSheet, Text, View } from 'react-native';
 import Animated, { FadeInDown, ZoomIn } from 'react-native-reanimated';
 import { Mark } from '@/components/brand';
 import { Avatar, Button, Card, Field, Icon, Row, Screen, T, Tap, toast } from '@/components/ui';
-import { api, type Checkin, type Kid } from '@/lib/api';
+import { api, openPage, type Checkin, type Kid } from '@/lib/api';
 import { nice, time, ymd } from '@/lib/dates';
 import { shareInvite } from '@/lib/meta';
 import { useLoad, useSession } from '@/lib/session';
@@ -117,6 +117,14 @@ export default function Family() {
               <T v="small" muted>{nice(ymd(new Date(h.at)))} · {time(h.at)}</T>
             </Row>
           ))}
+        </Card>
+      </Animated.View>
+
+      <Animated.View entering={FadeInDown.delay(170).springify()}>
+        <Card style={{ gap: 2 }}>
+          <Item ios="questionmark.bubble.fill" android="support_agent" title="Help & support" sub="Real people, fast answers" onPress={() => openPage('support')} />
+          <Item ios="hand.raised.fill" android="privacy_tip" title="Privacy policy" onPress={() => openPage('privacy')} />
+          <Item ios="doc.text.fill" android="description" title="Terms of use" onPress={() => openPage('terms')} />
         </Card>
       </Animated.View>
 

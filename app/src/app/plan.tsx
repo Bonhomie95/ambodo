@@ -2,18 +2,16 @@ import * as Haptics from 'expo-haptics';
 import { router } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { useEffect, useState } from 'react';
-import { Linking, Platform, ScrollView, StyleSheet, Text, View } from 'react-native';
-import Animated, { FadeIn, FadeInDown, ZoomIn } from 'react-native-reanimated';
+import { KeyboardAvoidingView, Linking, Platform, StyleSheet, Text, View } from 'react-native';
+import Animated, { FadeIn, FadeInDown, interpolate, useAnimatedScrollHandler, useAnimatedStyle, useSharedValue, ZoomIn } from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Mark } from '@/components/brand';
 import { Button, Field, Icon, Row, T, Tap, toast } from '@/components/ui';
-import { api, type Family } from '@/lib/api';
+import { api, openPage, type Family } from '@/lib/api';
 import { buy, getOffers, manageUrl, restore, testMode, type Offer } from '@/lib/billing';
 import { useSession } from '@/lib/session';
 import { brand, font, tint, useColors } from '@/lib/theme';
 
-const TERMS = 'https://ambodo.app/terms';
-const PRIVACY = 'https://ambodo.app/privacy';
 const store = Platform.OS === 'ios' ? 'Apple Account' : 'Google Play account';
 
 const PERKS: [string, string, string, string][] = [
@@ -36,6 +34,10 @@ export default function Plan() {
   const [reason, setReason] = useState('');
   // Offers (and so the buy button) appear only once the plan is fresh — the co-parent may have bought it already.
   useEffect(() => { Promise.all([getOffers(), refresh()]).then(([o]) => setOffers(o)); }, [refresh]);
+  // Android: a dark strip fades in behind the status bar once the hero scrolls away, so its light icons stay readable.
+  const scrollY = useSharedValue(0);
+  const onScroll = useAnimatedScrollHandler((e) => { scrollY.value = e.contentOffset.y; });
+  const scrim = useAnimatedStyle(() => ({ opacity: interpolate(scrollY.value, [80, 220], [0, 1], 'clamp') }));
 
   const plan = family?.plan;
   const chosen = offers.find((o) => o.period === period) ?? offers[0];
@@ -61,9 +63,13 @@ export default function Plan() {
     }
   }
 
+  // Android draws the paywall full-screen under the status bar, over a dark hero.
+  const lightBar = Platform.OS === 'android' ? <StatusBar style="light" /> : null;
+
   if (done) {
     return (
       <View style={[st.done, { backgroundImage: `linear-gradient(160deg, ${brand.ink2}, ${brand.ink})` }]}>
+        {lightBar}
         <Animated.View entering={ZoomIn.springify().damping(10)}><Mark size={150} animated /></Animated.View>
         <Animated.Text entering={FadeInDown.delay(500)} style={st.doneTitle}>Welcome to{'\n'}Ambodo Family.</Animated.Text>
         <Animated.Text entering={FadeIn.delay(800)} style={st.doneSub}>Both homes are unlocked.</Animated.Text>
@@ -72,9 +78,11 @@ export default function Plan() {
   }
 
   return (
-    <View style={{ flex: 1, backgroundColor: c.bg }}>
-      <ScrollView contentContainerStyle={{ paddingBottom: insets.bottom + 24 }} keyboardShouldPersistTaps="handled">
-        {Platform.OS === 'android' && <StatusBar style="light" />}
+    // iOS: the scroll view moves the waiver field above the keyboard; Android needs the padding.
+    <KeyboardAvoidingView behavior={Platform.OS === 'android' ? 'padding' : undefined} style={{ flex: 1, backgroundColor: c.bg }}>
+      <Animated.ScrollView onScroll={onScroll} scrollEventThrottle={16} contentContainerStyle={{ paddingBottom: insets.bottom + 24 }}
+        keyboardShouldPersistTaps="handled" automaticallyAdjustKeyboardInsets>
+        {lightBar}
         <View style={[st.hero, { paddingTop: 22 + (Platform.OS === 'android' ? insets.top : 0), backgroundImage: `linear-gradient(160deg, ${brand.ink2}, ${brand.ink})` }]}>
           <View style={[st.glow, { backgroundImage: `radial-gradient(circle, ${tint(brand.sun, 0.35)} 0%, ${tint(brand.sun, 0)} 70%)` }]} />
           <Row style={{ justifyContent: 'space-between' }}>
@@ -142,7 +150,7 @@ export default function Plan() {
               </View>
 
               <Button title={chosen ? `Start Family · ${chosen.price}${chosen.period === 'annual' ? '/yr' : '/mo'}` : 'Start Ambodo Family'} kind="accent"
-                loading={busy === 'buy'} disabled={!chosen || !!busy} onPress={() => chosen && run('buy', () => buy(chosen), 'Not active yet — try Restore.')} />
+                loading={busy === 'buy' || !offers.length} disabled={!chosen || !!busy} onPress={() => chosen && run('buy', () => buy(chosen), 'Not active yet — try Restore.')} />
 
               {testMode && (
                 <View style={[st.test, { backgroundColor: tint(c.sun, 0.14) }]}>
@@ -174,19 +182,21 @@ export default function Plan() {
 
           <T v="small" muted style={{ textAlign: 'center', fontSize: 11, lineHeight: 16 }}>
             Billed to your {store}. Auto-renews at the price above until cancelled. Cancel anytime at least 24 hours before renewal in your {store} settings.{' '}
-            <Text style={{ textDecorationLine: 'underline' }} onPress={() => Linking.openURL(TERMS)}>Terms</Text>
+            <Text style={{ textDecorationLine: 'underline' }} onPress={() => openPage('terms')}>Terms</Text>
             {' · '}
-            <Text style={{ textDecorationLine: 'underline' }} onPress={() => Linking.openURL(PRIVACY)}>Privacy</Text>
+            <Text style={{ textDecorationLine: 'underline' }} onPress={() => openPage('privacy')}>Privacy</Text>
           </T>
         </View>
-      </ScrollView>
-    </View>
+      </Animated.ScrollView>
+      {Platform.OS === 'android' && <Animated.View pointerEvents="none" style={[st.scrim, { height: insets.top }, scrim]} />}
+    </KeyboardAvoidingView>
   );
 }
 
 const st = StyleSheet.create({
   hero: { paddingHorizontal: 22, paddingBottom: 28, gap: 10, borderBottomLeftRadius: 34, borderBottomRightRadius: 34, overflow: 'hidden' },
   glow: { position: 'absolute', width: 320, height: 320, borderRadius: 160, right: -110, top: -120 },
+  scrim: { position: 'absolute', top: 0, left: 0, right: 0, backgroundColor: brand.ink },
   close: { width: 36, height: 36, borderRadius: 18, backgroundColor: 'rgba(255,255,255,0.14)', alignItems: 'center', justifyContent: 'center' },
   kicker: { fontFamily: font.heavy, fontSize: 12, letterSpacing: 1.6, color: brand.sun, marginTop: 10 },
   title: { fontFamily: font.display, fontSize: 42, lineHeight: 48, color: '#FFFFFF', letterSpacing: -0.8 },

@@ -1,0 +1,26 @@
+# Ambodo API on Render: Dashboard → New → Blueprint → this repo. Render asks for the secrets (sync: false)
+# on first deploy, so nothing secret lives in git. HTTPS is automatic; the app's EXPO_PUBLIC_API_URL points here.
+services:
+  - type: web
+    name: ambodo-api
+    runtime: node
+    rootDir: server
+    plan: starter # always on — the free plan sleeps, and App Review would hit a cold start
+    buildCommand: npm ci --omit=dev
+    startCommand: node index.mjs
+    healthCheckPath: /health
+    envVars:
+      - key: NODE_ENV
+        value: production # also switches off test purchases (BILLING_DEV)
+      - key: HOST
+        value: 0.0.0.0
+      - key: MONGODB_DB
+        value: ambodo
+      - key: MONGODB_URI
+        sync: false
+      - key: REVENUECAT_SECRET_KEY
+        sync: false
+      - key: SUPPORT_EMAIL
+        sync: false
+      - key: LEGAL_NAME
+        sync: false

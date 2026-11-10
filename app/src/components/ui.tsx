@@ -79,16 +79,24 @@ export function Screen({ children, onRefresh, refreshing, style }: {
 }) {
   const c = useColors();
   const insets = useSafeAreaInsets();
-  return (
+  const scroll = (
     <ScrollView
       style={{ flex: 1, backgroundColor: c.bg }}
       // iOS insets for the status bar and the glass tab bar itself; Android needs them by hand.
       contentInsetAdjustmentBehavior="automatic"
       contentContainerStyle={[{ paddingTop: ios ? 8 : insets.top + 14, paddingHorizontal: 20, paddingBottom: ios ? 40 : insets.bottom + 100, gap: 16 }, style]}
       keyboardShouldPersistTaps="handled"
-      refreshControl={onRefresh ? <RefreshControl refreshing={!!refreshing} onRefresh={onRefresh} tintColor={c.muted} colors={[c.me]} /> : undefined}>
+      refreshControl={onRefresh ? <RefreshControl refreshing={!!refreshing} onRefresh={onRefresh} tintColor={c.muted} colors={[c.me]} progressViewOffset={ios ? undefined : insets.top} /> : undefined}>
       {children}
     </ScrollView>
+  );
+  if (ios) return scroll;
+  // Android draws edge to edge: a strip in the page colour keeps scrolled content from running under the status bar.
+  return (
+    <View style={{ flex: 1 }}>
+      {scroll}
+      <View pointerEvents="none" style={{ position: 'absolute', top: 0, left: 0, right: 0, height: insets.top, backgroundColor: c.bg }} />
+    </View>
   );
 }
 

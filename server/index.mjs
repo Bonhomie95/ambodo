@@ -5,15 +5,19 @@ import { promisify } from 'node:util';
 import { MongoClient, ObjectId } from 'mongodb';
 import { FREE_REWRITES, isPro, lapsed, month, planView, revenueCat, storePlan } from './billing.mjs';
 import { PATTERNS, chainHash, custodyFor, icsFeed } from './custody.mjs';
+import { pages } from './pages.mjs';
 
 const { MONGODB_URI = 'mongodb://127.0.0.1:27017', MONGODB_DB = 'ambodo', PORT = '4000', HOST = '127.0.0.1', REVENUECAT_SECRET_KEY, NODE_ENV } = process.env;
+// Shown on the privacy, terms, support and account-deletion pages the store listings link to.
+const { SUPPORT_EMAIL = 'support@example.com', LEGAL_NAME = 'Ambodo (dev)' } = process.env;
+if (NODE_ENV === 'production' && !(process.env.SUPPORT_EMAIL && process.env.LEGAL_NAME)) throw new Error('Set SUPPORT_EMAIL and LEGAL_NAME — the store pages show them');
 // Test purchases (no real charge) are on outside production unless BILLING_DEV=false.
 const BILLING_DEV = process.env.BILLING_DEV ? process.env.BILLING_DEV === 'true' : NODE_ENV !== 'production';
 const rcSubscriber = revenueCat(REVENUECAT_SECRET_KEY);
 const client = new MongoClient(MONGODB_URI);
 const db = client.db(MONGODB_DB);
-const [users, sessions, families, messages, events, swaps, expenses, checkins] =
-  ['users', 'sessions', 'families', 'messages', 'events', 'swaps', 'expenses', 'checkins'].map((n) => db.collection(n));
+const [users, sessions, families, messages, events, swaps, expenses, checkins, attempts, reports] =
+  ['users', 'sessions', 'families', 'messages', 'events', 'swaps', 'expenses', 'checkins', 'attempts', 'reports'].map((n) => db.collection(n));
 
 // ---------- helpers ----------
 const fail = (status, error) => Object.assign(new Error(error), { status });
@@ -83,12 +87,15 @@ const expenseView = (e) => ({ id: id(e), title: e.title, category: e.category, a
 const eventView = (e) => ({ id: id(e), title: e.title, date: e.date, time: e.time, kind: e.kind, by: e.by.toString() });
 
 // ---------- routes ----------
-const CAL = Symbol('calendar'); // marks a text/calendar response
+const RAW = Symbol('raw'); // { [RAW]: [contentType, body] } for non-JSON responses
 const routes = [];
 const on = (method, path, fn, open = false) =>
   routes.push({ method, re: new RegExp(`^${path.replace(/:\w+/g, '([^/]+)')}$`), fn, open });
 
 on('GET', '/health', async () => ({ ok: true }), true);
+for (const [slug, html] of Object.entries(pages({ supportEmail: SUPPORT_EMAIL, legalName: LEGAL_NAME }))) {
+  on('GET', `/${slug}`, async () => ({ [RAW]: ['text/html; charset=utf-8', html] }), true);
+}
 
 on('POST', '/auth/signup', async ({ body }) => {
   const name = str(body.name, 'Your name', 60);
@@ -100,11 +107,20 @@ on('POST', '/auth/signup', async ({ body }) => {
   return { token: await newSession(insertedId), user: { id: insertedId.toString(), name, email } };
 }, true);
 
+// Guessing limits: 10 misses per key per 15 minutes, counted in Mongo so they survive restarts and extra instances.
+// ponytail: keyed by account, not IP (proxies make IPs spoofable) — a stranger can delay a sign-in by 15 minutes, not crack it
+async function guard(key) {
+  if (await attempts.findOne({ _id: key, n: { $gte: 10 }, expiresAt: { $gt: new Date() } })) throw fail(429, 'Too many tries. Take a breath and try again in 15 minutes.');
+}
+const miss = (key) => attempts.updateOne({ _id: key }, { $inc: { n: 1 }, $setOnInsert: { expiresAt: new Date(Date.now() + 15 * 60e3) } }, { upsert: true });
+
 on('POST', '/auth/signin', async ({ body }) => {
-  const u = await users.findOne({ email: String(body.email ?? '').trim().toLowerCase() });
-  if (!u || !(await checkPass(String(body.password ?? ''), u.pass))) throw fail(401, 'Email or password is wrong');
+  const email = String(body.email ?? '').trim().toLowerCase();
+  await guard(`signin:${email}`);
+  const u = await users.findOne({ email });
+  if (!u || !(await checkPass(String(body.password ?? ''), u.pass))) { await miss(`signin:${email}`); throw fail(401, 'Email or password is wrong'); }
   return { token: await newSession(u._id), user: pub(u) };
-}, true); // ponytail: no rate limiting yet — add per-IP throttling before going public
+}, true);
 
 on('POST', '/auth/signout', async ({ session }) => { await sessions.deleteOne({ _id: session }); });
 
@@ -118,9 +134,10 @@ on('DELETE', '/me', async ({ user }) => {
   const f = await families.findOne({ members: user._id });
   if (f) {
     const left = f.members.filter((m) => !m.equals(user._id));
-    if (left.length) await families.updateOne({ _id: f._id }, { $set: { members: left } });
+    // A fresh invite code, so the departed parent's old code can't be used to rejoin the family's history.
+    if (left.length) await families.updateOne({ _id: f._id }, { $set: { members: left, invite: inviteCode() } });
     else await Promise.all([families.deleteOne({ _id: f._id }),
-      ...[messages, events, swaps, expenses, checkins].map((c) => c.deleteMany({ familyId: f._id }))]);
+      ...[messages, events, swaps, expenses, checkins, reports].map((c) => c.deleteMany({ familyId: f._id }))]);
   }
   await Promise.all([users.deleteOne({ _id: user._id }), sessions.deleteMany({ userId: user._id })]);
 });
@@ -146,11 +163,12 @@ on('POST', '/family', async ({ body, user }) => {
 
 on('POST', '/family/join', async ({ body, user }) => {
   if (await families.findOne({ members: user._id })) throw fail(409, 'You already have a family');
+  await guard(`join:${user._id}`);
   const raw = String(body.code ?? '').toUpperCase().replace(/[^A-Z0-9]/g, '');
   const f = await families.findOneAndUpdate(
     { invite: `${raw.slice(0, 3)}-${raw.slice(3)}`, 'members.1': { $exists: false } },
     { $addToSet: { members: user._id } }, { returnDocument: 'after' });
-  if (!f) throw fail(404, "That code didn't work");
+  if (!f) { await miss(`join:${user._id}`); throw fail(404, "That code didn't work"); }
   if (!f.schedule.first) await families.updateOne({ _id: f._id }, { $set: { 'schedule.first': user._id } });
   return familyView(await families.findOne({ _id: f._id }));
 });
@@ -227,6 +245,16 @@ on('POST', '/messages', async ({ body, user }) => {
     } catch (e) { if (e.code !== 11000) throw e; }
   }
   throw fail(503, 'Busy — try again');
+});
+
+// App Store 1.2: messages can be reported. Reports wait in the `reports` collection for review (status: 'open').
+on('POST', '/messages/:id/report', async ({ params: [mid], body, user }) => {
+  const f = await famOf(user);
+  const m = await messages.findOne({ _id: oid(mid), familyId: f._id });
+  if (!m) throw fail(404, 'Not found');
+  await reports.updateOne({ messageId: m._id, by: user._id }, { $setOnInsert: {
+    familyId: f._id, author: m.authorId, text: m.text, reason: String(body.reason ?? '').slice(0, 500), status: 'open', at: new Date(),
+  } }, { upsert: true });
 });
 
 on('GET', '/messages/unread', async ({ user }) => {
@@ -383,7 +411,7 @@ on('GET', '/ics/:token', async ({ params: [token] }) => {
   requirePro(f);
   const people = await users.find({ _id: { $in: f.members } }, { projection: { name: 1 } }).toArray();
   const evs = await events.find({ familyId: f._id }).toArray();
-  return { [CAL]: icsFeed(f, Object.fromEntries(people.map((p) => [id(p), p.name])), evs) };
+  return { [RAW]: ['text/calendar; charset=utf-8', icsFeed(f, Object.fromEntries(people.map((p) => [id(p), p.name])), evs)] };
 }, true);
 
 // ---------- server ----------
@@ -415,6 +443,8 @@ await Promise.all([
   messages.createIndex({ familyId: 1, prevHash: 1 }, { unique: true }),
   messages.createIndex({ familyId: 1, createdAt: 1 }),
   events.createIndex({ familyId: 1, date: 1 }),
+  attempts.createIndex({ expiresAt: 1 }, { expireAfterSeconds: 0 }),
+  reports.createIndex({ messageId: 1, by: 1 }, { unique: true }),
 ]);
 
 http.createServer(async (req, res) => {
@@ -429,7 +459,7 @@ http.createServer(async (req, res) => {
       ...(route.open ? {} : await auth(req)),
     };
     const out = (await route.fn(ctx)) ?? { ok: true };
-    if (out[CAL]) { res.writeHead(200, { 'content-type': 'text/calendar; charset=utf-8' }); return res.end(out[CAL]); }
+    if (out[RAW]) { res.writeHead(200, { 'content-type': out[RAW][0] }); return res.end(out[RAW][1]); }
     res.writeHead(200, { 'content-type': 'application/json' });
     res.end(JSON.stringify(out));
   } catch (e) {

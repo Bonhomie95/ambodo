@@ -6,7 +6,7 @@ import Animated, { FadeIn } from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Mark } from '@/components/brand';
 import { Button, Field, Icon, T, Tap } from '@/components/ui';
-import { api } from '@/lib/api';
+import { api, openPage } from '@/lib/api';
 import { useSession } from '@/lib/session';
 import { font, useColors } from '@/lib/theme';
 
@@ -82,7 +82,10 @@ export default function Auth() {
         <Button title={signup ? 'Create account' : 'Sign in'} kind="accent" loading={busy} onPress={submit}
           disabled={!email || !password || (signup && !name)} />
         <T v="small" muted style={{ textAlign: 'center' }}>
-          Your messages are sealed and only shared with your co-parent and anyone you export them to.
+          {signup ? (
+            <>By creating an account you agree to the <Text style={st.link} onPress={() => openPage('terms')}>Terms</Text> and{' '}
+              <Text style={st.link} onPress={() => openPage('privacy')}>Privacy Policy</Text>. Ambodo is for adults 18+.</>
+          ) : 'Your messages are sealed and only shared with your co-parent and anyone you export them to.'}
         </T>
       </ScrollView>
     </KeyboardAvoidingView>
@@ -91,6 +94,7 @@ export default function Auth() {
 
 const st = StyleSheet.create({
   back: { width: 44, height: 44, borderRadius: 22, alignItems: 'center', justifyContent: 'center' },
+  link: { textDecorationLine: 'underline' },
   toggle: { height: 50, borderRadius: 25, flexDirection: 'row', padding: 4 },
   thumb: { position: 'absolute', top: 4, bottom: 4, width: '50%', borderRadius: 21, boxShadow: '0 2px 10px rgba(20,26,51,0.10)' },
   toggleItem: { flex: 1, alignItems: 'center', justifyContent: 'center' },

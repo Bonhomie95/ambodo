@@ -22,6 +22,12 @@ Demo family: `cd server && npm run seed` → sign in as `ada@demo.ambodo.app` or
 iOS builds need an Xcode whose simulator runtime is installed. If the default one isn't, run e.g.
 `DEVELOPER_DIR=/Applications/Xcode.app/Contents/Developer npm run ios`.
 
+## Ship
+
+[STORE.md](STORE.md) is the launch kit: hosting (`render.yaml`), subscriptions, EAS builds, listing copy,
+privacy answers and store art (`store/`). The API serves the store pages itself: `/privacy`, `/terms`,
+`/support`, `/delete-account`.
+
 ## Checks
 
 ```bash

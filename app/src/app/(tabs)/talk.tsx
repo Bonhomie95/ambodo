@@ -1,7 +1,7 @@
 import * as Haptics from 'expo-haptics';
 import { router, useFocusEffect } from 'expo-router';
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { FlatList, Keyboard, KeyboardAvoidingView, StyleSheet, Text, TextInput, View } from 'react-native';
+import { Alert, FlatList, Keyboard, KeyboardAvoidingView, StyleSheet, Text, TextInput, View } from 'react-native';
 import Animated, { FadeInDown, FadeInUp, FadeOutDown, LinearTransition } from 'react-native-reanimated';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Mark } from '@/components/brand';
@@ -80,6 +80,15 @@ export default function Talk() {
     }
   }
 
+  // Messages can't be edited or deleted, so crossing a line gets a report (App Store 1.2). We review within 24h.
+  function report(m: Message) {
+    Alert.alert(`Sealed · #${m.hash.slice(0, 8)}`, 'Messages can’t be edited or deleted. If this one crosses a line, report it — we review every report within 24 hours.', [
+      { text: 'Cancel', style: 'cancel' },
+      { text: 'Report message', style: 'destructive', onPress: () => api(`/messages/${m.id}/report`, { method: 'POST' })
+        .then(() => toast('Reported. Thanks for telling us.'), (e) => toast((e as Error).message)) },
+    ]);
+  }
+
   const live = text.trim() ? checkTone(text) : null;
   const toneColor = (l: Tone['level']) => ({ calm: c.good, tense: c.sun, heated: c.danger })[l];
   const data = [...msgs].reverse();
@@ -122,7 +131,8 @@ export default function Talk() {
             return (
               <Animated.View entering={FadeInUp.springify().damping(16)} layout={LinearTransition}>
                 {newDay && <T v="label" style={{ textAlign: 'center', marginVertical: 12 }}>{relative(dayOf(m.at))}</T>}
-                <Tap haptic={false} onLongPress={() => { Haptics.selectionAsync(); toast(`Sealed · #${m.hash.slice(0, 8)}`); }}
+                <Tap haptic={false} onLongPress={() => { Haptics.selectionAsync(); if (mine) toast(`Sealed · #${m.hash.slice(0, 8)}`); else report(m); }}
+                  accessibilityHint={mine ? undefined : 'Press and hold to report'}
                   style={[st.bubble, mine
                     ? { alignSelf: 'flex-end', backgroundColor: c.me, borderBottomRightRadius: 6 }
                     : { alignSelf: 'flex-start', backgroundColor: c.card, borderBottomLeftRadius: 6, borderColor: c.line, borderWidth: StyleSheet.hairlineWidth }]}>

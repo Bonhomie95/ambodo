@@ -21,3 +21,9 @@ test('heated messages get flagged and softened', () => {
 test('one issue is just tense', () => {
   assert.equal(checkTone('You never answer on time.').level, 'tense');
 });
+
+test('judging words become an I-statement', () => {
+  const t = checkTone('You ALWAYS forget the bag. This is ridiculous and you never listen.');
+  assert.equal(t.level, 'heated');
+  assert.equal(t.calmer, "It often feels like you forget the bag. I'm frustrated and it would really help if you listen.");
+});

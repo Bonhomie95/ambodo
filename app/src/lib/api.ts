@@ -1,9 +1,13 @@
 import * as SecureStore from 'expo-secure-store';
+import * as WebBrowser from 'expo-web-browser';
 import { Platform } from 'react-native';
 
 // Simulators reach the Mac at localhost (iOS) / 10.0.2.2 (Android). Set EXPO_PUBLIC_API_URL for devices & prod.
 export const API_URL =
   process.env.EXPO_PUBLIC_API_URL ?? (Platform.OS === 'android' ? 'http://10.0.2.2:4000' : 'http://localhost:4000');
+
+/** The API's public pages — the same URLs the store listings use — in an in-app browser. */
+export const openPage = (page: 'privacy' | 'terms' | 'support' | 'delete-account') => WebBrowser.openBrowserAsync(`${API_URL}/${page}`);
 
 const KEY = 'ambodo.session';
 let token: string | null = SecureStore.getItem(KEY);
