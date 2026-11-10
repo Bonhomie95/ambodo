@@ -43,12 +43,15 @@ submitted *with* app version 1.0.
 **Play Console** → Monetize → Subscriptions → product **`dev.bonhomieinc.ambodo.family`** with two auto-renewing base plans:
 `annual` (1 year, $89.00) and `monthly` (1 month, $9.99). This needs a payments profile, and it unlocks after the first `.aab` upload.
 
-**RevenueCat:**
-1. Create a project and add the iOS app (bundle `dev.bonhomieinc.ambodo`, plus an In-App Purchase key from App Store
-   Connect) and the Android app (package `dev.bonhomieinc.ambodo`, plus a Google Play service-account JSON).
-2. Import the products. Create entitlement **`family`** and attach all of them.
-3. Make the **default** offering with an *Annual* and a *Monthly* package.
-4. Copy the public SDK keys (`appl_…`, `goog_…`) and the secret key (`sk_…`, it goes on Render).
+**RevenueCat** (project `27c0c1e9`, "Bonhomie LLC"):
+- Done: Play app (`goog_` key is in EAS), entitlement **`family`**, Play products
+  `dev.bonhomieinc.ambodo.family:annual` / `:monthly` attached to it, and the current **default** offering
+  (`$rc_annual`, `$rc_monthly`) carrying them.
+- Still to do:
+  - Save the App Store app (it needs the In-App Purchase `.p8`, Key ID and Issuer ID), then add the two App Store
+    products to `family` and to the offering.
+  - Upload the service-account JSON to the Play app.
+  - Create a **V1** secret key for Render's `REVENUECAT_SECRET_KEY`. The API calls `/v1/subscribers`.
 
 Whichever parent buys, the API stores the plan on the family, so both unlock. Renewals are picked up
 automatically when the stored expiry passes. A RevenueCat outage never cancels a plan.
@@ -57,8 +60,7 @@ automatically when the stored expiry passes. A RevenueCat outage never cancels a
 The EAS project is linked: **@bonhomie95/ambodo** (ID in `app/app.json`). Once RevenueCat gives you the keys:
 ```bash
 cd app
-npx eas-cli@latest env:create --environment production --visibility plaintext --name EXPO_PUBLIC_RC_IOS_KEY --value appl_xxx
-npx eas-cli@latest env:create --environment production --visibility plaintext --name EXPO_PUBLIC_RC_ANDROID_KEY --value goog_xxx
+npx eas-cli@latest env:set --environment production --visibility plaintext --name EXPO_PUBLIC_RC_IOS_KEY --value appl_xxx
 ```
 `EXPO_PUBLIC_API_URL` is already set in the `production` profile of `eas.json`. `EXPO_PUBLIC_*` values ship inside
 the app, so they aren't secrets. Store builds refuse to start without them.
@@ -101,10 +103,16 @@ Free in 175 regions; iPhone only, with Mac and Vision Pro availability off.
   `store/ios-6.3/01…06.jpg` (1206×2622). The 6.9" originals in `store/ios/` are optional. iPhone-only app, so no iPad
   shots are needed. To remake the 6.3" set after new art:
   `for f in store/ios/*.jpg; do sips -z 2622 1206 "$f" --out "store/ios-6.3/${f##*/}"; done`
-- **Age rating:** answer the questionnaire honestly. The app has private messaging between co-parents and no other mature content. Ambodo's terms require users to be 18+.
-- **App Privacy** (all *linked to the user*, *not used for tracking*, purpose *App Functionality*):
-  Name · Email Address · User ID · Health (kids' allergies, medications, doctor) · Emails or Text Messages ·
-  Other User Content · Purchase History. These match the privacy manifest in `app/app.json`.
+- **Content rights:** Yes, it shows third-party content and you have the rights (co-parents' messages, which the terms
+  license; Google Fonts under the open font licence).
+- **Age rating:** Messaging and Chat **Yes**. Everything else is **No/None**: parental controls, age assurance,
+  unrestricted web, user-generated content (only shared within one family), social media, ads, and all the content
+  questions. Made for Kids: No.
+- **App Privacy:** "Yes, we collect data." Every type is *linked to the user*, *not used for tracking*, purpose
+  *App Functionality* only: Name · Email Address · User ID · Health (allergies, doctor, notes) · Other Financial Info
+  (expenses, settle-ups, fee-waiver reason) · Purchase History · Emails or Text Messages · Other User Content.
+  Nothing else: no location, contacts, photos, browsing, usage data, diagnostics or device ID. These match the
+  privacy manifest in `app/app.json`.
 
 **Description**
 ```
@@ -137,17 +145,23 @@ needs the AI-asset answer and Save), category, contact email and website, and th
 - **Category:** Parenting · **Contact email:** `support@bonhomieinc.dev` · **Website:** `https://bonhomieinc.dev/` · **Privacy policy:** `https://ambodo-api.onrender.com/privacy`
 - **Graphics:** icon `store/play-icon-512.png` · feature graphic `store/play-feature-graphic.png` · phone screenshots `store/android/01…06.jpg` (1080×1920)
 - **App content:**
-  - Ads: none
-  - App access: restricted — give the demo sign-in above
-  - Target audience: 18+
-  - Content rating (IARC): users can interact (private messages); no other flagged content
-  - News, COVID-19, government and health apps: no
-  - Financial features: none (expenses are a ledger; no money moves)
-  - **Account deletion URL:** `https://ambodo-api.onrender.com/delete-account`
+  - Ads: no · Advertising ID: no (the build doesn't request `AD_ID`) · Government app: no
+  - Financial features: "My app doesn't provide any financial features" (expenses are a ledger; no money moves)
+  - Health: no health features (allergies and doctor are free-text notes on the kids' card)
+  - App access: restricted. Use `ada@demo.ambodo.app` with `SEED_PASSWORD`, already linked to a co-parent, with no 2-step code
+  - Target audience: 18 and over only
+  - Content rating (IARC): category *All other app types*. All content questions No. Users interact (text): **Yes**.
+    Shares location: No. Digital purchases: **Yes**. Web browser or search: No
+  - Trader status: Yes (Bonhomie LLC). Terms link `https://ambodo-api.onrender.com/terms`
 - **Data safety:**
-  - Collected: Name, Email, User IDs (*account management*); Health info, Other in-app messages, other user-generated content, Purchase history (*app functionality*)
-  - Shared with third parties: none (hosting, database and RevenueCat are service providers)
-  - Encrypted in transit: yes · Users can request deletion: yes
+  - Collects data: yes · Encrypted in transit: yes · Shared with third parties: none (hosting, database and
+    RevenueCat are service providers) · Account creation: email + password, deletion URL
+    `https://ambodo-api.onrender.com/delete-account` · Users can request deletion: yes
+  - Required, for *App functionality* and *Account management*: Name, Email address, User IDs
+  - Required, for *App functionality*: Purchase history, Other info (kids' names and birthdays)
+  - Optional, for *App functionality*: Health info, Other financial info (expenses), Other in-app messages, Other
+    user-generated content
+  - Nothing is processed ephemerally; there's no location, photos, contacts, calendar, app activity analytics or crash logs
 
 ---
 
