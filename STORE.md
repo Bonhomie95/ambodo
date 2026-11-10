@@ -20,7 +20,8 @@ Both stores are under **Bonhomie LLC**. Play is an organization account, so ther
 Render service **ambodo-api** (Frankfurt) builds `server/` from this repo on every push to `main`. `NODE_ENV`,
 `HOST`, `MONGODB_DB`, `SUPPORT_EMAIL`, `LEGAL_NAME` and `LEGAL_ADDRESS` are set. (`render.yaml` describes the same service
 as a Blueprint, in case it ever needs recreating.) `MONGODB_URI` is set and the pages are up.
-- Still to do in Render → ambodo-api → Environment: `REVENUECAT_SECRET_KEY` (from step 3, `sk_…`).
+- `REVENUECAT_SECRET_KEY` holds the **public** iOS key (`appl_…`, also in `eas.json`). The API only reads
+  `/v1/subscribers`, which accepts public keys, so no secret is needed. A V1 `sk_…` key also works if you swap it in.
 - Free plan for now. It sleeps after 15 idle minutes, so the API pings itself every 10 minutes (`server/index.mjs`)
   and GitHub Actions pings it as a backup (`.github/workflows/keep-awake.yml`). That uses ~744 of the workspace's
   750 free hours a month, shared by every free Render service. Once revenue allows, switch to **Starter** and
@@ -32,8 +33,8 @@ as a Blueprint, in case it ever needs recreating.) `MONGODB_URI` is set and the 
 
 ### 3. Subscriptions (Ambodo Family)
 **App Store Connect — set up:** group **Ambodo Family** has both subscriptions, priced in all 175 regions, with
-English names. Each still needs its review screenshot (`store/review/paywall-ios.png`), and the account needs the
-Paid Apps agreement plus tax and banking (Business → Agreements).
+English names and review screenshots (`store/review/paywall-ios.png`). The API still reports them as "Missing
+Metadata" until the Paid Apps agreement is active, which is waiting on the W-9 and the bank check (Business → Agreements).
 
 | Product ID | Duration | Price | Display name |
 |---|---|---|---|
@@ -51,9 +52,7 @@ and `monthly` (1 month, US $9.99).
 - Done: App Store and Play apps. Entitlement **`family`** has all four products: App Store
   `dev.bonhomieinc.ambodo.family.annual` / `.monthly` and Play `dev.bonhomieinc.ambodo.family:annual` / `:monthly`.
   The current **default** offering (`$rc_annual`, `$rc_monthly`) carries both stores. The public keys are in `eas.json`.
-- Still to do:
-  - Upload the service-account JSON to the Play app.
-  - Create a **V1** secret key for Render's `REVENUECAT_SECRET_KEY`. The API calls `/v1/subscribers`.
+- The Play app has its service-account JSON. Render uses the public iOS key (see step 2).
 
 Whichever parent buys, the API stores the plan on the family, so both unlock. Renewals are picked up
 automatically when the stored expiry passes. A RevenueCat outage never cancels a plan.
@@ -74,9 +73,10 @@ npx eas-cli@latest build --platform android --profile production
 - **Android:** EAS created and keeps the upload keystore. Google needs the **first** `.aab` uploaded by hand: Play
   Console → Test and release → Internal testing → Create release. After that, `eas submit --platform android`
   works with the service-account key.
-- **Status:** Android build 2 (1.0.0) is uploaded. Production release "1.0.0 (2)" covers all 178 countries and is
-  saved in Publishing overview, which sends it for review together with the listing and app content (managed
-  publishing is off, so it goes live once approved). The internal-testing draft holds the same build and has no testers.
+- **Status (Nov 10):** Play: production release "1.0.0 (2)" for all 178 countries, the listing and all app content
+  are **in review**. Managed publishing is off, so it goes live once approved. The internal-testing draft holds the
+  same build and has no testers. iOS: build 2 (1.0.0) is built, and all 6 screenshots plus both subscription review
+  screenshots are uploaded. Version 1.0 still needs the build processed and attached, and the Paid Apps agreement active.
 
 ### 6. App Review details (both stores)
 - **Sign-in:** both use `SEED_PASSWORD` from `server/.env`. The password field is left blank in both stores.
