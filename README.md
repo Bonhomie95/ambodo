@@ -17,6 +17,11 @@ cd app && npm install && npm run ios        # or: npm run android
 Swap `MONGODB_URI` in `server/.env` for your Atlas string to go live — nothing else changes.
 Point devices/production at the API with `EXPO_PUBLIC_API_URL`.
 
+Demo family: `cd server && npm run seed` → sign in as `ada@demo.ambodo.app` or `bo@demo.ambodo.app` (password in `server/seed.mjs`).
+
+iOS builds need an Xcode whose simulator runtime is installed. If the default one isn't, run e.g.
+`DEVELOPER_DIR=/Applications/Xcode.app/Contents/Developer npm run ios`.
+
 ## Checks
 
 ```bash
