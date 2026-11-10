@@ -21,7 +21,10 @@ Render service **ambodo-api** (Frankfurt) builds `server/` from this repo on eve
 `HOST`, `MONGODB_DB`, `SUPPORT_EMAIL`, `LEGAL_NAME` and `LEGAL_ADDRESS` are set. (`render.yaml` describes the same service
 as a Blueprint, in case it ever needs recreating.) `MONGODB_URI` is set and the pages are up.
 - Still to do in Render → ambodo-api → Environment: `REVENUECAT_SECRET_KEY` (from step 3, `sk_…`).
-- Switch the instance to **Starter** before review: the free plan sleeps, and App Review would hit a cold start.
+- Free plan for now. It sleeps after 15 idle minutes, so the API pings itself every 10 minutes (`server/index.mjs`)
+  and GitHub Actions pings it as a backup (`.github/workflows/keep-awake.yml`). That uses ~744 of the workspace's
+  750 free hours a month, shared by every free Render service. Once revenue allows, switch to **Starter** and
+  delete both pings.
 - The review family is seeded on production. Its password is `SEED_PASSWORD` in `server/.env` (gitignored), not
   the public default in `server/seed.mjs`. To reset it:
   `cd server && API=https://ambodo-api.onrender.com node --env-file=.env seed.mjs`.
