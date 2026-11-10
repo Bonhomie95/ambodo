@@ -35,6 +35,9 @@ export async function api<T = { ok: true }>(path: string, opts: { method?: strin
   return data as T;
 }
 
+/** The tab badge registers its refresher here so Talk can clear it the moment messages are read. */
+export const unreadBadge = { refresh: () => {} };
+
 export const calendarFeedUrl = (icsToken: string) => `${API_URL.replace(/^https?/, 'webcal')}/ics/${icsToken}`;
 
 export type User = { id: string; name: string; email: string };

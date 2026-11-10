@@ -85,9 +85,10 @@ function Dot({ x, i, width, color }: { x: SharedValue<number>; i: number; width:
 }
 
 function Slide({ x, i, width, c, slide }: { x: SharedValue<number>; i: number; width: number; c: Palette; slide: (typeof SLIDES)[number] }) {
-  const parallax = useAnimatedStyle(() => ({ transform: [{ translateX: (x.get() - i * width) * 0.35 }] }));
+  // Art lags the page a little; each slide clips its own art so neighbours never peek in.
+  const parallax = useAnimatedStyle(() => ({ transform: [{ translateX: (x.get() - i * width) * 0.25 }] }));
   return (
-    <View style={{ width, paddingHorizontal: 28, justifyContent: 'center', gap: 18 }}>
+    <View style={{ width, paddingHorizontal: 28, justifyContent: 'center', gap: 18, overflow: 'hidden' }}>
       <Animated.View style={[{ alignItems: 'center', marginBottom: 12 }, parallax]}><slide.Art c={c} /></Animated.View>
       <T v="hero">{slide.title}</T>
       <T v="body" muted style={{ fontSize: 18, lineHeight: 26 }}>{slide.body}</T>

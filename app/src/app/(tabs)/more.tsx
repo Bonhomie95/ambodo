@@ -108,7 +108,7 @@ export default function Family() {
       <Animated.View entering={FadeInDown.delay(140).springify()}>
         <Card style={{ gap: 2 }}>
           <Item ios="checkmark.seal.fill" android="verified" title="Court-ready records" sub="Verify the seal, export a PDF" onPress={() => router.push('/records')} color={c.them} />
-          <Item ios="arrow.left.arrow.right" android="swap_horiz" title="Handoff log" sub={`${log?.length ?? 0} check-ins`} onPress={() => setShowLog(!showLog)} />
+          <Item ios="arrow.left.arrow.right" android="swap_horiz" title="Handoff log" sub={`${log?.length ?? 0} check-in${log?.length === 1 ? '' : 's'}`} onPress={() => setShowLog(!showLog)} />
           {showLog && (log ?? []).slice(0, 20).map((h) => (
             <Row key={h.id} style={{ paddingLeft: 52, paddingVertical: 4 }}>
               <T v="small" style={{ flex: 1 }}>{nameOf(h.by)} {h.kind === 'dropoff' ? 'dropped off' : 'picked up'}</T>

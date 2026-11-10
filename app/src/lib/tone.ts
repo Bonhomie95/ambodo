@@ -15,7 +15,7 @@ const RULES: [RegExp, string][] = [
 const SWAPS: [RegExp, string][] = [
   [/\byou always\b/gi, 'it often feels like you'],
   [/\byou never\b/gi, 'it would really help if you'],
-  [/\b(your fault|because of you|thanks to you)\b/gi, 'because of what happened'],
+  [/\b(this is |it'?s |it is )?(all )?(your fault|because of you|thanks to you)\b/gi, "let's figure this out together"],
   [/\b(stupid|idiot|liar|pathetic|useless|crazy|psycho|loser|bitch|asshole|bastard|dumb)\b\s*/gi, ''],
   [/\b(whatever|i don'?t care|grow up|get a life|shut up|deal with it)\b[.,!]*\s*/gi, ''],
   [/\b(or else|you'?ll regret it|see you in court)\b/gi, "let's sort this out"],
@@ -31,7 +31,7 @@ export function checkTone(text: string): Tone {
   let calmer = text.replace(/\b[A-Z]{3,}\b/g, (w) => w.toLowerCase());
   for (const [re, to] of SWAPS) calmer = calmer.replace(re, to);
   calmer = calmer.replace(/\s{2,}/g, ' ').replace(/\s+([.,?])/g, '$1').replace(/[,;]+([.?])/g, '$1').trim();
-  calmer = calmer.charAt(0).toUpperCase() + calmer.slice(1);
+  calmer = calmer.replace(/(^|[.?!]\s+)([a-z])/g, (_, p: string, ch: string) => p + ch.toUpperCase());
 
   return { level: issues.length === 0 ? 'calm' : issues.length === 1 ? 'tense' : 'heated', issues, calmer };
 }

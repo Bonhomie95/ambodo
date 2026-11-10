@@ -1,6 +1,6 @@
 import { Fraunces_600SemiBold, Fraunces_600SemiBold_Italic, useFonts } from '@expo-google-fonts/fraunces';
 import { Manrope_500Medium, Manrope_600SemiBold, Manrope_700Bold, Manrope_800ExtraBold } from '@expo-google-fonts/manrope';
-import { Stack } from 'expo-router';
+import { Stack, usePathname } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { StatusBar } from 'expo-status-bar';
 import { useEffect } from 'react';
@@ -16,16 +16,19 @@ const modal = { presentation: 'modal', animation: 'slide_from_bottom' } as const
 
 export default function RootLayout() {
   const c = useColors();
+  const path = usePathname();
   const [loaded] = useFonts({
     Fraunces_600SemiBold, Fraunces_600SemiBold_Italic, Manrope_500Medium, Manrope_600SemiBold, Manrope_700Bold, Manrope_800ExtraBold,
   });
-  useEffect(() => { if (loaded) SplashScreen.hide(); }, [loaded]);
+  // The intro hides the splash itself once its first frame is laid out; any other entry point hides it here.
+  useEffect(() => { if (loaded && path !== '/') SplashScreen.hide(); }, [loaded, path]);
   if (!loaded) return null;
 
   return (
     <GestureHandlerRootView style={{ flex: 1, backgroundColor: c.bg }}>
       <SessionProvider>
-        <StatusBar style="auto" />
+        {/* The intro picks its own bar style per random backdrop; everything else follows the theme. */}
+        {path !== '/' && <StatusBar style="auto" />}
         <Stack screenOptions={{ headerShown: false, contentStyle: { backgroundColor: c.bg }, animation: 'fade' }}>
           <Stack.Screen name="index" options={{ animation: 'none' }} />
           <Stack.Screen name="welcome" />

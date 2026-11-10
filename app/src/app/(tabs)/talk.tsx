@@ -1,12 +1,12 @@
 import * as Haptics from 'expo-haptics';
 import { router, useFocusEffect } from 'expo-router';
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { FlatList, KeyboardAvoidingView, StyleSheet, Text, TextInput, View } from 'react-native';
+import { FlatList, Keyboard, KeyboardAvoidingView, StyleSheet, Text, TextInput, View } from 'react-native';
 import Animated, { FadeInDown, FadeInUp, FadeOutDown, LinearTransition } from 'react-native-reanimated';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Mark } from '@/components/brand';
 import { Button, Icon, Row, T, Tap, toast } from '@/components/ui';
-import { api, type Message } from '@/lib/api';
+import { api, unreadBadge, type Message } from '@/lib/api';
 import { relative, time, ymd } from '@/lib/dates';
 import { shareInvite } from '@/lib/meta';
 import { useSession } from '@/lib/session';
@@ -37,7 +37,7 @@ export default function Talk() {
         if (!alive) return;
         setMsgs((prev) => (full ? list : list.length ? [...prev, ...list.filter((m) => !prev.some((p) => p.id === m.id))] : prev));
         setLoaded(true);
-        if (list.some((m) => m.author !== meId)) api('/messages/read', { method: 'POST' }).catch(() => {});
+        if (list.some((m) => m.author !== meId)) api('/messages/read', { method: 'POST' }).then(() => unreadBadge.refresh(), () => {});
       } catch { /* offline: keep what we have */ }
     };
     tick();
@@ -48,6 +48,7 @@ export default function Talk() {
   async function send(body: string, force = false) {
     const t = checkTone(body);
     if (!force && t.level !== 'calm') {
+      Keyboard.dismiss(); // give the pause card the whole screen
       setReview(t);
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning);
       return;

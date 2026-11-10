@@ -6,7 +6,8 @@
     "start": "node --env-file-if-exists=.env index.mjs",
     "dev": "node --watch --env-file-if-exists=.env index.mjs",
     "test": "node --test",
-    "smoke": "node smoke.mjs"
+    "smoke": "node smoke.mjs",
+    "seed": "node seed.mjs"
   },
   "engines": {
     "node": ">=22"

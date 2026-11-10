@@ -2,12 +2,14 @@ import * as Haptics from 'expo-haptics';
 import { SymbolView, type SymbolViewProps } from 'expo-symbols';
 import { useEffect, useState, type ReactNode } from 'react';
 import {
-  ActivityIndicator, Pressable, RefreshControl, ScrollView, StyleSheet, Text, TextInput, View,
+  ActivityIndicator, Platform, Pressable, RefreshControl, ScrollView, StyleSheet, Text, TextInput, View,
   type PressableProps, type StyleProp, type TextInputProps, type TextProps, type ViewStyle,
 } from 'react-native';
 import Animated, { FadeInUp, FadeOutUp } from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { font, tint, useColors } from '@/lib/theme';
+
+const ios = Platform.OS === 'ios';
 
 // ---------- type ----------
 const variants = {
@@ -43,7 +45,7 @@ export function Tap({ style, onPress, haptic = true, disabled, children, ...p }:
       onPressOut={(e) => { setDown(false); p.onPressOut?.(e); }}
       onPress={(e) => { if (haptic) Haptics.selectionAsync(); onPress?.(e); }}
       style={[style, {
-        transform: [{ scale: down ? 0.96 : 1 }], opacity: disabled ? 0.45 : 1,
+        transform: [{ scale: down ? 0.96 : 1 }], opacity: disabled ? 0.45 : (StyleSheet.flatten(style)?.opacity ?? 1),
         transitionProperty: ['transform', 'opacity', 'backgroundColor', 'borderColor'], transitionDuration: 160,
       }]}>
       {children}
@@ -80,7 +82,9 @@ export function Screen({ children, onRefresh, refreshing, style }: {
   return (
     <ScrollView
       style={{ flex: 1, backgroundColor: c.bg }}
-      contentContainerStyle={[{ paddingTop: insets.top + 14, paddingHorizontal: 20, paddingBottom: insets.bottom + 120, gap: 16 }, style]}
+      // iOS insets for the status bar and the glass tab bar itself; Android needs them by hand.
+      contentInsetAdjustmentBehavior="automatic"
+      contentContainerStyle={[{ paddingTop: ios ? 8 : insets.top + 14, paddingHorizontal: 20, paddingBottom: ios ? 40 : insets.bottom + 100, gap: 16 }, style]}
       keyboardShouldPersistTaps="handled"
       refreshControl={onRefresh ? <RefreshControl refreshing={!!refreshing} onRefresh={onRefresh} tintColor={c.muted} colors={[c.me]} /> : undefined}>
       {children}

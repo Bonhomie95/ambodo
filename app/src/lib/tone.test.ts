@@ -15,6 +15,7 @@ test('heated messages get flagged and softened', () => {
   assert.ok(t.issues.length >= 3);
   assert.doesNotMatch(t.calmer, /idiot|!|ALWAYS/);
   assert.match(t.calmer, /^It often feels like you/);
+  assert.match(t.calmer, /\. Let's figure this out together\.$/);
 });
 
 test('one issue is just tense', () => {

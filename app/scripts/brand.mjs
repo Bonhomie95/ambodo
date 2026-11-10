@@ -52,14 +52,15 @@ png('favicon', bg + mark(0.86), 196);
 const ic = join(ROOT, 'assets/ambodo.icon');
 mkdirSync(join(ic, 'Assets'), { recursive: true });
 const p = parts();
-writeFileSync(join(ic, 'Assets/parents.svg'), svg(`<g transform="translate(512 511) scale(0.86) translate(-512 -511)">${p.b}${p.d}</g>`));
-writeFileSync(join(ic, 'Assets/kid.svg'), svg(`<g transform="translate(512 511) scale(0.86) translate(-512 -511)">${p.o}</g>`));
+const big = (body) => svg(`<g transform="translate(512 511) scale(0.98) translate(-512 -511)">${body}</g>`); // ~67% of the canvas, per Apple's icon grid
+writeFileSync(join(ic, 'Assets/parents.svg'), big(p.b + p.d));
+writeFileSync(join(ic, 'Assets/kid.svg'), big(p.o));
 const layer = (n) => ({ 'image-name': `${n}.svg`, name: n, position: { scale: 1, 'translation-in-points': [0, 0] } });
 writeFileSync(join(ic, 'icon.json'), JSON.stringify({
   fill: { 'automatic-gradient': 'extended-srgb:0.10980,0.13333,0.30196,1.00000' },
   groups: [
-    { layers: [layer('kid')], shadow: { kind: 'layer-color', opacity: 0.6 }, translucency: { enabled: true, value: 0.2 } },
-    { layers: [layer('parents')], shadow: { kind: 'neutral', opacity: 0.5 }, translucency: { enabled: true, value: 0.35 } },
+    { layers: [layer('kid')], shadow: { kind: 'layer-color', opacity: 0.6 }, translucency: { enabled: true, value: 0.1 } },
+    { layers: [layer('parents')], shadow: { kind: 'neutral', opacity: 0.5 }, translucency: { enabled: true, value: 0.15 } },
   ],
   'supported-platforms': { circles: ['watchOS'], squares: 'shared' },
 }, null, 2));
