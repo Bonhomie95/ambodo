@@ -469,3 +469,8 @@ http.createServer(async (req, res) => {
     res.end(JSON.stringify({ error: e.status ? e.message : e.code === 11000 ? 'That already exists' : 'Something went wrong' }));
   }
 }).listen(Number(PORT), HOST, () => console.log(`ambodo api → http://${HOST}:${PORT} (db: ${MONGODB_DB})`));
+
+// ponytail: Render's free plan sleeps after 15 idle minutes (~1 min cold start). Pinging our own public URL counts as
+// traffic, so the API stays warm for App Review and early users. Delete this once the service is on a paid instance.
+const { RENDER_EXTERNAL_URL } = process.env;
+if (RENDER_EXTERNAL_URL) setInterval(() => fetch(`${RENDER_EXTERNAL_URL}/health`).catch(() => {}), 10 * 60_000).unref();
