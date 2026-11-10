@@ -2,7 +2,9 @@
 // Sign in as either parent — both use the password below.
 const API = process.env.API ?? 'http://127.0.0.1:4000';
 const PASSWORD = process.env.SEED_PASSWORD || 'ambodo-demo-2026';
-const PARENTS = [{ name: 'Ada', email: 'ada@demo.ambodo.app' }, { name: 'Bo', email: 'bo@demo.ambodo.app' }];
+// SEED_TAG=play seeds a second family (ada.play@…) so each store's reviewer gets their own.
+const TAG = process.env.SEED_TAG ? `.${process.env.SEED_TAG}` : '';
+const PARENTS = [{ name: 'Ada', email: `ada${TAG}@demo.ambodo.app` }, { name: 'Bo', email: `bo${TAG}@demo.ambodo.app` }];
 
 const call = async (path, token, body, method) => {
   const r = await fetch(API + path, {

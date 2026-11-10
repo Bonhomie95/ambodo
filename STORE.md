@@ -77,8 +77,11 @@ npx eas-cli@latest submit --platform ios --latest
   `eas submit --platform android` works with a service-account key.
 
 ### 6. App Review details (both stores)
-- **Sign-in:** `ada@demo.ambodo.app` with `SEED_PASSWORD` from `server/.env`. The co-parent is `bo@demo.ambodo.app` with the same password.
-  In App Store Connect, the user name, contact details and notes are filled in; only the password is left blank.
+- **Sign-in:** both use `SEED_PASSWORD` from `server/.env`. The password field is left blank in both stores.
+  - **Apple:** `ada@demo.ambodo.app` (co-parent `bo@…`), on Free, so the reviewer can buy Ambodo Family in the sandbox.
+  - **Google:** `ada.play@demo.ambodo.app` (co-parent `bo.play@…`), with Family unlocked by a waiver, because Play
+    reviewers can't make purchases. To recreate it: `SEED_TAG=play` in the seed command, then set that family's
+    `plan = { source: "waiver" }`.
 - **Notes for the reviewer:**
   > Ambodo is a co-parenting app: two parents share one private family space (joined by invite code).
   > The demo account is already connected to a co-parent with sample messages, events and a swap request.
@@ -148,7 +151,7 @@ needs the AI-asset answer and Save), category, contact email and website, and th
   - Ads: no · Advertising ID: no (the build doesn't request `AD_ID`) · Government app: no
   - Financial features: "My app doesn't provide any financial features" (expenses are a ledger; no money moves)
   - Health: no health features (allergies and doctor are free-text notes on the kids' card)
-  - App access: restricted. Use `ada@demo.ambodo.app` with `SEED_PASSWORD`, already linked to a co-parent, with no 2-step code
+  - Sign in details: restricted. `ada.play@demo.ambodo.app` (Family unlocked), with "full access" ticked. The password is yours to add
   - Target audience: 18 and over only
   - Content rating (IARC): category *All other app types*. All content questions No. Users interact (text): **Yes**.
     Shares location: No. Digital purchases: **Yes**. Web browser or search: No
@@ -157,10 +160,11 @@ needs the AI-asset answer and Save), category, contact email and website, and th
   - Collects data: yes · Encrypted in transit: yes · Shared with third parties: none (hosting, database and
     RevenueCat are service providers) · Account creation: email + password, deletion URL
     `https://ambodo-api.onrender.com/delete-account` · Users can request deletion: yes
-  - Required, for *App functionality* and *Account management*: Name, Email address, User IDs
-  - Required, for *App functionality*: Purchase history, Other info (kids' names and birthdays)
-  - Optional, for *App functionality*: Health info, Other financial info (expenses), Other in-app messages, Other
-    user-generated content
+  - Required, for *App functionality* and *Account management*: Name. Email address and User IDs add *Fraud
+    prevention, security, and compliance*, because the sign-in and invite-code guessing limits use them
+  - Required, for *App functionality*: Other info (kids' names and birthdays)
+  - Optional, for *App functionality*: Purchase history (only when someone subscribes), Health info, Other financial
+    info (expenses), Other in-app messages, Other user-generated content
   - Nothing is processed ephemerally; there's no location, photos, contacts, calendar, app activity analytics or crash logs
 
 ---
