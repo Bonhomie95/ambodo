@@ -10,7 +10,7 @@
     "backgroundColor": "#141A33",
     "description": "Calm, court-ready co-parenting: sealed messages, a shared custody calendar, expenses and handoffs — one plan for both homes.",
     "ios": {
-      "bundleIdentifier": "com.ambodo.app",
+      "bundleIdentifier": "dev.bonhomieinc.ambodo",
       "buildNumber": "1",
       "icon": "./assets/ambodo.icon",
       "supportsTablet": false,
@@ -104,7 +104,7 @@
       }
     },
     "android": {
-      "package": "com.ambodo.app",
+      "package": "dev.bonhomieinc.ambodo",
       "versionCode": 1,
       "icon": "./assets/images/icon.png",
       "adaptiveIcon": {

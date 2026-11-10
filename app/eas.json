@@ -3,7 +3,7 @@
   "build": {
     "development": { "developmentClient": false, "distribution": "internal", "ios": { "simulator": true } },
     "preview": { "distribution": "internal", "environment": "preview" },
-    "production": { "autoIncrement": true, "environment": "production", "env": { "AMBODO_STORE_BUILD": "1" } }
+    "production": { "autoIncrement": true, "environment": "production", "env": { "AMBODO_STORE_BUILD": "1", "EXPO_PUBLIC_API_URL": "https://ambodo-api.onrender.com" } }
   },
   "submit": { "production": { "android": { "track": "internal" } } }
 }
