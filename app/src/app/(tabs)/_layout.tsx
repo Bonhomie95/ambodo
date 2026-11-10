@@ -1,7 +1,9 @@
+import { Redirect } from 'expo-router';
 import { NativeTabs } from 'expo-router/native-tabs';
 import { useEffect, useState } from 'react';
 import { AppState, Platform } from 'react-native';
 import { api, unreadBadge } from '@/lib/api';
+import { useSession } from '@/lib/session';
 import { tint, useColors } from '@/lib/theme';
 
 // ponytail: polls the unread count; switch to push notifications once APNs/FCM keys exist
@@ -21,6 +23,10 @@ function useUnread() {
 export default function Tabs() {
   const c = useColors();
   const unread = useUnread();
+  const { ready, user, family } = useSession();
+  // A session can end while the app is open (expired, or the account was deleted): leave the tabs, don't render them empty.
+  if (ready && !user) return <Redirect href="/welcome" />;
+  if (ready && !family) return <Redirect href="/setup" />;
   return (
     <NativeTabs
       tintColor={c.me}
