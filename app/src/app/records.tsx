@@ -1,5 +1,6 @@
 import * as Haptics from 'expo-haptics';
 import * as Print from 'expo-print';
+import { router } from 'expo-router';
 import * as Sharing from 'expo-sharing';
 import { useState } from 'react';
 import { StyleSheet, View } from 'react-native';
@@ -17,13 +18,16 @@ const when = (iso: string) => new Date(iso).toLocaleString(undefined, { dateStyl
 
 export default function Records() {
   const c = useColors();
-  const { family } = useSession();
+  const { family, pro } = useSession();
   const { data: v } = useLoad(() => api<Verify>('/records/verify'));
   const [parts, setParts] = useState({ messages: true, handoffs: true, expenses: true, swaps: true });
   const [busy, setBusy] = useState(false);
   const name = (id: string) => family?.members.find((m) => m.id === id)?.name ?? 'Former member';
 
   async function exportPdf() {
+    // ponytail: gated in the app only; the PDF is built here from endpoints Free also uses. A server-rendered
+    // export endpoint would make it airtight if that ever matters.
+    if (!pro) return router.push('/plan');
     setBusy(true);
     try {
       const [msgs, checks, exps, swaps, check] = await Promise.all([
@@ -59,7 +63,7 @@ export default function Records() {
   const sealColor = v?.ok === false ? c.danger : c.them;
   return (
     <Sheet title="Records" footer={<Button title="Export court-ready PDF" kind="accent" loading={busy} onPress={exportPdf}
-      icon={<Icon ios="doc.richtext" android="picture_as_pdf" size={18} color="#fff" />} />}>
+      icon={<Icon ios={pro ? 'doc.richtext' : 'lock.fill'} android={pro ? 'picture_as_pdf' : 'lock'} size={18} color="#fff" />} />}>
       <Animated.View entering={ZoomIn.springify().damping(14)} style={{ alignItems: 'center', gap: 12, paddingVertical: 10 }}>
         <View style={st.sealWrap}>
           <Animated.View style={[st.ring, { borderColor: tint(sealColor, 0.35), borderTopColor: sealColor },

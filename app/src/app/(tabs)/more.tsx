@@ -109,7 +109,7 @@ export default function Family() {
         <Card style={{ gap: 2 }}>
           <Item ios={pro ? 'sparkles' : 'lock.open.fill'} android={pro ? 'auto_awesome' : 'lock_open'} title={pro ? 'Ambodo Family' : 'Upgrade to Ambodo Family'}
             sub={pro ? 'Active for both homes' : 'One plan covers you and your co-parent'} onPress={() => router.push('/plan')} color={c.sun} />
-          <Item ios="checkmark.seal.fill" android="verified" title="Court-ready records" sub="Verify the seal, export a PDF" onPress={() => router.push('/records')} color={c.them} />
+          <Item ios="checkmark.seal.fill" android="verified" title="Court-ready records" sub={pro ? 'Verify the seal, export a PDF' : 'Verify the seal · PDF export with Family'} onPress={() => router.push('/records')} color={c.them} />
           <Item ios="arrow.left.arrow.right" android="swap_horiz" title="Handoff log" sub={log ? `${log.length} check-in${log.length === 1 ? '' : 's'}` : '…'} onPress={() => setShowLog(!showLog)} />
           {showLog && (log ?? []).slice(0, 20).map((h) => (
             <Row key={h.id} style={{ paddingLeft: 52, paddingVertical: 4 }}>

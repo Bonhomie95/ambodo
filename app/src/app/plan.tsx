@@ -15,6 +15,7 @@ import { brand, font, tint, useColors } from '@/lib/theme';
 const store = Platform.OS === 'ios' ? 'Apple Account' : 'Google Play account';
 
 const PERKS: [string, string, string, string][] = [
+  ['doc.richtext', 'picture_as_pdf', 'Court-ready PDF records', 'Messages, handoffs, expenses and swaps in one sealed report.'],
   ['wind', 'air', 'Unlimited calmer rewrites', 'ToneGuard turns heat into “let’s figure this out.”'],
   ['creditcard.fill', 'payments', 'Expenses, splits & settle-ups', 'Every receipt logged, every share clear.'],
   ['calendar.badge.clock', 'event_repeat', 'Sync to Apple & Google Calendar', 'Custody days show up where you already look.'],

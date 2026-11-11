@@ -89,7 +89,8 @@ npx eas-cli@latest build --platform android --profile production
   > Ambodo is a co-parenting app: two parents share one private family space (joined by invite code).
   > The demo account is already connected to a co-parent with sample messages, events and a swap request.
   > Ambodo Family is an auto-renewing subscription (Family tab → Upgrade, or Expenses); one purchase
-  > covers both parents. ToneGuard runs on-device. Messages can't be edited or deleted (that's the point
+  > covers both parents. It unlocks the court-ready PDF export (Family → Court-ready records), expenses,
+  > calendar sync and unlimited ToneGuard rewrites. ToneGuard runs on-device. Messages can't be edited or deleted (that's the point
   > of the record); press and hold a message to report it. Account deletion: Family → Delete account.
   > No ads, no tracking.
 
@@ -132,8 +133,8 @@ Ambodo keeps co-parenting calm, fair and on the record — for both of you, on o
 • Know the kids — school, doctor, allergies and sizes in one shared place.
 • Sync everywhere — custody days in Apple or Google Calendar.
 
-Free: messages with ToneGuard checks, the shared calendar, swaps, kids' info, check-ins and court-ready exports.
-Ambodo Family ($9.99/month or $89/year, one plan for both parents): expenses and settle-ups, calendar sync and unlimited ToneGuard rewrites. Fee waivers are available for families who need them.
+Free: messages with ToneGuard checks, the shared calendar, swaps, kids' info, check-ins and seal verification.
+Ambodo Family ($9.99/month or $89/year, one plan for both parents): court-ready PDF records, expenses and settle-ups, calendar sync and unlimited ToneGuard rewrites. Fee waivers are available for families who need them.
 
 Payment is charged to your Apple Account at confirmation. The subscription renews automatically unless cancelled at least 24 hours before the end of the period. Manage or cancel in your Apple Account settings.
 
