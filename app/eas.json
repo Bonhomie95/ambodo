@@ -29,6 +29,7 @@
   "submit": {
     "production": {
       "android": {
+        "serviceAccountKeyPath": "./play-service-account.json",
         "track": "internal"
       },
       "ios": {
