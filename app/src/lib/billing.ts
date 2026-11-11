@@ -44,9 +44,12 @@ export async function getOffers(): Promise<Offer[]> {
 
 /** Returns the updated family, or null if the person cancelled the store sheet. */
 export async function buy(offer: Offer): Promise<Family | null> {
-  if (!KEY || !offer.pkg) return api<Family>('/billing/dev-grant', { body: { period: offer.period } });
+  if (!KEY) return api<Family>('/billing/dev-grant', { body: { period: offer.period } });
+  // Fallback offers (store unreachable) carry no package: try the store once more, then say so out loud.
+  const pkg = offer.pkg ?? (await getOffers()).find((o) => o.period === offer.period)?.pkg;
+  if (!pkg) throw new Error(`Couldn’t reach ${Platform.OS === 'ios' ? 'the App Store' : 'Google Play'}. Try again in a moment.`);
   try {
-    await Purchases.purchasePackage(offer.pkg);
+    await Purchases.purchasePackage(pkg);
   } catch (e) {
     if ((e as { code?: string }).code === Purchases.PURCHASES_ERROR_CODE.PURCHASE_CANCELLED_ERROR) return null;
     throw e;

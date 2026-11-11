@@ -378,7 +378,7 @@ on('POST', '/billing/sync', async ({ user }) => familyView(await syncStore(await
 
 // Simulator/dev purchases: no store, no charge. Disabled in production.
 on('POST', '/billing/dev-grant', async ({ body, user }) => {
-  if (!BILLING_DEV) throw fail(404, 'Not found');
+  if (!BILLING_DEV) throw fail(404, 'Test purchases are off on this server — use a store build to buy.');
   const f = await famOf(user);
   const days = body.period === 'monthly' ? 31 : 366;
   if (body.period === 'off') await families.updateOne({ _id: f._id }, { $unset: { plan: '' } });

@@ -7,6 +7,7 @@ import {
 } from 'react-native';
 import Animated, { FadeInUp, FadeOutUp } from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { FullWindowOverlay } from 'react-native-screens';
 import { font, tint, useColors } from '@/lib/theme';
 
 const ios = Platform.OS === 'ios';
@@ -158,12 +159,15 @@ export function ToastHost() {
     return () => clearTimeout(t);
   }, [msg]);
   if (!msg) return null;
+  // iOS presents modals (the paywall, sheets) above the root view; the overlay window keeps the toast on top of them.
   return (
-    <Animated.View key={msg.id} entering={FadeInUp.springify().damping(16)} exiting={FadeOutUp}
-      pointerEvents="none" accessibilityLiveRegion="polite"
-      style={[s.toast, { top: insets.top + 8, backgroundColor: c.text }]}>
-      <Text style={{ fontFamily: font.bold, fontSize: 15, color: c.bg }}>{msg.text}</Text>
-    </Animated.View>
+    <FullWindowOverlay>
+      <Animated.View key={msg.id} entering={FadeInUp.springify().damping(16)} exiting={FadeOutUp}
+        pointerEvents="none" accessibilityLiveRegion="polite"
+        style={[s.toast, { top: insets.top + 8, backgroundColor: c.text }]}>
+        <Text style={{ fontFamily: font.bold, fontSize: 15, color: c.bg }}>{msg.text}</Text>
+      </Animated.View>
+    </FullWindowOverlay>
   );
 }
 
