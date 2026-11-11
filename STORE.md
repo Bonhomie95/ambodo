@@ -80,13 +80,20 @@ npx eas-cli@latest build --platform android --profile production
   Then attach the build and both subscriptions to version 1.0, and submit.
 - **Android:** EAS created and keeps the upload keystore. Google needs the **first** `.aab` uploaded by hand: Play
   Console → Test and release → Internal testing → Create release. After that, `eas submit --platform android`
-  works with the service-account key.
-- **Status (Nov 10):** build 3 (the paywall fix and the new Family gates) is building for both stores and replaces
-  build 2. iOS: the build-2 submission was pulled back; version **1.0.0** gets build 3 and goes back to review with
-  the subscription group and both subscriptions. Play: the production release moves to build 3 for all 178 countries
-  and is sent for review with the updated listing (managed publishing is off, so it goes live once approved). The
-  server's new Family gates deploy when both reviews have build 3. The Paid Apps agreement is still pending the W-9
-  (Apple accepts it once the bank update clears), so Apple's reviewers may not be able to buy yet.
+  works with the service-account key (`app/play-service-account.json`, gitignored), but only once that service
+  account has release permissions on this app: Play Console → Users and permissions →
+  `play-console-api-access@…` → App permissions → Add app → Ambodo. Otherwise Play answers "The Google service
+  account cannot submit this app".
+- **Status (Nov 11):** build 3 (the paywall fix and the new Family gates) replaces build 2.
+  - iOS: version **1.0.0 (3)** is waiting for review with the subscription group and both subscriptions.
+  - Play: build 3 (`281a05a0-c185-41a6-b73d-9fc7e62c11a8`) is built but not uploaded, because the service account
+    has no permissions on Ambodo yet (see above). After that's granted: `cd app && eas submit -p android --id
+    281a05a0-c185-41a6-b73d-9fc7e62c11a8`, then Production → Create new release → Add from library → version code 3,
+    and send it for review with the saved listing changes (managed publishing is off, so it goes live once approved).
+  - The server's Family gates are live. They don't affect build 2's Play review, because the Play reviewer's family
+    is on a waiver.
+  - The Paid Apps agreement is still pending the W-9 (Apple accepts it once the bank update clears), so Apple's
+    reviewers may not be able to buy yet.
 
 ### 6. App Review details (both stores)
 - **Sign-in:** both use `SEED_PASSWORD` from `server/.env`. The password field is left blank in both stores.
