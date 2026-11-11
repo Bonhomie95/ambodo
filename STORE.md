@@ -89,6 +89,9 @@ npx eas-cli@latest build --platform android --profile production
   - Play: production release **1.0.0 (3)** (all 178 countries) is in review with the new Free/Family listing; the
     review restarted on Nov 11. Build 3 is also on the internal track. Managed publishing is off, so it goes live
     once approved. The service account now has Admin on Ambodo, so `eas submit -p android` works.
+  - RevenueCat → Ambodo (Play Store) → service account credentials: the catalog checks pass; the purchases check still
+    said "package name was not found" on Nov 11 (Google can take up to ~36 h to apply new permissions). Click
+    **Check again** there before the app goes live.
   - The server's Family gates are live. The Play reviewer's family is on a waiver, so they see everything unlocked.
   - The Paid Apps agreement is still pending the W-9 (Apple accepts it once the bank update clears), so Apple's
     reviewers may not be able to buy yet.
