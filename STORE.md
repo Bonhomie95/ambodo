@@ -86,12 +86,10 @@ npx eas-cli@latest build --platform android --profile production
   account cannot submit this app".
 - **Status (Nov 11):** build 3 (the paywall fix and the new Family gates) replaces build 2.
   - iOS: version **1.0.0 (3)** is waiting for review with the subscription group and both subscriptions.
-  - Play: build 3 (`281a05a0-c185-41a6-b73d-9fc7e62c11a8`) is built but not uploaded, because the service account
-    has no permissions on Ambodo yet (see above). After that's granted: `cd app && eas submit -p android --id
-    281a05a0-c185-41a6-b73d-9fc7e62c11a8`, then Production → Create new release → Add from library → version code 3,
-    and send it for review with the saved listing changes (managed publishing is off, so it goes live once approved).
-  - The server's Family gates are live. They don't affect build 2's Play review, because the Play reviewer's family
-    is on a waiver.
+  - Play: production release **1.0.0 (3)** (all 178 countries) is in review with the new Free/Family listing; the
+    review restarted on Nov 11. Build 3 is also on the internal track. Managed publishing is off, so it goes live
+    once approved. The service account now has Admin on Ambodo, so `eas submit -p android` works.
+  - The server's Family gates are live. The Play reviewer's family is on a waiver, so they see everything unlocked.
   - The Paid Apps agreement is still pending the W-9 (Apple accepts it once the bank update clears), so Apple's
     reviewers may not be able to buy yet.
 
