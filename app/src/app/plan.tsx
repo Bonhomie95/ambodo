@@ -15,11 +15,12 @@ import { brand, font, tint, useColors } from '@/lib/theme';
 const store = Platform.OS === 'ios' ? 'Apple Account' : 'Google Play account';
 
 const PERKS: [string, string, string, string][] = [
+  ['person.2.fill', 'group', 'Connect your co-parent', 'One plan for both homes — whoever pays, you both get everything.'],
+  ['calendar.badge.plus', 'event', 'Events, swaps & every kid', 'Add appointments, trade days and all your kids.'],
   ['doc.richtext', 'picture_as_pdf', 'Court-ready PDF records', 'Messages, handoffs, expenses and swaps in one sealed report.'],
-  ['wind', 'air', 'Unlimited calmer rewrites', 'ToneGuard turns heat into “let’s figure this out.”'],
   ['creditcard.fill', 'payments', 'Expenses, splits & settle-ups', 'Every receipt logged, every share clear.'],
+  ['wind', 'air', 'Unlimited calmer rewrites', 'ToneGuard turns heat into “let’s figure this out.”'],
   ['calendar.badge.clock', 'event_repeat', 'Sync to Apple & Google Calendar', 'Custody days show up where you already look.'],
-  ['person.2.fill', 'group', 'One plan for both homes', 'Whoever pays, you both get everything.'],
   ['bolt.heart.fill', 'support_agent', 'Priority support', 'Real humans, fast — when it matters most.'],
 ];
 

@@ -152,6 +152,8 @@ on('POST', '/family', async ({ body, user }) => {
   if (await families.findOne({ members: user._id })) throw fail(409, 'You already have a family');
   const kids = Array.isArray(body.kids) ? body.kids.slice(0, 8).map(kid) : [];
   if (!kids.length) throw fail(400, 'Add at least one kid');
+  // A new family is on Free, which has one kid; the rest come with Ambodo Family.
+  if (kids.length > 1) throw fail(402, 'More kids are part of Ambodo Family. Add one now, the rest after you upgrade.');
   if (!PATTERNS[body.pattern]) throw fail(400, 'Pick a schedule');
   const f = {
     members: [user._id], kids, invite: inviteCode(), icsToken: randomBytes(18).toString('base64url'),
@@ -166,10 +168,13 @@ on('POST', '/family/join', async ({ body, user }) => {
   if (await families.findOne({ members: user._id })) throw fail(409, 'You already have a family');
   await guard(`join:${user._id}`);
   const raw = String(body.code ?? '').toUpperCase().replace(/[^A-Z0-9]/g, '');
-  const f = await families.findOneAndUpdate(
-    { invite: `${raw.slice(0, 3)}-${raw.slice(3)}`, 'members.1': { $exists: false } },
-    { $addToSet: { members: user._id } }, { returnDocument: 'after' });
-  if (!f) { await miss(`join:${user._id}`); throw fail(404, "That code didn't work"); }
+  const open = { invite: `${raw.slice(0, 3)}-${raw.slice(3)}`, 'members.1': { $exists: false } };
+  const target = await families.findOne(open);
+  if (!target) { await miss(`join:${user._id}`); throw fail(404, "That code didn't work"); }
+  // Connecting a co-parent is the heart of Ambodo Family; the inviting parent's plan covers whoever joins.
+  if (!isPro(target)) throw fail(402, 'Connecting a co-parent is part of Ambodo Family. Ask the parent who invited you to upgrade, then try the code again.');
+  const f = await families.findOneAndUpdate({ ...open, _id: target._id }, { $addToSet: { members: user._id } }, { returnDocument: 'after' });
+  if (!f) throw fail(404, "That code didn't work");
   if (!f.schedule.first) await families.updateOne({ _id: f._id }, { $set: { 'schedule.first': user._id } });
   return familyView(await families.findOne({ _id: f._id }));
 });
@@ -193,6 +198,7 @@ on('PATCH', '/family/schedule', async ({ body, user }) => {
 on('POST', '/family/kids', async ({ body, user }) => {
   const f = await famOf(user);
   if (f.kids.length >= 8) throw fail(400, 'Up to 8 kids for now');
+  if (f.kids.length >= 1) requirePro(f); // Free has one kid
   const k = kid(body);
   await families.updateOne({ _id: f._id }, { $push: { kids: k } });
   return k;
@@ -288,6 +294,7 @@ on('GET', '/events', async ({ query, user }) => {
 });
 on('POST', '/events', async ({ body, user }) => {
   const f = await famOf(user);
+  requirePro(f);
   const e = {
     familyId: f._id, by: user._id, title: str(body.title, 'Title', 80), date: day(body.date, 'Date'),
     time: /^\d{2}:\d{2}$/.test(body.time ?? '') ? body.time : null, kind: KINDS.includes(body.kind) ? body.kind : 'other', createdAt: new Date(),
@@ -307,6 +314,7 @@ on('GET', '/swaps', async ({ user }) => {
 on('POST', '/swaps', async ({ body, user }) => {
   const f = await famOf(user);
   if (f.members.length < 2) throw fail(409, 'Invite your co-parent first');
+  requirePro(f);
   const dates = Array.isArray(body.dates) ? [...new Set(body.dates.filter(isDay))].sort().slice(0, 31) : [];
   if (!dates.length) throw fail(400, 'Pick at least one day');
   const assignTo = f.members.find((m) => m.toString() === body.assignTo);

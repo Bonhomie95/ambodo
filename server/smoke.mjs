@@ -16,10 +16,19 @@ const signup = async (name) =>
 
 const a = await signup('ada');
 const b = await signup('bo');
+// Free: one kid, no co-parent, no shared events. Those are Ambodo Family.
+assert.equal((await call('POST', '/family', b, { kids: [{ name: 'Mia' }, { name: 'Leo' }], pattern: '2-2-3', anchor: '2026-11-09' })).status, 402);
 const fam = (await call('POST', '/family', a, { kids: [{ name: 'Mia' }], pattern: '2-2-3', anchor: '2026-11-09' })).data;
 assert.match(fam.invite, /^[A-Z0-9]{3}-[A-Z0-9]{3}$/);
+assert.equal((await call('POST', '/family/kids', a, { name: 'Leo' })).status, 402);
+assert.equal((await call('POST', '/events', a, { title: 'Dentist', date: '2026-11-12' })).status, 402);
+assert.equal((await call('POST', '/family/join', b, { code: fam.invite })).status, 402, 'joining needs the inviter on Family');
+// One purchase (test mode) covers the family, so the co-parent can join.
+assert.equal((await call('POST', '/billing/dev-grant', a, { period: 'annual' })).data.plan.active, true);
 const joined = (await call('POST', '/family/join', b, { code: fam.invite.toLowerCase().replace('-', ' ') })).data;
 assert.equal(joined.members.length, 2);
+assert.equal((await call('POST', '/family/kids', a, { name: 'Leo' })).status, 200);
+assert.equal((await call('POST', '/events', b, { title: 'Dentist', date: '2026-11-12' })).status, 200);
 const [ada, bo] = joined.members.map((m) => m.id);
 
 await call('POST', '/messages', a, { text: 'Pickup at 5 works for me.' });
@@ -37,7 +46,9 @@ assert.equal((await call('POST', `/swaps/${swap.id}`, a, { accept: true })).stat
 assert.equal((await call('POST', `/swaps/${swap.id}`, b, { accept: true })).data.status, 'accepted');
 assert.equal((await call('GET', '/custody?from=2026-11-09&to=2026-11-09', a)).data[0].parent, bo);
 
-// Free plan: expenses + calendar feed are Family features; ToneGuard rewrites are capped.
+// A lapsed plan: the family stays connected, but Family features lock again; ToneGuard rewrites are capped.
+await call('POST', '/billing/dev-grant', a, { period: 'off' });
+assert.equal((await call('POST', '/swaps', b, { dates: ['2026-11-10'], assignTo: bo })).status, 402);
 assert.equal((await call('POST', '/expenses', b, { title: 'x', amount: 1 })).status, 402);
 assert.equal((await call('GET', `/ics/${joined.ics}`)).status, 402);
 for (let i = 0; i < 5; i++) assert.equal((await call('POST', '/tone/rewrite', a)).status, 200);

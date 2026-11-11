@@ -1,5 +1,5 @@
 import * as Haptics from 'expo-haptics';
-import { router, useLocalSearchParams } from 'expo-router';
+import { Redirect, router, useLocalSearchParams } from 'expo-router';
 import { useState } from 'react';
 import { View } from 'react-native';
 import { MonthGrid } from '@/components/month';
@@ -13,7 +13,7 @@ const KINDS = [['school', 'School'], ['health', 'Health'], ['activity', 'Activit
 
 export default function NewEvent() {
   const params = useLocalSearchParams<{ date?: string }>();
-  const { meId } = useSession();
+  const { meId, pro } = useSession();
   const [day, setDay] = useState(params.date ?? today());
   const [view, setView] = useState(() => ({ y: parse(day).getFullYear(), m: parse(day).getMonth() }));
   const [title, setTitle] = useState('');
@@ -24,6 +24,7 @@ export default function NewEvent() {
   const { data } = useLoad(() => api<Day[]>(`/custody?from=${grid[0]}&to=${grid[41]}`), grid[0]);
   const clock = at.trim().match(/^(\d{1,2})[:.]?(\d{2})$/);
   const timeOk = !at.trim() || (clock && +clock[1] < 24 && +clock[2] < 60);
+  if (!pro) return <Redirect href="/plan" />; // shared events are part of Ambodo Family
 
   async function save() {
     setBusy(true);

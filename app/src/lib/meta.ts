@@ -1,3 +1,4 @@
+import { router } from 'expo-router';
 import { Share } from 'react-native';
 
 /** [SF Symbol, Material Symbol] per event kind / expense category. */
@@ -13,6 +14,8 @@ export const CATEGORY_ICON: Record<string, [string, string]> = {
 export const money = (cents: number) =>
   (cents / 100).toLocaleString(undefined, { style: 'currency', currency: 'USD' }); // ponytail: USD only; localize with the family's currency later
 
-export function shareInvite(code: string, name?: string) {
+/** Connecting a co-parent is part of Ambodo Family, so Free families get the paywall instead of the share sheet. */
+export function shareInvite(pro: boolean, code: string, name?: string) {
+  if (!pro) return router.push('/plan');
   return Share.share({ message: `${name ? `${name} invited you to Ambodo. ` : ''}Join our family with code ${code} — get the app and tap “I have a code”.` });
 }

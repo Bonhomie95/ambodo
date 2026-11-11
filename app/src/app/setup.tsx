@@ -15,7 +15,7 @@ import { font, tint, useColors } from '@/lib/theme';
 export default function Setup() {
   const c = useColors();
   const insets = useSafeAreaInsets();
-  const { user, setFamily, signOut } = useSession();
+  const { user, setFamily, signOut, pro } = useSession();
   const [mode, setMode] = useState<'new' | 'join'>('new');
   const [kids, setKids] = useState<string[]>([]);
   const [kidName, setKidName] = useState('');
@@ -30,7 +30,7 @@ export default function Setup() {
 
   const addKid = () => {
     const n = kidName.trim();
-    if (n && !kids.includes(n)) { setKids([...kids, n]); Haptics.selectionAsync(); }
+    if (n && !kids.length) { setKids([n]); Haptics.selectionAsync(); } // Free has one kid; more come with Ambodo Family
     setKidName('');
   };
 
@@ -41,7 +41,7 @@ export default function Setup() {
     finally { setBusy(false); }
   }
   const create = () => run(
-    () => api<Family>('/family', { body: { kids: [...kids, kidName.trim()].filter(Boolean).map((name) => ({ name })), pattern, anchor, youFirst } }),
+    () => api<Family>('/family', { body: { kids: (kids.length ? kids : [kidName.trim()]).filter(Boolean).map((name) => ({ name })), pattern, anchor, youFirst } }),
     (f) => setMade(f),
   );
   const join = () => run(() => api<Family>('/family/join', { body: { code } }), (f) => { setFamily(f); router.replace('/(tabs)'); });
@@ -54,13 +54,15 @@ export default function Setup() {
         </Animated.View>
         <Animated.View entering={FadeInDown.delay(150)} style={{ gap: 10, alignItems: 'center' }}>
           <T v="title" style={{ textAlign: 'center' }}>Your family is ready.</T>
-          <T muted style={{ textAlign: 'center' }}>Send this code to your co-parent. One code, both homes.</T>
+          <T muted style={{ textAlign: 'center' }}>
+            {pro ? 'Send this code to your co-parent. One code, both homes.' : 'Connecting your co-parent comes with Ambodo Family. One plan covers both homes.'}
+          </T>
         </Animated.View>
         <Animated.View entering={ZoomIn.delay(300).springify()}>
           <Text selectable style={[st.code, { color: c.text, backgroundColor: c.card, borderColor: c.line }]}>{made.invite}</Text>
         </Animated.View>
         <View style={{ alignSelf: 'stretch', gap: 12 }}>
-          <Button title="Share code" kind="accent" onPress={() => shareInvite(made.invite, user?.name)}
+          <Button title={pro ? 'Share code' : 'Connect your co-parent'} kind="accent" onPress={() => shareInvite(pro, made.invite, user?.name)}
             icon={<Icon ios="square.and.arrow.up" android="share" size={18} color="#fff" />} />
           <Button title="Go to Today" kind="ghost" onPress={() => { setFamily(made); router.replace('/(tabs)'); }} />
         </View>
@@ -92,8 +94,10 @@ export default function Setup() {
         ) : (
           <Animated.View key="new" entering={FadeIn} style={{ gap: 22 }}>
             <View style={{ gap: 10 }}>
-              <Field label="Your kids" value={kidName} onChangeText={setKidName} placeholder="Name, then return" onSubmitEditing={addKid}
-                returnKeyType="done" submitBehavior="submit" autoCapitalize="words" />
+              {kids.length ? <T v="label">Your kid</T> : (
+                <Field label="Your kid" value={kidName} onChangeText={setKidName} placeholder="Name, then return" onSubmitEditing={addKid}
+                  returnKeyType="done" submitBehavior="submit" autoCapitalize="words" />
+              )}
               <Row style={{ flexWrap: 'wrap' }}>
                 {kids.map((k) => (
                   <Animated.View key={k} entering={ZoomIn.springify()}>
@@ -102,6 +106,7 @@ export default function Setup() {
                 ))}
                 {!!kidName.trim() && <Chip label={`+ Add ${kidName.trim()}`} onPress={addKid} />}
               </Row>
+              {!!kids.length && <T v="small" muted>More kids come with Ambodo Family. Add them after setup.</T>}
             </View>
 
             <View style={{ gap: 10 }}>

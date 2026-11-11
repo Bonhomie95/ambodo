@@ -105,7 +105,7 @@ export default function Today() {
               <T v="strong" style={{ flex: 1 }}>Bring your co-parent in</T>
             </Row>
             <T muted>Share code <Text style={{ fontFamily: font.heavy, color: c.text }}>{family.invite}</Text>. Ambodo works best with both homes on it.</T>
-            <Button title="Share invite" kind="primary" style={{ height: 48 }} onPress={() => shareInvite(family.invite, user?.name)} />
+            <Button title="Share invite" kind="primary" style={{ height: 48 }} onPress={() => shareInvite(pro, family.invite, user?.name)} />
           </Card>
         </Animated.View>
       )}

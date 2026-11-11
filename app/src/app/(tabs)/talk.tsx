@@ -121,7 +121,7 @@ export default function Talk() {
               <T muted style={{ textAlign: 'center' }}>
                 {other ? 'Every message is timestamped and sealed — nobody can edit or delete it.' : 'Share your family code so your co-parent can join.'}
               </T>
-              {!other && family && <Button title={`Share code ${family.invite}`} kind="accent" onPress={() => shareInvite(family.invite, user?.name)} />}
+              {!other && family && <Button title={`Share code ${family.invite}`} kind="accent" onPress={() => shareInvite(pro, family.invite, user?.name)} />}
             </View>
           ) : undefined}
           renderItem={({ item: m, index }) => {

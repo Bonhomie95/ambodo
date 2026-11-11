@@ -30,7 +30,11 @@ const tokens = [];
 for (const p of PARENTS) tokens.push((await call('/auth/signup', null, { ...p, password: PASSWORD })).token);
 const [a, b] = tokens;
 
-const fam = await call('/family', a, { kids: [{ name: 'Mia', birthday: '2018-04-02' }, { name: 'Leo', birthday: '2021-09-15' }], pattern: '2-2-3', anchor: monday() });
+const fam = await call('/family', a, { kids: [{ name: 'Mia', birthday: '2018-04-02' }], pattern: '2-2-3', anchor: monday() });
+// A co-parent, a second kid, events, swaps and expenses are Family features: seed under a test plan, then drop back
+// to Free at the end so the paywall shows. Production has no test plans (see STORE.md → "To reset it").
+const testPlan = await call('/billing/dev-grant', a, { period: 'annual' }).then(() => true, () => false);
+await call('/family/kids', a, { name: 'Leo', birthday: '2021-09-15' });
 const joined = await call('/family/join', b, { code: fam.invite });
 const boId = joined.members.find((m) => m.name === 'Bo').id;
 await call(`/family/kids/${fam.kids[0].id}`, a, { school: 'Maple Elementary · Ms. Lee', allergies: 'Peanuts', sizes: 'Shoes 13 · Shirt 6', doctor: 'Dr. Okafor' }, 'PATCH');
@@ -45,15 +49,11 @@ for (const [t, text] of [
 await call('/events', b, { title: 'Mia · dentist', date: inDays(8), time: '10:30', kind: 'health' });
 await call('/events', a, { title: 'Spring recital', date: inDays(3), time: '18:00', kind: 'activity' });
 await call('/events', a, { title: 'School picture day', date: inDays(5), kind: 'school' });
-// Expenses are a Family feature: seed some history with a test plan, then drop back to Free so the paywall shows.
-// Production has no test plans — App Review buys Family in the sandbox and adds expenses themselves.
-if (await call('/billing/dev-grant', a, { period: 'annual' }).then(() => true, () => false)) {
-  await call('/expenses', a, { title: 'Soccer cleats', amount: 64.5, category: 'activities', split: 50 });
-  await call('/expenses', b, { title: 'Field trip fee', amount: 30, category: 'school', split: 50 });
-  await call('/billing/dev-grant', a, { period: 'off' });
-}
+await call('/expenses', a, { title: 'Soccer cleats', amount: 64.5, category: 'activities', split: 50 });
+await call('/expenses', b, { title: 'Field trip fee', amount: 30, category: 'school', split: 50 });
 await call('/checkins', a, { kind: 'dropoff' });
 const saturday = inDays(((6 - new Date().getDay() + 7) % 7) || 7);
 await call('/swaps', b, { dates: [saturday], assignTo: boId, note: 'My parents are in town — can I have them Saturday?' });
+if (testPlan) await call('/billing/dev-grant', a, { period: 'off' });
 
 console.log(`demo family ready → ${PARENTS.map((p) => p.email).join(' / ')} (password: ${process.env.SEED_PASSWORD ? 'SEED_PASSWORD' : 'the default in server/seed.mjs'})`);

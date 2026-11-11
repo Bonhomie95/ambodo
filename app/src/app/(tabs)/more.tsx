@@ -35,6 +35,7 @@ export default function Family() {
 
   async function addKid() {
     if (!kidName.trim()) return;
+    if (!pro && (family?.kids.length ?? 0) >= 1) return router.push('/plan'); // Free has one kid
     try {
       await api<Kid>('/family/kids', { body: { name: kidName.trim() } });
       setKidName('');
@@ -99,7 +100,7 @@ export default function Family() {
             <>
               <T muted>Not joined yet. Their code:</T>
               <Text selectable style={[st.code, { color: c.text }]}>{family?.invite}</Text>
-              <Button title="Share invite" kind="accent" style={{ height: 48 }} onPress={() => family && shareInvite(family.invite, user?.name)} />
+              <Button title="Share invite" kind="accent" style={{ height: 48 }} onPress={() => family && shareInvite(pro, family.invite, user?.name)} />
             </>
           )}
         </Card>

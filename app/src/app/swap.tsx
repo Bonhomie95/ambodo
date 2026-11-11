@@ -1,5 +1,5 @@
 import * as Haptics from 'expo-haptics';
-import { router, useLocalSearchParams } from 'expo-router';
+import { Redirect, router, useLocalSearchParams } from 'expo-router';
 import { useState } from 'react';
 import { View } from 'react-native';
 import { MonthGrid } from '@/components/month';
@@ -13,7 +13,7 @@ import { useColors } from '@/lib/theme';
 export default function SwapRequest() {
   const c = useColors();
   const params = useLocalSearchParams<{ date?: string }>();
-  const { meId, other } = useSession();
+  const { meId, other, pro } = useSession();
   const first = params.date ?? today();
   const [dates, setDates] = useState<string[]>(params.date ? [params.date] : []);
   const [view, setView] = useState(() => ({ y: parse(first).getFullYear(), m: parse(first).getMonth() }));
@@ -28,6 +28,7 @@ export default function SwapRequest() {
 
   const toggle = (d: string) => setDates((x) => (x.includes(d) ? x.filter((y) => y !== d) : [...x, d].sort()));
   const step = (n: number) => { const d = new Date(view.y, view.m + n, 1); setView({ y: d.getFullYear(), m: d.getMonth() }); };
+  if (!pro) return <Redirect href="/plan" />; // swap requests are part of Ambodo Family
 
   async function send() {
     setBusy(true);
