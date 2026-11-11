@@ -95,6 +95,15 @@ npx eas-cli@latest build --platform android --profile production
   - The server's Family gates are live. The Play reviewer's family is on a waiver, so they see everything unlocked.
   - The Paid Apps agreement is still pending the W-9 (Apple accepts it once the bank update clears), so Apple's
     reviewers may not be able to buy yet.
+- **Testing purchases on a phone** (no real charges either way):
+  - **iOS:** the TestFlight build (internal group "Team (Expo)" gets every build). TestFlight purchases run in
+    Apple's sandbox. Until the Paid Apps agreement is **Active**, Apple serves no subscription products to any build,
+    so the paywall says "Couldn't reach the App Store". That's an account state, not an app bug.
+  - **Android:** the "My Testers" email list is both the internal-testing list and the license-tester list
+    (`RESPOND_NORMALLY`), so its accounts pay with Play's test cards. On the phone (signed in with a listed Google
+    account), open the "Join on the web" link from Play Console → Internal testing → Testers, accept, then install
+    Ambodo from the Play Store. The purchase only unlocks Family once RevenueCat's
+    purchases check (above) passes.
 
 ### 6. App Review details (both stores)
 - **Sign-in:** both use `SEED_PASSWORD` from `server/.env`. The password field is left blank in both stores.
