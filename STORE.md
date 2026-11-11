@@ -27,9 +27,11 @@ as a Blueprint, in case it ever needs recreating.) `MONGODB_URI` is set and the 
   750 free hours a month, shared by every free Render service. Once revenue allows, switch to **Starter** and
   delete both pings.
 - The review family is seeded on production. Its password is `SEED_PASSWORD` in `server/.env` (gitignored), not
-  the public default in `server/seed.mjs`. To reset it:
-  `cd server && API=https://ambodo-api.onrender.com node --env-file=.env seed.mjs`.
-  Production has no test purchases, so the demo family starts on Free with no expenses.
+  the public default in `server/seed.mjs`. The seed adds a co-parent, a second kid, events, swaps and expenses,
+  which are Family features, so it runs under a test plan and drops back to Free at the end. Production has no
+  test plans, so to reset it: set `BILLING_DEV=true` on Render, run
+  `cd server && API=https://ambodo-api.onrender.com node --env-file=.env seed.mjs`, then remove `BILLING_DEV` right
+  away (while it's on, anyone can give themselves a test plan).
 
 ### 3. Subscriptions (Ambodo Family)
 **App Store Connect — set up:** group **Ambodo Family** has both subscriptions, priced in all 175 regions, with
@@ -44,7 +46,13 @@ Metadata" until the Paid Apps agreement is active, which is waiting on the W-9 a
 Descriptions: "One plan for both homes, billed yearly." / "…billed monthly." The first subscriptions must be
 submitted *with* app version 1.0.
 
-**Play Console — set up:** product **`dev.bonhomieinc.ambodo.family`** ("Ambodo Family", four benefits and a description)
+**What Family unlocks:** connecting a co-parent (the inviter's plan covers whoever joins), adding events and swap
+requests, more than one kid, the court-ready PDF export, expenses and settle-ups, calendar sync and unlimited
+ToneGuard rewrites. Free is a solo family space: one kid, the custody schedule, handoff check-ins, ToneGuard checks
+and 5 rewrites a month. A lapsed family stays connected and keeps its data, but adding new Family items locks again.
+
+**Play Console — set up:** product **`dev.bonhomieinc.ambodo.family`** ("Ambodo Family"; benefits: Connect your
+co-parent · Court-ready PDF records · Shared events, swaps and expenses · Unlimited ToneGuard rewrites)
 with two active auto-renewing base plans in every region: `annual` (1 year, US $89.99, because Play enforces .99 endings)
 and `monthly` (1 month, US $9.99).
 
@@ -73,11 +81,12 @@ npx eas-cli@latest build --platform android --profile production
 - **Android:** EAS created and keeps the upload keystore. Google needs the **first** `.aab` uploaded by hand: Play
   Console → Test and release → Internal testing → Create release. After that, `eas submit --platform android`
   works with the service-account key.
-- **Status (Nov 10):** Play: production release "1.0.0 (2)" for all 178 countries, the listing and all app content
-  are **in review**. Managed publishing is off, so it goes live once approved. The internal-testing draft holds the
-  same build and has no testers. iOS: version **1.0.0** (renamed from 1.0 to match the build), build 2, the
-  subscription group and both subscriptions are **Waiting for Review** (submitted 22:24 UTC). The Paid Apps agreement
-  is still pending the W-9 (Apple accepts it once the bank update clears), so reviewers may not be able to buy yet.
+- **Status (Nov 10):** build 3 (the paywall fix and the new Family gates) is building for both stores and replaces
+  build 2. iOS: the build-2 submission was pulled back; version **1.0.0** gets build 3 and goes back to review with
+  the subscription group and both subscriptions. Play: the production release moves to build 3 for all 178 countries
+  and is sent for review with the updated listing (managed publishing is off, so it goes live once approved). The
+  server's new Family gates deploy when both reviews have build 3. The Paid Apps agreement is still pending the W-9
+  (Apple accepts it once the bank update clears), so Apple's reviewers may not be able to buy yet.
 
 ### 6. App Review details (both stores)
 - **Sign-in:** both use `SEED_PASSWORD` from `server/.env`. The password field is left blank in both stores.
@@ -87,10 +96,11 @@ npx eas-cli@latest build --platform android --profile production
     `plan = { source: "waiver" }`.
 - **Notes for the reviewer:**
   > Ambodo is a co-parenting app: two parents share one private family space (joined by invite code).
-  > The demo account is already connected to a co-parent with sample messages, events and a swap request.
-  > Ambodo Family is an auto-renewing subscription (Family tab → Upgrade, or Expenses); one purchase
-  > covers both parents. It unlocks the court-ready PDF export (Family → Court-ready records), expenses,
-  > calendar sync and unlimited ToneGuard rewrites. ToneGuard runs on-device. Messages can't be edited or deleted (that's the point
+  > The demo account is on Free and already connected to a co-parent with sample messages, events and a swap request.
+  > Ambodo Family is an auto-renewing subscription (Family tab → Upgrade, or any locked feature); one purchase
+  > covers both parents. It unlocks connecting a co-parent, adding events, swap requests and more kids, the
+  > court-ready PDF export (Family → Court-ready records), expenses, calendar sync and unlimited ToneGuard
+  > rewrites. ToneGuard runs on-device. Messages can't be edited or deleted (that's the point
   > of the record); press and hold a message to report it. Account deletion: Family → Delete account.
   > No ads, no tracking.
 
@@ -133,8 +143,8 @@ Ambodo keeps co-parenting calm, fair and on the record — for both of you, on o
 • Know the kids — school, doctor, allergies and sizes in one shared place.
 • Sync everywhere — custody days in Apple or Google Calendar.
 
-Free: messages with ToneGuard checks, the shared calendar, swaps, kids' info, check-ins and seal verification.
-Ambodo Family ($9.99/month or $89/year, one plan for both parents): court-ready PDF records, expenses and settle-ups, calendar sync and unlimited ToneGuard rewrites. Fee waivers are available for families who need them.
+Free: set up your family space with one kid's profile, the custody schedule and handoff check-ins.
+Ambodo Family ($9.99/month or $89/year, one plan for both parents): connect your co-parent for sealed messages, shared events and swap requests, add all your kids, court-ready PDF records, expenses and settle-ups, calendar sync and unlimited ToneGuard rewrites. Fee waivers are available for families who need them.
 
 Payment is charged to your Apple Account at confirmation. The subscription renews automatically unless cancelled at least 24 hours before the end of the period. Manage or cancel in your Apple Account settings.
 
