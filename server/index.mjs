@@ -5,6 +5,7 @@ import { promisify } from 'node:util';
 import { MongoClient, ObjectId } from 'mongodb';
 import { FREE_REWRITES, isPro, lapsed, month, planView, revenueCat, storePlan } from './billing.mjs';
 import { PATTERNS, chainHash, custodyFor, icsFeed } from './custody.mjs';
+import { verifyIdToken } from './idtoken.mjs';
 import { pages } from './pages.mjs';
 
 const { MONGODB_URI = 'mongodb://127.0.0.1:27017', MONGODB_DB = 'ambodo', PORT = '4000', HOST = '127.0.0.1', REVENUECAT_SECRET_KEY, NODE_ENV } = process.env;
@@ -119,8 +120,49 @@ on('POST', '/auth/signin', async ({ body }) => {
   const email = String(body.email ?? '').trim().toLowerCase();
   await guard(`signin:${email}`);
   const u = await users.findOne({ email });
-  if (!u || !(await checkPass(String(body.password ?? ''), u.pass))) { await miss(`signin:${email}`); throw fail(401, 'Email or password is wrong'); }
+  // Google/Apple-only accounts have no password, so they fail the same way as a wrong one.
+  if (!u?.pass || !(await checkPass(String(body.password ?? ''), u.pass))) { await miss(`signin:${email}`); throw fail(401, 'Email or password is wrong'); }
   return { token: await newSession(u._id), user: pub(u) };
+}, true);
+
+// Google and Apple sign-in. Google's tokens carry our Web client ID as the audience on both platforms; Apple's
+// carry the iOS bundle ID. A verified email that already has an account signs into that account.
+// Public OAuth client IDs from Google Cloud project "ambodo" (Web, iOS); GOOGLE_CLIENT_IDS overrides them.
+const GOOGLE_AUDIENCES = (process.env.GOOGLE_CLIENT_IDS ??
+  '679056273635-hkksvpsd88omcfjhqgkg4orn35rmuu7n.apps.googleusercontent.com,679056273635-u4c2s50mv253eurero8evn3cv8dq20ge.apps.googleusercontent.com')
+  .split(',').map((s) => s.trim()).filter(Boolean);
+const APPLE_AUDIENCES = [process.env.APPLE_BUNDLE_ID ?? 'dev.bonhomieinc.ambodo'];
+async function providerSignIn(provider, claims, name) {
+  const key = `${provider}Id`;
+  const email = String(claims.email ?? '').trim().toLowerCase();
+  let u = await users.findOne({ [key]: claims.sub });
+  if (!u && email) {
+    u = await users.findOne({ email });
+    if (u && String(claims.email_verified) !== 'true') throw fail(409, 'That email already has an account. Sign in with your password.');
+    if (u) await users.updateOne({ _id: u._id }, { $set: { [key]: claims.sub } });
+  }
+  if (!u) {
+    if (!email) throw fail(400, `${provider === 'apple' ? 'Apple' : 'Google'} didn’t share an email, so we can’t make your account`);
+    const doc = { name: (name || email.split('@')[0]).slice(0, 60), email, [key]: claims.sub, createdAt: new Date() };
+    u = { _id: (await users.insertOne(doc)).insertedId, ...doc };
+  }
+  return { token: await newSession(u._id), user: pub(u) };
+}
+const tokenFrom = (provider, token, audiences) =>
+  verifyIdToken(token, provider, audiences).catch(() => { throw fail(401, 'Sign-in didn’t go through. Try again.'); });
+
+on('POST', '/auth/google', async ({ body }) => {
+  if (!GOOGLE_AUDIENCES.length) throw fail(503, 'Google sign-in isn’t set up on this server yet');
+  const claims = await tokenFrom('google', body.idToken, GOOGLE_AUDIENCES);
+  return providerSignIn('google', claims, typeof claims.name === 'string' ? claims.name.trim() : '');
+}, true);
+
+// ponytail: deleting an account doesn't revoke the Apple grant via Apple's REST API (needs a Sign in with Apple key);
+// the user can remove it in Settings → Apple Account → Sign in with Apple. Add revocation when that key exists.
+on('POST', '/auth/apple', async ({ body }) => {
+  const claims = await tokenFrom('apple', body.identityToken, APPLE_AUDIENCES);
+  // Apple shares the name only on the very first sign-in, so the app passes it along.
+  return providerSignIn('apple', claims, typeof body.name === 'string' ? body.name.trim() : '');
 }, true);
 
 on('POST', '/auth/signout', async ({ session }) => { await sessions.deleteOne({ _id: session }); });
@@ -445,6 +487,8 @@ async function auth(req) {
 await client.connect();
 await Promise.all([
   users.createIndex({ email: 1 }, { unique: true }),
+  users.createIndex({ googleId: 1 }, { unique: true, sparse: true }),
+  users.createIndex({ appleId: 1 }, { unique: true, sparse: true }),
   sessions.createIndex({ expiresAt: 1 }, { expireAfterSeconds: 0 }),
   families.createIndex({ members: 1 }),
   families.createIndex({ invite: 1 }, { unique: true }),

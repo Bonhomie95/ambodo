@@ -65,6 +65,9 @@ assert.equal((await call('POST', `/expenses/${exp.id}/settle`, a)).data.status, 
 assert.match((await call('GET', `/ics/${joined.ics}`)).data, /SUMMARY:Kids with bo/);
 
 assert.equal((await call('POST', '/auth/signin', null, { email: `ada.${stamp}@smoke.test`, password: 'nope' })).status, 401);
+// Google/Apple sign-in only takes real provider tokens (503 = Google not configured on this server).
+assert.equal((await call('POST', '/auth/apple', null, { identityToken: 'x.y.z' })).status, 401);
+assert.ok([401, 503].includes((await call('POST', '/auth/google', null, { idToken: 'junk' })).status));
 assert.equal((await call('GET', '/me', 'not-a-token')).status, 401);
 assert.equal((await call('POST', '/messages', a, '[1]')).status, 400);
 
