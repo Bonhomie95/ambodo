@@ -478,7 +478,16 @@ http.createServer(async (req, res) => {
   }
 }).listen(Number(PORT), HOST, () => console.log(`ambodo api → http://${HOST}:${PORT} (db: ${MONGODB_DB})`));
 
-// ponytail: Render's free plan sleeps after 15 idle minutes (~1 min cold start). Pinging our own public URL counts as
-// traffic, so the API stays warm for App Review and early users. Delete this once the service is on a paid instance.
-const { RENDER_EXTERNAL_URL } = process.env;
-if (RENDER_EXTERNAL_URL) setInterval(() => fetch(`${RENDER_EXTERNAL_URL}/health`).catch(() => {}), 10 * 60_000).unref();
+// ponytail: Render's free plan sleeps after 15 idle minutes (~1 min cold start). Pinging our own public URL every 5–10
+// minutes counts as traffic, so the API stays warm. KEEPALIVE_HOURS ("14-01", UTC) limits that to part of the day: the
+// workspace's free services share 750 hours a month and Ambodo and Manendi split them (each ~11 h/day), because when they
+// run out Render suspends every free service. The keep-awake workflow wakes it when the window opens.
+// Delete this once the service is on a paid instance.
+const { RENDER_EXTERNAL_URL, KEEPALIVE_HOURS } = process.env;
+const inWindow = (h, [a, b] = (KEEPALIVE_HOURS ?? '').split('-').map(Number)) =>
+  !KEEPALIVE_HOURS || (a <= b ? h >= a && h < b : h >= a || h < b);
+const warm = () => setTimeout(() => {
+  if (inWindow(new Date().getUTCHours())) fetch(`${RENDER_EXTERNAL_URL}/health`).catch(() => {});
+  warm();
+}, (5 + Math.random() * 5) * 60_000).unref();
+if (RENDER_EXTERNAL_URL) warm();

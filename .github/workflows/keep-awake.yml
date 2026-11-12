@@ -1,15 +1,26 @@
 # Render's free plan sleeps after 15 idle minutes and takes ~1 minute to wake, so App Review would hit a cold start.
-# ponytail: this keeps the API awake 24/7 (~744 of the workspace's 750 free hours/month, shared by every free
-# Render service). Disable it here (Actions → keep-awake → Disable) once the apps are approved, or move to a paid
-# instance. GitHub pauses scheduled workflows after 60 days without repo activity.
+# ponytail: awake 24/7 this would use ~744 of the workspace's 750 free hours/month (shared by every free Render
+# service), so it only pings inside KEEPALIVE_HOURS, the same window Manendi uses. Disable it (Actions → keep-awake →
+# Disable) once the API is on a paid instance. GitHub pauses scheduled workflows after 60 days without repo activity.
 name: keep-awake
 on:
   schedule:
     - cron: '*/10 * * * *'
+    # The window opens at 14:00 UTC: a few extra tries, since a sleeping server can't wake itself and GitHub runs late.
+    - cron: '0,4,8,15 14 * * *'
   workflow_dispatch:
 jobs:
   ping:
     runs-on: ubuntu-latest
     timeout-minutes: 3
     steps:
-      - run: curl -fsS -m 90 --retry 2 --retry-delay 10 https://ambodo-api.onrender.com/health
+      # Only inside KEEPALIVE_HOURS (UTC, default 14-01 = 9am–8pm Eastern): Ambodo and Manendi share Render's free hours.
+      - run: |
+          h=$(date -u +%-H); w="${KEEPALIVE_HOURS:-14-01}"; a=${w%-*}; b=${w#*-}
+          if { [ "$a" -le "$b" ] && [ "$h" -ge "$a" ] && [ "$h" -lt "$b" ]; } || { [ "$a" -gt "$b" ] && { [ "$h" -ge "$a" ] || [ "$h" -lt "$b" ]; }; }; then
+            curl -fsS -m 90 --retry 2 --retry-delay 10 https://ambodo-api.onrender.com/health
+          else
+            echo "outside $w UTC, letting it sleep"
+          fi
+        env:
+          KEEPALIVE_HOURS: ${{ vars.KEEPALIVE_HOURS }}
