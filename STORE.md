@@ -84,11 +84,15 @@ npx eas-cli@latest build --platform android --profile production
   account has release permissions on this app: Play Console → Users and permissions →
   `play-console-api-access@…` → App permissions → Add app → Ambodo. Otherwise Play answers "The Google service
   account cannot submit this app".
-- **Status (Nov 11):** build 3 (the paywall fix and the new Family gates) replaces build 2.
-  - iOS: version **1.0.0 (3)** is waiting for review with the subscription group and both subscriptions.
-  - Play: production release **1.0.0 (3)** (all 178 countries) is in review with the new Free/Family listing; the
-    review restarted on Nov 11. Build 3 is also on the internal track. Managed publishing is off, so it goes live
-    once approved. The service account now has Admin on Ambodo, so `eas submit -p android` works.
+- **Apple signing after adding a capability** (e.g. Sign in with Apple): `eas build --non-interactive` never logs in to
+  Apple, so it can't add the capability or refresh the profile, and the build fails at signing. Run it interactively
+  with an App Store Connect API key in the environment (`EXPO_ASC_API_KEY_PATH`, `EXPO_ASC_KEY_ID`,
+  `EXPO_ASC_ISSUER_ID`, `EXPO_APPLE_TEAM_ID=S9XX65426W`, `EXPO_APPLE_TEAM_TYPE=COMPANY_OR_ORGANIZATION`) and answer
+  **yes** to "reuse the original profile?". EAS then updates the profile.
+- **Status (Nov 14):** build 3 has been **live on Google Play since Nov 13** (1.0.0 (3), 178 countries; IARC rating
+  issued). Build 4 (Android) / 7 (iOS) adds Continue with Apple and Continue with Google; the iOS review of
+  build 3 was pulled on Nov 14 so version **1.0.0** goes to Apple with build 7 instead, plus the subscription group
+  and both subscriptions. Play gets 1.0.0 (4) as an update.
   - RevenueCat → Ambodo (Play Store) → service account credentials: the catalog checks pass; the purchases check still
     said "package name was not found" on Nov 11 (Google can take up to ~36 h to apply new permissions). Click
     **Check again** there before the app goes live.
@@ -104,6 +108,20 @@ npx eas-cli@latest build --platform android --profile production
     account), open the "Join on the web" link from Play Console → Internal testing → Testers, accept, then install
     Ambodo from the Play Store. The purchase only unlocks Family once RevenueCat's
     purchases check (above) passes.
+
+### Sign in with Apple and Google
+- **Google Cloud project `ambodo`** ("My First Project" is WordWar's). Google Auth Platform: app name Ambodo,
+  External, **In production**, no logo (a logo triggers verification), basic scopes only. Clients: Web (the token
+  audience the API checks), iOS (bundle `dev.bonhomieinc.ambodo`; its reversed ID is the URL scheme in `app.json`),
+  Android × 2 (Play app-signing SHA-1 and upload-key SHA-1, from Play Console → App integrity → App signing).
+  Debug builds have no client: Google sign-in only works in Play-installed or EAS-signed builds.
+- **Apple:** the App ID has Sign in with Apple; the app shows Apple's own button (iOS only), as App Review requires
+  whenever Google sign-in is offered.
+- **API:** `/auth/google` and `/auth/apple` check the ID token's signature against Google's/Apple's published keys,
+  plus issuer, audience and expiry, then sign into the account with that provider ID, link the account with the
+  same verified email, or create one. Provider-only accounts have no password.
+- Not done: revoking the Apple grant when an account is deleted (needs a Sign in with Apple key); people can remove it
+  in Settings → Apple Account → Sign in with Apple.
 
 ### 6. App Review details (both stores)
 - **Sign-in:** both use `SEED_PASSWORD` from `server/.env`. The password field is left blank in both stores.
