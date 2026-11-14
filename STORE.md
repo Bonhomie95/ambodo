@@ -89,17 +89,14 @@ npx eas-cli@latest build --platform android --profile production
   with an App Store Connect API key in the environment (`EXPO_ASC_API_KEY_PATH`, `EXPO_ASC_KEY_ID`,
   `EXPO_ASC_ISSUER_ID`, `EXPO_APPLE_TEAM_ID=S9XX65426W`, `EXPO_APPLE_TEAM_TYPE=COMPANY_OR_ORGANIZATION`) and answer
   **yes** to "reuse the original profile?". EAS then updates the profile.
-- **Status (Nov 14):** build 3 has been **live on Google Play since Nov 13** (1.0.0 (3), 178 countries; IARC rating
-  issued). Build 4 (Android) / 7 (iOS) adds Continue with Apple and Continue with Google.
+- **Status (Nov 14):** **1.0.0 (4) is live on Google Play** (approved Nov 14; 178 countries; IARC rating issued;
+  build 3 was live from Nov 13). Build 4 (Android) / 7 (iOS) adds Continue with Apple and Continue with Google.
   - iOS: the build-3 review was pulled; version **1.0.0 (7)**, the subscription group and both subscriptions were
     submitted on Nov 14 and are waiting for review.
-  - Play: production update **1.0.0 (4)** (100%, all countries) was sent for review on Nov 14; build 3 stays live
-    until it's approved.
   - Next update: Apple's "unknown reason" sign-in error now reads "Sign in to your Apple Account in Settings"
     (in `main`, not in build 7).
-  - RevenueCat → Ambodo (Play Store) → service account credentials: the catalog checks pass; the purchases check still
-    said "package name was not found" on Nov 11 (Google can take up to ~36 h to apply new permissions). Click
-    **Check again** there before the app goes live.
+  - RevenueCat → Ambodo (Play Store) → service account credentials: all three checks pass as of Nov 14 (subscription
+    purchases, product catalog, subscription catalog).
   - The server's Family gates are live. The Play reviewer's family is on a waiver, so they see everything unlocked.
   - The Paid Apps agreement is still pending the W-9 (Apple accepts it once the bank update clears), so Apple's
     reviewers may not be able to buy yet.
