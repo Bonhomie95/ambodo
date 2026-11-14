@@ -1,6 +1,6 @@
 // Public pages the stores require: privacy policy, terms of use, support, and account deletion (Google Play).
 // Served by the API so they live wherever it does — the app links to `${API_URL}/privacy` etc.
-const UPDATED = 'November 10, 2026';
+const UPDATED = 'November 14, 2026';
 const esc = (s) => String(s).replace(/[&<>"]/g, (ch) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[ch]);
 
 const shell = (title, body) => `<!doctype html>
@@ -35,7 +35,7 @@ export function pages({ supportEmail, legalName, address = '' }) {
 
 <h2>What we collect</h2>
 <ul>
-<li><b>Account:</b> your name, email address and password. Passwords are stored only as a salted scrypt hash — nobody can read them.</li>
+<li><b>Account:</b> your name, email address and password. Passwords are stored only as a salted scrypt hash — nobody can read them. If you continue with Apple or Google instead, we get your name, your email address (with Apple, a private relay address if you chose to hide yours) and an account ID from them, and no password. We don’t receive anything else from your Apple or Google account.</li>
 <li><b>Your family space:</b> what you and your co-parent add — your children’s names and any details you choose (birthday, school and teacher, doctor and dentist, allergies and medications, sizes, notes), the custody schedule, messages, calendar events, swap requests, expense records (title, amount, category, split) and handoff check-ins (time, drop-off or pick-up, optional note). Allergy, medication and doctor details are health information; add only what helps you co-parent.</li>
 <li><b>Plan and billing:</b> whether your family has Ambodo Family, where it came from (App Store, Google Play or a fee waiver), when it ends, and any fee-waiver request you send. Apple or Google take the payment — we never see card details. RevenueCat, our subscription service, receives a random app user ID (not your name or email) and the purchase records Apple or Google provide.</li>
 <li><b>Free-plan limits:</b> a monthly count of ToneGuard “calmer version” sends.</li>
