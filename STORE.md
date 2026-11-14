@@ -90,9 +90,13 @@ npx eas-cli@latest build --platform android --profile production
   `EXPO_ASC_ISSUER_ID`, `EXPO_APPLE_TEAM_ID=S9XX65426W`, `EXPO_APPLE_TEAM_TYPE=COMPANY_OR_ORGANIZATION`) and answer
   **yes** to "reuse the original profile?". EAS then updates the profile.
 - **Status (Nov 14):** build 3 has been **live on Google Play since Nov 13** (1.0.0 (3), 178 countries; IARC rating
-  issued). Build 4 (Android) / 7 (iOS) adds Continue with Apple and Continue with Google; the iOS review of
-  build 3 was pulled on Nov 14 so version **1.0.0** goes to Apple with build 7 instead, plus the subscription group
-  and both subscriptions. Play gets 1.0.0 (4) as an update.
+  issued). Build 4 (Android) / 7 (iOS) adds Continue with Apple and Continue with Google.
+  - iOS: the build-3 review was pulled; version **1.0.0 (7)**, the subscription group and both subscriptions were
+    submitted on Nov 14 and are waiting for review.
+  - Play: production update **1.0.0 (4)** (100%, all countries) was sent for review on Nov 14; build 3 stays live
+    until it's approved.
+  - Next update: Apple's "unknown reason" sign-in error now reads "Sign in to your Apple Account in Settings"
+    (in `main`, not in build 7).
   - RevenueCat → Ambodo (Play Store) → service account credentials: the catalog checks pass; the purchases check still
     said "package name was not found" on Nov 11 (Google can take up to ~36 h to apply new permissions). Click
     **Check again** there before the app goes live.
