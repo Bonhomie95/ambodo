@@ -113,8 +113,8 @@ export default function Welcome() {
         <View style={{ flexDirection: 'row', gap: 6, alignSelf: 'center', marginBottom: 10 }}>
           {SLIDES.map((sl, i) => <Dot key={sl.title} x={x} i={i} width={width} color={c.text} />)}
         </View>
-        <Button title="Create your account" kind="accent" onPress={() => router.push('/auth?mode=signup')} />
-        <Button title="I already have one" kind="ghost" onPress={() => router.push('/auth?mode=signin')} />
+        <Button title="Get started" kind="accent" onPress={() => router.push('/setup')} />
+        <Button title="I already have an account" kind="ghost" onPress={() => router.push('/auth?mode=signin')} />
       </View>
     </View>
   );

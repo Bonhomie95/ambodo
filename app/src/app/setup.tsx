@@ -1,6 +1,6 @@
 import * as Haptics from 'expo-haptics';
 import { router } from 'expo-router';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { KeyboardAvoidingView, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
 import Animated, { FadeIn, FadeInDown, ZoomIn } from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -12,18 +12,22 @@ import { PATTERNS } from '@/lib/patterns';
 import { useSession } from '@/lib/session';
 import { font, tint, useColors } from '@/lib/theme';
 
+type Draft = { mode: 'new' | 'join'; kids: string[]; pattern: string; anchor: string; youFirst: boolean; code: string };
+// Setup comes before sign-up: the answers wait here while the account is made, then sign-up reopens setup to finish.
+let draft: Draft | null = null;
+
 export default function Setup() {
   const c = useColors();
   const insets = useSafeAreaInsets();
   const { user, setFamily, signOut, pro } = useSession();
-  const [mode, setMode] = useState<'new' | 'join'>('new');
-  const [kids, setKids] = useState<string[]>([]);
+  const [mode, setMode] = useState<'new' | 'join'>(draft?.mode ?? 'new');
+  const [kids, setKids] = useState<string[]>(draft?.kids ?? []);
   const [kidName, setKidName] = useState('');
-  const [pattern, setPattern] = useState<string>('2-2-3');
+  const [pattern, setPattern] = useState<string>(draft?.pattern ?? '2-2-3');
   const thisMonday = monday(today());
-  const [anchor, setAnchor] = useState(thisMonday);
-  const [youFirst, setYouFirst] = useState(true);
-  const [code, setCode] = useState('');
+  const [anchor, setAnchor] = useState(draft?.anchor ?? thisMonday);
+  const [youFirst, setYouFirst] = useState(draft?.youFirst ?? true);
+  const [code, setCode] = useState(draft?.code ?? '');
   const [busy, setBusy] = useState(false);
   const [err, setErr] = useState('');
   const [made, setMade] = useState<Family | null>(null);
@@ -45,6 +49,19 @@ export default function Setup() {
     (f) => setMade(f),
   );
   const join = () => run(() => api<Family>('/family/join', { body: { code } }), (f) => { setFamily(f); router.replace('/(tabs)'); });
+  // Signing up is the last step: no account yet means hold the answers and ask for one.
+  const finish = (go: () => void) => () => {
+    if (user) return go();
+    draft = { mode, kids: (kids.length ? kids : [kidName.trim()]).filter(Boolean), pattern, anchor, youFirst, code };
+    router.push('/auth?mode=signup');
+  };
+  // Back from sign-up with held answers: finish once, right away.
+  useEffect(() => {
+    if (!user || !draft) return;
+    const go = draft.mode === 'join' ? join : create;
+    draft = null;
+    go();
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   if (made) {
     return (
@@ -73,10 +90,16 @@ export default function Setup() {
   return (
     <KeyboardAvoidingView behavior="padding" style={{ flex: 1, backgroundColor: c.bg }}>
       <ScrollView keyboardShouldPersistTaps="handled" contentContainerStyle={{ paddingTop: insets.top + 16, paddingBottom: insets.bottom + 32, paddingHorizontal: 22, gap: 20 }}>
-        <Row style={{ justifyContent: 'space-between' }}>
-          <T v="label">Hi {user?.name ?? 'there'}</T>
-          <Tap onPress={async () => { await signOut(); router.replace('/welcome'); }} haptic={false}><T v="small" muted>Sign out</T></Tap>
-        </Row>
+        {user ? (
+          <Row style={{ justifyContent: 'space-between' }}>
+            <T v="label">Hi {user.name}</T>
+            <Tap onPress={async () => { await signOut(); router.replace('/welcome'); }} haptic={false}><T v="small" muted>Sign out</T></Tap>
+          </Row>
+        ) : (
+          <Tap onPress={() => router.back()} accessibilityLabel="Back" style={[st.back, { backgroundColor: c.soft }]}>
+            <Icon ios="chevron.left" android="arrow_back" size={18} />
+          </Tap>
+        )}
         <T v="hero">Set up your family.</T>
         <Row>
           <Chip label="Start fresh" on={mode === 'new'} onPress={() => setMode('new')} />
@@ -89,7 +112,7 @@ export default function Setup() {
             <TextInput value={code} onChangeText={(t) => setCode(t.toUpperCase())} placeholder="ABC-123" placeholderTextColor={c.muted}
               autoCapitalize="characters" autoCorrect={false} maxLength={7} accessibilityLabel="Invite code"
               style={[st.code, { color: c.text, backgroundColor: c.card, borderColor: c.line }]} />
-            <Button title="Join family" kind="accent" loading={busy} disabled={code.replace(/[^A-Z0-9]/gi, '').length < 6} onPress={join} />
+            <Button title="Join family" kind="accent" loading={busy} disabled={code.replace(/[^A-Z0-9]/gi, '').length < 6} onPress={finish(join)} />
           </Animated.View>
         ) : (
           <Animated.View key="new" entering={FadeIn} style={{ gap: 22 }}>
@@ -147,7 +170,7 @@ export default function Setup() {
               </Row>
             </View>
 
-            <Button title="Create our family" kind="accent" loading={busy} disabled={!kids.length && !kidName.trim()} onPress={create} />
+            <Button title="Create our family" kind="accent" loading={busy} disabled={!kids.length && !kidName.trim()} onPress={finish(create)} />
           </Animated.View>
         )}
         {!!err && <T v="strong" color={c.danger}>{err}</T>}
@@ -157,6 +180,7 @@ export default function Setup() {
 }
 
 const st = StyleSheet.create({
+  back: { width: 44, height: 44, borderRadius: 22, alignItems: 'center', justifyContent: 'center' },
   done: { flex: 1, alignItems: 'center', justifyContent: 'center', gap: 26, paddingHorizontal: 24 },
   badge: { width: 104, height: 104, borderRadius: 52, alignItems: 'center', justifyContent: 'center' },
   code: { fontFamily: font.heavy, fontSize: 40, letterSpacing: 6, textAlign: 'center', paddingVertical: 18, paddingHorizontal: 26, borderRadius: 24, borderWidth: StyleSheet.hairlineWidth, overflow: 'hidden' },

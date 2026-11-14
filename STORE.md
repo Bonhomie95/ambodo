@@ -93,8 +93,10 @@ npx eas-cli@latest build --platform android --profile production
   build 3 was live from Nov 13). Build 4 (Android) / 7 (iOS) adds Continue with Apple and Continue with Google.
   - iOS: the build-3 review was pulled; version **1.0.0 (7)**, the subscription group and both subscriptions were
     submitted on Nov 14 and are waiting for review.
-  - Next update: Apple's "unknown reason" sign-in error now reads "Sign in to your Apple Account in Settings"
-    (in `main`, not in build 7).
+  - Next update (in `main`, not in build 7 / build 4):
+    - Apple's "unknown reason" sign-in error now reads "Sign in to your Apple Account in Settings".
+    - Sign-up comes after family setup: welcome → **Get started** → set up your family (or enter a co-parent's code)
+      → create the account → the family is created right away. "I already have an account" still goes to sign-in.
   - RevenueCat → Ambodo (Play Store) → service account credentials: all three checks pass as of Nov 14 (subscription
     purchases, product catalog, subscription catalog).
   - The server's Family gates are live. The Play reviewer's family is on a waiver, so they see everything unlocked.
