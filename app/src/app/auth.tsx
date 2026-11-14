@@ -1,19 +1,24 @@
+import * as AppleAuthentication from 'expo-apple-authentication';
 import * as Haptics from 'expo-haptics';
+import { Image } from 'expo-image';
 import { router, useLocalSearchParams } from 'expo-router';
-import { useState } from 'react';
-import { KeyboardAvoidingView, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { useEffect, useState } from 'react';
+import { KeyboardAvoidingView, Platform, ScrollView, StyleSheet, Text, useColorScheme, View } from 'react-native';
 import Animated, { FadeIn } from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Mark } from '@/components/brand';
 import { Button, Field, Icon, T, Tap } from '@/components/ui';
 import { api, openPage } from '@/lib/api';
 import { useSession } from '@/lib/session';
+import { appleSignIn, googleSignIn } from '@/lib/social';
 import { font, useColors } from '@/lib/theme';
 
 type Mode = 'signup' | 'signin';
+type Way = 'email' | 'google' | 'apple';
 
 export default function Auth() {
   const c = useColors();
+  const dark = useColorScheme() === 'dark';
   const insets = useSafeAreaInsets();
   const { signIn } = useSession();
   const params = useLocalSearchParams<{ mode?: Mode }>();
@@ -21,14 +26,22 @@ export default function Auth() {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [busy, setBusy] = useState(false);
+  const [busy, setBusy] = useState<Way | null>(null);
+  const [apple, setApple] = useState(false);
   const [err, setErr] = useState<{ id: number; text: string } | null>(null);
   const signup = mode === 'signup';
 
-  async function submit() {
-    setBusy(true);
+  useEffect(() => { if (Platform.OS === 'ios') AppleAuthentication.isAvailableAsync().then(setApple, () => {}); }, []);
+
+  // Email, Google and Apple all end the same way: a session token, then home (or setup for a new family).
+  async function go(way: Way) {
+    if (busy) return;
+    setBusy(way);
     try {
-      const { token } = await api<{ token: string }>(`/auth/${mode}`, { body: signup ? { name, email, password } : { email, password } });
+      const body = way === 'email' ? (signup ? { name, email, password } : { email, password })
+        : way === 'google' ? await googleSignIn() : await appleSignIn();
+      if (!body) return; // backed out of Google/Apple
+      const { token } = await api<{ token: string }>(`/auth/${way === 'email' ? mode : way}`, { body });
       const me = await signIn(token);
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
       router.dismissAll();
@@ -37,9 +50,10 @@ export default function Auth() {
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
       setErr({ id: Date.now(), text: (e as Error).message });
     } finally {
-      setBusy(false);
+      setBusy(null);
     }
   }
+  const submit = () => go('email');
 
   return (
     <KeyboardAvoidingView behavior="padding" style={{ flex: 1, backgroundColor: c.bg }}>
@@ -52,6 +66,22 @@ export default function Auth() {
           <T v="hero">{signup ? 'Let’s get you set.' : 'Welcome back.'}</T>
           <T muted>{signup ? 'One account. Two homes. Zero drama.' : 'Pick up right where you left off.'}</T>
         </Animated.View>
+
+        <View style={{ gap: 12 }}>
+          {apple && (
+            <AppleAuthentication.AppleAuthenticationButton
+              buttonType={AppleAuthentication.AppleAuthenticationButtonType.CONTINUE}
+              buttonStyle={dark ? AppleAuthentication.AppleAuthenticationButtonStyle.WHITE : AppleAuthentication.AppleAuthenticationButtonStyle.BLACK}
+              cornerRadius={28} style={{ height: 56 }} onPress={() => go('apple')} />
+          )}
+          <Button title="Continue with Google" kind="ghost" loading={busy === 'google'} onPress={() => go('google')}
+            icon={<Image source={require('@/assets/images/google-g.png')} style={{ width: 20, height: 20 }} accessibilityIgnoresInvertColors />} />
+        </View>
+        <View style={st.or}>
+          <View style={[st.rule, { backgroundColor: c.line }]} />
+          <T v="small" muted>or with email</T>
+          <View style={[st.rule, { backgroundColor: c.line }]} />
+        </View>
 
         <View style={[st.toggle, { backgroundColor: c.soft }]}>
           <Animated.View style={[st.thumb, { backgroundColor: c.card, left: signup ? 4 : '50%', transitionProperty: 'left', transitionDuration: 260 }]} />
@@ -79,11 +109,11 @@ export default function Auth() {
           </Animated.View>
         )}
 
-        <Button title={signup ? 'Create account' : 'Sign in'} kind="accent" loading={busy} onPress={submit}
+        <Button title={signup ? 'Create account' : 'Sign in'} kind="accent" loading={busy === 'email'} onPress={submit}
           disabled={!email || !password || (signup && !name)} />
         <T v="small" muted style={{ textAlign: 'center' }}>
           {signup ? (
-            <>By creating an account you agree to the <Text style={st.link} onPress={() => openPage('terms')}>Terms</Text> and{' '}
+            <>By continuing you agree to the <Text style={st.link} onPress={() => openPage('terms')}>Terms</Text> and{' '}
               <Text style={st.link} onPress={() => openPage('privacy')}>Privacy Policy</Text>. Ambodo is for adults 18+.</>
           ) : 'Your messages are sealed and only shared with your co-parent and anyone you export them to.'}
         </T>
@@ -95,6 +125,8 @@ export default function Auth() {
 const st = StyleSheet.create({
   back: { width: 44, height: 44, borderRadius: 22, alignItems: 'center', justifyContent: 'center' },
   link: { textDecorationLine: 'underline' },
+  or: { flexDirection: 'row', alignItems: 'center', gap: 12 },
+  rule: { flex: 1, height: 1 },
   toggle: { height: 50, borderRadius: 25, flexDirection: 'row', padding: 4 },
   thumb: { position: 'absolute', top: 4, bottom: 4, width: '50%', borderRadius: 21, boxShadow: '0 2px 10px rgba(20,26,51,0.10)' },
   toggleItem: { flex: 1, alignItems: 'center', justifyContent: 'center' },

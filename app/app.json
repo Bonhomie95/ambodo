@@ -109,7 +109,8 @@
             ]
           }
         ]
-      }
+      },
+      "usesAppleSignIn": true
     },
     "android": {
       "package": "dev.bonhomieinc.ambodo",
@@ -153,7 +154,14 @@
           "faceIDPermission": false
         }
       ],
-      "expo-sharing"
+      "expo-sharing",
+      [
+        "react-native-nitro-google-signin",
+        {
+          "iosUrlScheme": "com.googleusercontent.apps.679056273635-u4c2s50mv253eurero8evn3cv8dq20ge"
+        }
+      ],
+      "expo-apple-authentication"
     ],
     "experiments": {
       "typedRoutes": true,
