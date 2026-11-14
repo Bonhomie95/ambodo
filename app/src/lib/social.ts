@@ -27,7 +27,10 @@ export async function appleSignIn(): Promise<{ identityToken: string; name: stri
     if (!c.identityToken) throw new Error('Apple didn’t finish signing you in. Try again.');
     return { identityToken: c.identityToken, name: [c.fullName?.givenName, c.fullName?.familyName].filter(Boolean).join(' ') };
   } catch (e) {
-    if ((e as { code?: string }).code === 'ERR_REQUEST_CANCELED') return null;
+    const code = (e as { code?: string }).code;
+    if (code === 'ERR_REQUEST_CANCELED') return null;
+    // Apple's "unknown" error: usually no Apple Account on the device, or its sign-in prompt was closed.
+    if (code === 'ERR_REQUEST_UNKNOWN') throw new Error('Sign in to your Apple Account in Settings, then try again.');
     throw e;
   }
 }
