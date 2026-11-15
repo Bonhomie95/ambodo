@@ -89,17 +89,17 @@ npx eas-cli@latest build --platform android --profile production
   with an App Store Connect API key in the environment (`EXPO_ASC_API_KEY_PATH`, `EXPO_ASC_KEY_ID`,
   `EXPO_ASC_ISSUER_ID`, `EXPO_APPLE_TEAM_ID=S9XX65426W`, `EXPO_APPLE_TEAM_TYPE=COMPANY_OR_ORGANIZATION`) and answer
   **yes** to "reuse the original profile?". EAS then updates the profile.
-- **Status (Nov 14):** **1.0.0 (4) is live on Google Play** (approved Nov 14; 178 countries; IARC rating issued;
-  build 3 was live from Nov 13). Build 4 (Android) / 7 (iOS) adds Continue with Apple and Continue with Google.
+- **Status (Nov 15):** **1.0.1 (5) is live on Google Play** (178 countries; IARC rating issued; build 3 was live
+  from Nov 13, build 4 from Nov 14). Build 4 (Android) / 7 (iOS) adds Continue with Apple and Continue with Google.
   - iOS: the build-3 review was pulled; version **1.0.0 (7)**, the subscription group and both subscriptions were
-    submitted on Nov 14 and are waiting for review.
+    submitted on Nov 14 08:00 UTC and were still waiting for review on Nov 15 (not on the App Store yet).
   - **1.0.1** (Android build 5 / iOS build 8, built Nov 14):
     - Apple's "unknown reason" sign-in error now reads "Sign in to your Apple Account in Settings".
     - Sign-up comes after family setup: welcome → **Get started** → set up your family (or enter a co-parent's code)
       → create the account → the family is created right away. "I already have an account" still goes to sign-in.
     - Play: 1.0.1 (5) put on production (100%) on Nov 14 through the Play Developer API (service account, no Console
-      clicks); in review, publishes itself when approved (managed publishing is off).
-    - iOS: build 8 is uploaded to App Store Connect. Version 1.0.1 can only be created after 1.0.0 leaves review
+      clicks); approved and live (the listing shows 1.0.1).
+    - iOS: build 8 is uploaded and processed. Version 1.0.1 can only be created after 1.0.0 leaves review
       (1.0.0 releases itself on approval); then create 1.0.1, attach build 8, copy 1.0.0's review details and submit.
   - RevenueCat → Ambodo (Play Store) → service account credentials: all three checks pass as of Nov 14 (subscription
     purchases, product catalog, subscription catalog).
