@@ -1,6 +1,6 @@
 import { StyleSheet, Text, View } from 'react-native';
 import { Tap, T } from '@/components/ui';
-import { monthGrid, nice, parse, today } from '@/lib/dates';
+import { monthGrid, nice, parse, today, weekLetters } from '@/lib/dates';
 import { font, tint, useColors } from '@/lib/theme';
 
 /** Month view where each parent's days join into one continuous band. */
@@ -10,7 +10,7 @@ export function MonthGrid({ year, month, custody, meId, dots = {}, selected = []
 }) {
   const c = useColors();
   const days = monthGrid(year, month);
-  const t = today();
+  const td = today();
   const colorOf = (d?: string) => {
     if (!d || !(d in custody)) return null;
     const p = custody[d];
@@ -19,7 +19,7 @@ export function MonthGrid({ year, month, custody, meId, dots = {}, selected = []
   return (
     <View>
       <View style={{ flexDirection: 'row', marginBottom: 6 }}>
-        {['M', 'T', 'W', 'T', 'F', 'S', 'S'].map((d, i) => <T key={i} v="label" style={{ flex: 1, textAlign: 'center' }}>{d}</T>)}
+        {weekLetters().map((d, i) => <T key={i} v="label" style={{ flex: 1, textAlign: 'center' }}>{d}</T>)}
       </View>
       {[0, 1, 2, 3, 4, 5].map((row) => (
         <View key={row} style={{ flexDirection: 'row' }}>
@@ -39,7 +39,7 @@ export function MonthGrid({ year, month, custody, meId, dots = {}, selected = []
                     borderTopRightRadius: joinR ? 0 : 15, borderBottomRightRadius: joinR ? 0 : 15,
                   }]} />
                 )}
-                <View style={[g.num, { backgroundColor: sel ? c.text : 'transparent', borderWidth: d === t && !sel ? 2 : 0, borderColor: c.text }]}>
+                <View style={[g.num, { backgroundColor: sel ? c.text : 'transparent', borderWidth: d === td && !sel ? 2 : 0, borderColor: c.text }]}>
                   <Text style={{ fontFamily: font.bold, fontSize: 15, color: sel ? c.bg : c.text }}>{parse(d).getDate()}</Text>
                 </View>
                 {!!dots[d] && <View style={[g.dot, { backgroundColor: col ?? c.text }]} />}

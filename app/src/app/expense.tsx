@@ -5,16 +5,17 @@ import { TextInput, View } from 'react-native';
 import { Sheet } from '@/components/sheet';
 import { Button, Chip, Field, Row, T, toast } from '@/components/ui';
 import { api } from '@/lib/api';
+import { locale, t } from '@/lib/i18n';
 import { money } from '@/lib/meta';
 import { useSession } from '@/lib/session';
 import { font, useColors } from '@/lib/theme';
 
-const CATS = [['school', 'School'], ['health', 'Health'], ['activities', 'Activities'], ['clothes', 'Clothes'], ['food', 'Food'], ['other', 'Other']] as const;
-const SPLITS = [[50, '50 / 50'], [60, '60%'], [70, '70%'], [100, 'All of it'], [0, 'Just log it']] as const;
+const CATS = [['school', t('School')], ['health', t('Health')], ['activities', t('Activities')], ['clothes', t('Clothes')], ['food', t('Food')], ['other', t('Other')]] as const;
+const SPLITS = [[50, '50 / 50'], [60, '60%'], [70, '70%'], [100, t('All of it')], [0, t('Just log it')]] as const;
 
 export default function NewExpense() {
   const c = useColors();
-  const { other, pro } = useSession();
+  const { other, pro, family } = useSession();
   const [amount, setAmount] = useState('');
   const [title, setTitle] = useState('');
   const [category, setCategory] = useState<string>('school');
@@ -30,28 +31,30 @@ export default function NewExpense() {
     try {
       await api('/expenses', { body: { title, amount: value, category, split } });
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-      toast('Logged. No more “I don’t remember that”.');
+      toast(t('Logged. No more “I don’t remember that”.'));
       router.back();
     } catch (e) { toast((e as Error).message); setBusy(false); }
   }
 
   return (
-    <Sheet title="Add expense" footer={
-      <Button title={cents > 0 && split > 0 ? `Log · ${other?.name ?? 'They'} owe ${money(Math.round((cents * split) / 100))}` : 'Log expense'}
+    <Sheet title={t('Add expense')} footer={
+      <Button title={!(cents > 0 && split > 0) ? t('Log expense') : other
+        ? t('Log · {name} owes {amount}', { name: other.name, amount: money(Math.round((cents * split) / 100), family?.currency) })
+        : t('Log · They owe {amount}', { amount: money(Math.round((cents * split) / 100), family?.currency) })}
         kind="accent" loading={busy} disabled={!title.trim() || !(cents > 0)} onPress={save} />
     }>
       <View style={{ alignItems: 'center', gap: 4, paddingVertical: 8 }}>
-        <T v="label">Amount</T>
-        <TextInput value={amount} onChangeText={setAmount} placeholder="0.00" placeholderTextColor={c.line} keyboardType="decimal-pad" autoFocus
-          accessibilityLabel="Amount" style={{ fontFamily: font.display, fontSize: 56, color: c.text, minWidth: 160, textAlign: 'center' }} />
+        <T v="label">{t('Amount')}</T>
+        <TextInput value={amount} onChangeText={setAmount} placeholder={(0).toLocaleString(locale, { minimumFractionDigits: 2 })} placeholderTextColor={c.line} keyboardType="decimal-pad" autoFocus
+          accessibilityLabel={t('Amount')} style={{ fontFamily: font.display, fontSize: 56, color: c.text, minWidth: 160, textAlign: 'center' }} />
       </View>
-      <Field label="What for" value={title} onChangeText={setTitle} placeholder="Soccer cleats, school trip…" />
+      <Field label={t('What for')} value={title} onChangeText={setTitle} placeholder={t('Soccer cleats, school trip…')} />
       <View style={{ gap: 10 }}>
-        <T v="label">Category</T>
+        <T v="label">{t('Category')}</T>
         <Row style={{ flexWrap: 'wrap' }}>{CATS.map(([k, l]) => <Chip key={k} label={l} on={category === k} onPress={() => setCategory(k)} />)}</Row>
       </View>
       <View style={{ gap: 10 }}>
-        <T v="label">{other?.name ?? 'Your co-parent'} covers</T>
+        <T v="label">{t('{name} covers', { name: other?.name ?? t('Your co-parent') })}</T>
         <Row style={{ flexWrap: 'wrap' }}>{SPLITS.map(([k, l]) => <Chip key={k} label={l} on={split === k} color={c.them} onPress={() => setSplit(k)} />)}</Row>
       </View>
     </Sheet>

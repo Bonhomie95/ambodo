@@ -57,7 +57,7 @@ const pub = (u) => ({ id: id(u), name: u.name, email: u.email });
 async function familyView(f) {
   const people = await users.find({ _id: { $in: f.members } }, { projection: { name: 1 } }).toArray();
   return {
-    id: id(f), invite: f.invite, ics: f.icsToken, kids: f.kids,
+    id: id(f), invite: f.invite, ics: f.icsToken, kids: f.kids, currency: f.currency ?? 'USD',
     schedule: { ...f.schedule, first: f.schedule.first?.toString() ?? null },
     members: f.members.map((m) => ({ id: m.toString(), name: people.find((p) => p._id.equals(m))?.name ?? 'Co-parent' })),
     plan: planView(f),
@@ -142,7 +142,7 @@ async function providerSignIn(provider, claims, name) {
     if (u) await users.updateOne({ _id: u._id }, { $set: { [key]: claims.sub } });
   }
   if (!u) {
-    if (!email) throw fail(400, `${provider === 'apple' ? 'Apple' : 'Google'} didn’t share an email, so we can’t make your account`);
+    if (!email) throw fail(400, provider === 'apple' ? 'Apple didn’t share an email, so we can’t make your account' : 'Google didn’t share an email, so we can’t make your account');
     const doc = { name: (name || email.split('@')[0]).slice(0, 60), email, [key]: claims.sub, createdAt: new Date() };
     u = { _id: (await users.insertOne(doc)).insertedId, ...doc };
   }
@@ -200,6 +200,8 @@ on('POST', '/family', async ({ body, user }) => {
   const f = {
     members: [user._id], kids, invite: inviteCode(), icsToken: randomBytes(18).toString('base64url'),
     schedule: { pattern: body.pattern, anchor: day(body.anchor, 'Start date'), first: body.youFirst === false ? null : user._id },
+    // Expenses use the creator's phone currency; families made before 1.0.2 stay on USD.
+    currency: /^[A-Z]{3}$/.test(body.currency) ? body.currency : 'USD',
     overrides: {}, createdAt: new Date(),
   };
   await families.insertOne(f);
@@ -456,13 +458,13 @@ on('POST', '/tone/rewrite', async ({ user }) => {
 });
 
 // Subscribe in Apple/Google Calendar: webcal://<host>/ics/<token>. The token is the secret.
-on('GET', '/ics/:token', async ({ params: [token] }) => {
+on('GET', '/ics/:token', async ({ params: [token], query }) => {
   const f = await fresh(await families.findOne({ icsToken: token }));
   if (!f) throw fail(404, 'Not found');
   requirePro(f);
   const people = await users.find({ _id: { $in: f.members } }, { projection: { name: 1 } }).toArray();
   const evs = await events.find({ familyId: f._id }).toArray();
-  return { [RAW]: ['text/calendar; charset=utf-8', icsFeed(f, Object.fromEntries(people.map((p) => [id(p), p.name])), evs)] };
+  return { [RAW]: ['text/calendar; charset=utf-8', icsFeed(f, Object.fromEntries(people.map((p) => [id(p), p.name])), evs, Date.now(), query.lang)] };
 }, true);
 
 // ---------- server ----------

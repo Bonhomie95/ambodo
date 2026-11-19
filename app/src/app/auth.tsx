@@ -9,6 +9,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Mark } from '@/components/brand';
 import { Button, Field, Icon, T, Tap } from '@/components/ui';
 import { api, openPage } from '@/lib/api';
+import { rich, t } from '@/lib/i18n';
 import { useSession } from '@/lib/session';
 import { appleSignIn, googleSignIn } from '@/lib/social';
 import { font, useColors } from '@/lib/theme';
@@ -58,13 +59,13 @@ export default function Auth() {
   return (
     <KeyboardAvoidingView behavior="padding" style={{ flex: 1, backgroundColor: c.bg }}>
       <ScrollView keyboardShouldPersistTaps="handled" contentContainerStyle={{ paddingTop: insets.top + 8, paddingBottom: insets.bottom + 24, paddingHorizontal: 24, gap: 22 }}>
-        <Tap onPress={() => router.back()} accessibilityLabel="Back" style={[st.back, { backgroundColor: c.soft }]}>
+        <Tap onPress={() => router.back()} accessibilityLabel={t('Back')} style={[st.back, { backgroundColor: c.soft }]}>
           <Icon ios="chevron.left" android="arrow_back" size={18} />
         </Tap>
         <Mark size={72} />
         <Animated.View key={mode} entering={FadeIn.duration(260)} style={{ gap: 8 }}>
-          <T v="hero">{signup ? 'Let’s get you set.' : 'Welcome back.'}</T>
-          <T muted>{signup ? 'One account. Two homes. Zero drama.' : 'Pick up right where you left off.'}</T>
+          <T v="hero">{signup ? t('Let’s get you set.') : t('Welcome back.')}</T>
+          <T muted>{signup ? t('One account. Two homes. Zero drama.') : t('Pick up right where you left off.')}</T>
         </Animated.View>
 
         <View style={{ gap: 12 }}>
@@ -74,12 +75,12 @@ export default function Auth() {
               buttonStyle={dark ? AppleAuthentication.AppleAuthenticationButtonStyle.WHITE : AppleAuthentication.AppleAuthenticationButtonStyle.BLACK}
               cornerRadius={28} style={{ height: 56 }} onPress={() => go('apple')} />
           )}
-          <Button title="Continue with Google" kind="ghost" loading={busy === 'google'} onPress={() => go('google')}
+          <Button title={t('Continue with Google')} kind="ghost" loading={busy === 'google'} onPress={() => go('google')}
             icon={<Image source={require('@/assets/images/google-g.png')} style={{ width: 20, height: 20 }} accessibilityIgnoresInvertColors />} />
         </View>
         <View style={st.or}>
           <View style={[st.rule, { backgroundColor: c.line }]} />
-          <T v="small" muted>or with email</T>
+          <T v="small" muted>{t('or with email')}</T>
           <View style={[st.rule, { backgroundColor: c.line }]} />
         </View>
 
@@ -87,16 +88,16 @@ export default function Auth() {
           <Animated.View style={[st.thumb, { backgroundColor: c.card, left: signup ? 4 : '50%', transitionProperty: 'left', transitionDuration: 260 }]} />
           {(['signup', 'signin'] as const).map((m) => (
             <Tap key={m} onPress={() => { setMode(m); setErr(null); }} style={st.toggleItem} accessibilityState={{ selected: mode === m }}>
-              <Text style={{ fontFamily: font.bold, fontSize: 15, color: mode === m ? c.text : c.muted }}>{m === 'signup' ? 'New here' : 'Sign in'}</Text>
+              <Text style={{ fontFamily: font.bold, fontSize: 15, color: mode === m ? c.text : c.muted }}>{m === 'signup' ? t('New here') : t('Sign in')}</Text>
             </Tap>
           ))}
         </View>
 
         <View style={{ gap: 14 }}>
-          {signup && <Field label="Your name" value={name} onChangeText={setName} placeholder="First name is fine" autoComplete="name" textContentType="givenName" returnKeyType="next" />}
-          <Field label="Email" value={email} onChangeText={setEmail} placeholder="you@example.com" keyboardType="email-address"
+          {signup && <Field label={t('Your name')} value={name} onChangeText={setName} placeholder={t('First name is fine')} autoComplete="name" textContentType="givenName" returnKeyType="next" />}
+          <Field label={t('Email')} value={email} onChangeText={setEmail} placeholder="you@example.com" keyboardType="email-address"
             autoCapitalize="none" autoCorrect={false} autoComplete="email" textContentType="emailAddress" returnKeyType="next" />
-          <Field label="Password" value={password} onChangeText={setPassword} placeholder={signup ? '8+ characters' : 'Your password'} secureTextEntry
+          <Field label={t('Password')} value={password} onChangeText={setPassword} placeholder={signup ? t('8+ characters') : t('Your password')} secureTextEntry
             autoComplete={signup ? 'new-password' : 'current-password'} textContentType={signup ? 'newPassword' : 'password'} returnKeyType="go" onSubmitEditing={submit} />
         </View>
 
@@ -109,13 +110,13 @@ export default function Auth() {
           </Animated.View>
         )}
 
-        <Button title={signup ? 'Create account' : 'Sign in'} kind="accent" loading={busy === 'email'} onPress={submit}
+        <Button title={signup ? t('Create account') : t('Sign in')} kind="accent" loading={busy === 'email'} onPress={submit}
           disabled={!email || !password || (signup && !name)} />
         <T v="small" muted style={{ textAlign: 'center' }}>
-          {signup ? (
-            <>By continuing you agree to the <Text style={st.link} onPress={() => openPage('terms')}>Terms</Text> and{' '}
-              <Text style={st.link} onPress={() => openPage('privacy')}>Privacy Policy</Text>. Ambodo is for adults 18+.</>
-          ) : 'Your messages are sealed and only shared with your co-parent and anyone you export them to.'}
+          {signup ? rich('By continuing you agree to the {terms} and {privacy}. Ambodo is for adults 18+.', {
+            terms: <Text style={st.link} onPress={() => openPage('terms')}>{t('Terms')}</Text>,
+            privacy: <Text style={st.link} onPress={() => openPage('privacy')}>{t('Privacy Policy')}</Text>,
+          }) : t('Your messages are sealed and only shared with your co-parent and anyone you export them to.')}
         </T>
       </ScrollView>
     </KeyboardAvoidingView>

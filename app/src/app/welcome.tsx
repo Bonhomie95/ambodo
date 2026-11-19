@@ -4,6 +4,8 @@ import Animated, { interpolate, useAnimatedScrollHandler, useAnimatedStyle, useS
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Mark } from '@/components/brand';
 import { Button, Icon, T } from '@/components/ui';
+import { weekLetters } from '@/lib/dates';
+import { t } from '@/lib/i18n';
 import { font, tint, useColors, type Palette } from '@/lib/theme';
 
 const bob = (ms: number, px: number, delay = 0) => ({
@@ -16,14 +18,14 @@ function TalkArt({ c }: { c: Palette }) {
   return (
     <View style={{ width: 280, height: 220 }}>
       <Animated.View style={[a.bubble, { backgroundColor: c.card, left: 0, top: 18, borderBottomLeftRadius: 6 }, bob(2600, 5)]}>
-        <Text style={[a.bubbleText, { color: c.text }]}>Can we swap Friday?</Text>
+        <Text style={[a.bubbleText, { color: c.text }]}>{t('Can we swap Friday?')}</Text>
       </Animated.View>
       <Animated.View style={[a.bubble, { backgroundColor: c.me, right: 0, top: 92, borderBottomRightRadius: 6 }, bob(3000, 6, 400)]}>
-        <Text style={[a.bubbleText, { color: '#fff' }]}>Sure, I&apos;ll do pickup 👍</Text>
+        <Text style={[a.bubbleText, { color: '#fff' }]}>{t("Sure, I'll do pickup 👍")}</Text>
       </Animated.View>
       <Animated.View style={[a.seal, { backgroundColor: tint(c.them, 0.16) }, bob(2200, 3, 800)]}>
         <Icon ios="lock.fill" android="lock" size={13} color={c.them} />
-        <Text style={{ fontFamily: font.heavy, fontSize: 12, color: c.them }}>SEALED · ON THE RECORD</Text>
+        <Text style={{ fontFamily: font.heavy, fontSize: 12, color: c.them }}>{t('SEALED · ON THE RECORD')}</Text>
       </Animated.View>
     </View>
   );
@@ -31,6 +33,7 @@ function TalkArt({ c }: { c: Palette }) {
 
 function PlanArt({ c }: { c: Palette }) {
   const seq = 'AABBAAABBAABBB';
+  const letters = weekLetters();
   return (
     <View style={{ width: 280, height: 220, justifyContent: 'center', gap: 10 }}>
       {[0, 1].map((row) => (
@@ -41,13 +44,13 @@ function PlanArt({ c }: { c: Palette }) {
               animationName: { '0%': { transform: [{ scale: 0.6 }], opacity: 0 }, '18%': { transform: [{ scale: 1 }], opacity: 1 }, '100%': { transform: [{ scale: 1 }], opacity: 1 } },
               animationDuration: 3600, animationDelay: (row * 7 + i) * 90, animationIterationCount: 'infinite', animationTimingFunction: 'ease-out',
             }}>
-              <Text style={{ fontFamily: font.heavy, fontSize: 13, color: '#fff' }}>{'MTWTFSS'[i]}</Text>
+              <Text style={{ fontFamily: font.heavy, fontSize: 13, color: '#fff' }}>{letters[i]}</Text>
             </Animated.View>
           ))}
         </View>
       ))}
       <View style={{ flexDirection: 'row', justifyContent: 'center', gap: 18, marginTop: 8 }}>
-        <T v="small" color={c.me}>● You</T><T v="small" color={c.them}>● Co-parent</T>
+        <T v="small" color={c.me}>● {t('You')}</T><T v="small" color={c.them}>● {t('Co-parent')}</T>
       </View>
     </View>
   );
@@ -64,16 +67,16 @@ function ProofArt({ c }: { c: Palette }) {
         animationDuration: 3000, animationIterationCount: 'infinite', animationTimingFunction: 'ease-out',
       }]}>
         <Icon ios="checkmark.seal.fill" android="verified" size={26} color={c.them} />
-        <Text style={{ fontFamily: font.heavy, fontSize: 11, color: c.them, letterSpacing: 1 }}>VERIFIED</Text>
+        <Text style={{ fontFamily: font.heavy, fontSize: 11, color: c.them, letterSpacing: 1 }}>{t('VERIFIED')}</Text>
       </Animated.View>
     </View>
   );
 }
 
 const SLIDES = [
-  { title: 'Talk calm.', body: 'ToneGuard checks every message before it lands. Kind words, on the record.', Art: TalkArt },
-  { title: 'Plan fair.', body: 'One custody calendar you both see the same way. Swaps in two taps.', Art: PlanArt },
-  { title: 'Keep proof.', body: 'Messages, handoffs and expenses — sealed and court-ready in one tap.', Art: ProofArt },
+  { title: t('Talk calm.'), body: t('ToneGuard checks every message before it lands. Kind words, on the record.'), Art: TalkArt },
+  { title: t('Plan fair.'), body: t('One custody calendar you both see the same way. Swaps in two taps.'), Art: PlanArt },
+  { title: t('Keep proof.'), body: t('Messages, handoffs and expenses — sealed and court-ready in one tap.'), Art: ProofArt },
 ];
 
 function Dot({ x, i, width, color }: { x: SharedValue<number>; i: number; width: number; color: string }) {
@@ -113,8 +116,8 @@ export default function Welcome() {
         <View style={{ flexDirection: 'row', gap: 6, alignSelf: 'center', marginBottom: 10 }}>
           {SLIDES.map((sl, i) => <Dot key={sl.title} x={x} i={i} width={width} color={c.text} />)}
         </View>
-        <Button title="Get started" kind="accent" onPress={() => router.push('/setup')} />
-        <Button title="I already have an account" kind="ghost" onPress={() => router.push('/auth?mode=signin')} />
+        <Button title={t('Get started')} kind="accent" onPress={() => router.push('/setup')} />
+        <Button title={t('I already have an account')} kind="ghost" onPress={() => router.push('/auth?mode=signin')} />
       </View>
     </View>
   );

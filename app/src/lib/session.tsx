@@ -3,6 +3,7 @@ import { createContext, use, useCallback, useEffect, useMemo, useRef, useState, 
 import { AppState } from 'react-native';
 import { api, ApiError, hasToken, setToken, type Family, type User } from './api';
 import { startBilling } from './billing';
+import { t } from './i18n';
 
 type Me = { user: User | null; family: Family | null };
 type State = Me & { ready: boolean; offline: boolean };
@@ -53,7 +54,7 @@ export function SessionProvider({ children }: { children: ReactNode }) {
       meId,
       pro: !!s.family?.plan?.active,
       other: s.family?.members.find((m) => m.id !== meId) ?? null,
-      nameOf: (id) => (id && id === meId ? 'You' : s.family?.members.find((m) => m.id === id)?.name ?? 'Co-parent'),
+      nameOf: (id) => (id && id === meId ? t('You') : s.family?.members.find((m) => m.id === id)?.name ?? t('Co-parent')),
       refresh,
       signIn: async (token) => {
         await setToken(token);

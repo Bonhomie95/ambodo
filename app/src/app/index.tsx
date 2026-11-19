@@ -6,6 +6,7 @@ import { Pressable, StyleSheet, View } from 'react-native';
 import Animated, { FadeInDown } from 'react-native-reanimated';
 import { Backdrop, Mark, Tagline, Wordmark, pickLook } from '@/components/brand';
 import { Button, T } from '@/components/ui';
+import { t } from '@/lib/i18n';
 import { useSession } from '@/lib/session';
 
 // Every launch draws a fresh look: 8 palettes × 5 patterns × random layout × 7 taglines.
@@ -19,15 +20,15 @@ export default function Intro() {
   // Start the clock only once the splash is gone, so slow launches still see the whole show.
   useEffect(() => {
     if (!shown) return;
-    const t = setTimeout(() => setTimeUp(true), 2800);
-    return () => clearTimeout(t);
+    const timer = setTimeout(() => setTimeUp(true), 2800);
+    return () => clearTimeout(timer);
   }, [shown]);
   useEffect(() => {
     if (timeUp && ready && !stuck) router.replace(!user ? '/welcome' : !family ? '/setup' : '/(tabs)');
   }, [timeUp, ready, stuck, user, family]);
 
   return (
-    <Pressable style={{ flex: 1 }} onPress={() => setTimeUp(true)} accessibilityHint="Tap to skip the intro"
+    <Pressable style={{ flex: 1 }} onPress={() => setTimeUp(true)} accessibilityHint={t('Tap to skip the intro')}
       onLayout={() => { if (!shown) { SplashScreen.hide(); setShown(true); } }}>
       <StatusBar style={look.light ? 'light' : 'dark'} />
       <Backdrop look={look} />
@@ -39,8 +40,8 @@ export default function Intro() {
       </View>}
       {stuck && (
         <Animated.View entering={FadeInDown.springify()} style={s.offline}>
-          <T v="strong" color={look.text}>Can&apos;t reach Ambodo right now.</T>
-          <Button title="Try again" kind="primary" onPress={refresh} style={{ alignSelf: 'stretch' }} />
+          <T v="strong" color={look.text}>{t("Can't reach Ambodo right now.")}</T>
+          <Button title={t('Try again')} kind="primary" onPress={refresh} style={{ alignSelf: 'stretch' }} />
         </Animated.View>
       )}
     </Pressable>

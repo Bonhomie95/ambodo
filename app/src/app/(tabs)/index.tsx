@@ -5,7 +5,8 @@ import Animated, { FadeInDown, ZoomIn } from 'react-native-reanimated';
 import { SwapCard } from '@/components/swap-card';
 import { Avatar, Button, Card, Icon, Row, Screen, T, Tap, toast } from '@/components/ui';
 import { api, type CalEvent, type Day, type Swap } from '@/lib/api';
-import { addDays, greeting, parse, relative, today, weekday } from '@/lib/dates';
+import { addDays, dayTag, fmt, greeting, parse, relative, time, today } from '@/lib/dates';
+import { rich, t } from '@/lib/i18n';
 import { useLoad, useSession } from '@/lib/session';
 import { KIND_ICON, shareInvite } from '@/lib/meta';
 import { brand, font, tint, useColors } from '@/lib/theme';
@@ -13,18 +14,18 @@ import { brand, font, tint, useColors } from '@/lib/theme';
 export default function Today() {
   const c = useColors();
   const { user, family, meId, other, nameOf, pro } = useSession();
-  const t = today();
+  const td = today();
   const { data, reload, loading } = useLoad(async () => {
     const [days, events, swaps] = await Promise.all([
-      api<Day[]>(`/custody?from=${addDays(t, -21)}&to=${addDays(t, 45)}`),
-      api<CalEvent[]>(`/events?from=${t}&to=${addDays(t, 30)}`),
+      api<Day[]>(`/custody?from=${addDays(td, -21)}&to=${addDays(td, 45)}`),
+      api<CalEvent[]>(`/events?from=${td}&to=${addDays(td, 30)}`),
       api<Swap[]>('/swaps'),
     ]);
     return { days, events, swaps };
   });
 
   const days = data?.days ?? [];
-  const i = days.findIndex((d) => d.date === t);
+  const i = days.findIndex((d) => d.date === td);
   const now = days[i];
   let start = i;
   let end = i;
@@ -43,7 +44,8 @@ export default function Today() {
     try {
       await api('/checkins', { body: { kind } });
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-      toast(`${kind === 'dropoff' ? 'Drop-off' : 'Pickup'} logged · ${new Date().toLocaleTimeString(undefined, { hour: 'numeric', minute: '2-digit' })}`);
+      const at = time(new Date().toISOString());
+      toast(kind === 'dropoff' ? t('Drop-off logged · {time}', { time: at }) : t('Pickup logged · {time}', { time: at }));
     } catch (e) { toast((e as Error).message); }
   }
 
@@ -51,17 +53,17 @@ export default function Today() {
     <Screen onRefresh={reload} refreshing={loading && !!data}>
       <Row style={{ justifyContent: 'space-between' }}>
         <View style={{ flex: 1 }}>
-          <T v="label">{parse(t).toLocaleDateString(undefined, { weekday: 'long', month: 'long', day: 'numeric' })}</T>
+          <T v="label">{fmt(td, { weekday: 'long', month: 'long', day: 'numeric' })}</T>
           <T v="title">{greeting()}, {user?.name}</T>
         </View>
-        <Tap onPress={() => router.navigate('/(tabs)/more')} accessibilityLabel="Family"><Avatar name={user?.name ?? '?'} color={c.me} size={44} /></Tap>
+        <Tap onPress={() => router.navigate('/(tabs)/more')} accessibilityLabel={t('Family')}><Avatar name={user?.name ?? '?'} color={c.me} size={44} /></Tap>
       </Row>
 
       <Animated.View entering={FadeInDown.springify().damping(15)} style={[st.hero, { backgroundImage: `linear-gradient(135deg, ${hero[0]}, ${hero[1]})` }]}>
         <View style={[st.heroGlow, { backgroundImage: 'radial-gradient(circle, rgba(255,255,255,0.35) 0%, rgba(255,255,255,0) 70%)' }]} />
-        <Text style={st.heroLabel}>TODAY THE KIDS ARE</Text>
+        <Text style={st.heroLabel}>{t('TODAY THE KIDS ARE')}</Text>
         <Text style={st.heroTitle} adjustsFontSizeToFit numberOfLines={1}>
-          {!now ? '…' : !now.parent ? 'not set yet' : mine ? 'with you' : `with ${nameOf(now.parent)}`}
+          {!now ? '…' : !now.parent ? t('not set yet') : mine ? t('with you') : t('with {name}', { name: nameOf(now.parent) })}
         </Text>
         <Row style={{ flexWrap: 'wrap', gap: 6 }}>
           {family?.kids.map((k) => <View key={k.id} style={st.kid}><Text style={st.kidText}>{k.name}</Text></View>)}
@@ -69,8 +71,10 @@ export default function Today() {
         {next && (
           <View style={{ gap: 8, marginTop: 6 }}>
             <Row style={{ justifyContent: 'space-between' }}>
-              <Text style={st.heroSmall}>Day {dayN} of {blockLen}</Text>
-              <Text style={st.heroSmall}>Handoff {relative(next.date).toLowerCase()} → {next.parent === meId ? 'you' : nameOf(next.parent)}</Text>
+              <Text style={st.heroSmall}>{t('Day {n} of {total}', { n: dayN, total: blockLen })}</Text>
+              <Text style={st.heroSmall}>{next.parent === meId
+                ? t('Handoff {when} → you', { when: relative(next.date, true) })
+                : t('Handoff {when} → {name}', { when: relative(next.date, true), name: nameOf(next.parent) })}</Text>
             </Row>
             <View style={{ flexDirection: 'row', gap: 4 }}>
               {Array.from({ length: Math.min(blockLen, 14) }, (_, k) => (
@@ -87,7 +91,7 @@ export default function Today() {
           const col = d.parent === meId ? c.me : d.parent ? c.them : c.muted;
           return (
             <Animated.View key={d.date} entering={ZoomIn.delay(100 + k * 45).springify()} style={[st.dayPill, { backgroundColor: tint(col, 0.16), borderColor: k === 0 ? col : 'transparent' }]}>
-              <Text style={[st.dayName, { color: col }]}>{weekday(d.date).slice(0, 2)}</Text>
+              <Text style={[st.dayName, { color: col }]}>{dayTag(d.date)}</Text>
               <Text style={[st.dayNum, { color: c.text }]}>{parse(d.date).getDate()}</Text>
               <View style={{ width: 6, height: 6, borderRadius: 3, backgroundColor: col }} />
             </Animated.View>
@@ -102,10 +106,10 @@ export default function Today() {
               <Animated.View style={{ animationName: { from: { transform: [{ scale: 1 }] }, to: { transform: [{ scale: 1.12 }] } }, animationDuration: 900, animationIterationCount: 'infinite', animationDirection: 'alternate' }}>
                 <Icon ios="person.badge.plus" android="person_add" size={26} color={c.them} />
               </Animated.View>
-              <T v="strong" style={{ flex: 1 }}>Bring your co-parent in</T>
+              <T v="strong" style={{ flex: 1 }}>{t('Bring your co-parent in')}</T>
             </Row>
-            <T muted>Share code <Text style={{ fontFamily: font.heavy, color: c.text }}>{family.invite}</Text>. Ambodo works best with both homes on it.</T>
-            <Button title="Share invite" kind="primary" style={{ height: 48 }} onPress={() => shareInvite(pro, family.invite, user?.name)} />
+            <T muted>{rich('Share code {code}. Ambodo works best with both homes on it.', { code: <Text style={{ fontFamily: font.heavy, color: c.text }}>{family.invite}</Text> })}</T>
+            <Button title={t('Share invite')} kind="primary" style={{ height: 48 }} onPress={() => shareInvite(pro, family.invite, user?.name)} />
           </Card>
         </Animated.View>
       )}
@@ -114,17 +118,17 @@ export default function Today() {
 
       <Animated.View entering={FadeInDown.delay(160)}>
         <Card>
-          <T v="label">Handoff</T>
-          <T v="h2">Log it while it happens.</T>
+          <T v="label">{t('Handoff')}</T>
+          <T v="h2">{t('Log it while it happens.')}</T>
           <Row>
-            <Button title="Dropped off" kind="soft" style={{ flex: 1, height: 48 }} onPress={() => handoff('dropoff')} />
-            <Button title="Picked up" kind="soft" style={{ flex: 1, height: 48 }} onPress={() => handoff('pickup')} />
+            <Button title={t('Dropped off')} kind="soft" style={{ flex: 1, height: 48 }} onPress={() => handoff('dropoff')} />
+            <Button title={t('Picked up')} kind="soft" style={{ flex: 1, height: 48 }} onPress={() => handoff('pickup')} />
           </Row>
         </Card>
       </Animated.View>
 
       <Row style={{ gap: 10 }}>
-        {([['New event', 'calendar.badge.plus', 'event', '/event'], ['Add expense', 'plus.circle.fill', 'add_card', '/expense'], ['Swap days', 'arrow.triangle.swap', 'swap_horiz', '/swap']] as const)
+        {([[t('New event'), 'calendar.badge.plus', 'event', '/event'], [t('Add expense'), 'plus.circle.fill', 'add_card', '/expense'], [t('Swap days'), 'arrow.triangle.swap', 'swap_horiz', '/swap']] as const)
           .map(([label, ios, android, href], k) => (
             <Animated.View key={label} entering={FadeInDown.delay(200 + k * 60)} style={{ flex: 1 }}>
               <Tap onPress={() => router.push(href === '/expense' && !pro ? '/plan' : href)} style={[st.quick, { backgroundColor: c.card, borderColor: c.line }]}>
@@ -136,7 +140,7 @@ export default function Today() {
       </Row>
 
       <View style={{ gap: 10 }}>
-        <T v="label">Coming up</T>
+        <T v="label">{t('Coming up')}</T>
         {(data?.events ?? []).slice(0, 4).map((e, k) => {
           const [ios, android] = KIND_ICON[e.kind] ?? KIND_ICON.other;
           return (
@@ -151,7 +155,7 @@ export default function Today() {
             </Animated.View>
           );
         })}
-        {data && !data.events.length && <T muted>Nothing on the books. Enjoy the quiet. ☀️</T>}
+        {data && !data.events.length && <T muted>{t('Nothing on the books. Enjoy the quiet. ☀️')}</T>}
       </View>
     </Screen>
   );

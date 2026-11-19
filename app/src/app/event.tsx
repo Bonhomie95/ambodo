@@ -6,10 +6,11 @@ import { MonthGrid } from '@/components/month';
 import { Sheet } from '@/components/sheet';
 import { Button, Chip, Field, Icon, Row, T, Tap, toast } from '@/components/ui';
 import { api, type Day } from '@/lib/api';
-import { monthGrid, nice, parse, today } from '@/lib/dates';
+import { monthGrid, monthTitle, nice, parse, today } from '@/lib/dates';
+import { t } from '@/lib/i18n';
 import { useLoad, useSession } from '@/lib/session';
 
-const KINDS = [['school', 'School'], ['health', 'Health'], ['activity', 'Activity'], ['handoff', 'Handoff'], ['other', 'Other']] as const;
+const KINDS = [['school', t('School')], ['health', t('Health')], ['activity', t('Activity')], ['handoff', t('Handoff')], ['other', t('Other')]] as const;
 
 export default function NewEvent() {
   const params = useLocalSearchParams<{ date?: string }>();
@@ -31,26 +32,26 @@ export default function NewEvent() {
     try {
       await api('/events', { body: { title, date: day, kind, time: clock ? `${clock[1].padStart(2, '0')}:${clock[2]}` : null } });
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-      toast('On the calendar. Both homes can see it.');
+      toast(t('On the calendar. Both homes can see it.'));
       router.back();
     } catch (e) { toast((e as Error).message); setBusy(false); }
   }
 
   const step = (n: number) => { const d = new Date(view.y, view.m + n, 1); setView({ y: d.getFullYear(), m: d.getMonth() }); };
   return (
-    <Sheet title="New event" footer={<Button title={`Add for ${nice(day)}`} kind="accent" loading={busy} disabled={!title.trim() || !timeOk} onPress={save} />}>
-      <Field label="What’s happening" value={title} onChangeText={setTitle} placeholder="Dentist, recital, field trip…" autoFocus />
+    <Sheet title={t('New event')} footer={<Button title={t('Add for {date}', { date: nice(day) })} kind="accent" loading={busy} disabled={!title.trim() || !timeOk} onPress={save} />}>
+      <Field label={t('What’s happening')} value={title} onChangeText={setTitle} placeholder={t('Dentist, recital, field trip…')} autoFocus />
       <View style={{ gap: 10 }}>
-        <T v="label">Kind</T>
+        <T v="label">{t('Kind')}</T>
         <Row style={{ flexWrap: 'wrap' }}>{KINDS.map(([k, label]) => <Chip key={k} label={label} on={kind === k} onPress={() => setKind(k)} />)}</Row>
       </View>
-      <Field label="Time (optional)" value={at} onChangeText={setAt} placeholder="15:30" keyboardType="numbers-and-punctuation" maxLength={5} />
+      <Field label={t('Time (optional)')} value={at} onChangeText={setAt} placeholder="15:30" keyboardType="numbers-and-punctuation" maxLength={5} />
       <View style={{ gap: 6 }}>
         <Row style={{ justifyContent: 'space-between' }}>
-          <T v="h2">{new Date(view.y, view.m, 1).toLocaleDateString(undefined, { month: 'long', year: 'numeric' })}</T>
+          <T v="h2">{monthTitle(view.y, view.m)}</T>
           <Row>
-            <Tap onPress={() => step(-1)} accessibilityLabel="Previous month"><Icon ios="chevron.left" android="chevron_left" size={18} /></Tap>
-            <Tap onPress={() => step(1)} accessibilityLabel="Next month"><Icon ios="chevron.right" android="chevron_right" size={18} /></Tap>
+            <Tap onPress={() => step(-1)} accessibilityLabel={t('Previous month')}><Icon ios="chevron.left" android="chevron_left" size={18} /></Tap>
+            <Tap onPress={() => step(1)} accessibilityLabel={t('Next month')}><Icon ios="chevron.right" android="chevron_right" size={18} /></Tap>
           </Row>
         </Row>
         <MonthGrid year={view.y} month={view.m} meId={meId} selected={[day]} onPress={setDay}

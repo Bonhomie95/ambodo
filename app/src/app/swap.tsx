@@ -6,7 +6,8 @@ import { MonthGrid } from '@/components/month';
 import { Sheet } from '@/components/sheet';
 import { Button, Chip, Field, Icon, Row, T, Tap, toast } from '@/components/ui';
 import { api, type Day } from '@/lib/api';
-import { monthGrid, parse, today } from '@/lib/dates';
+import { monthGrid, monthTitle, parse, today } from '@/lib/dates';
+import { t, tn } from '@/lib/i18n';
 import { useLoad, useSession } from '@/lib/session';
 import { useColors } from '@/lib/theme';
 
@@ -35,34 +36,34 @@ export default function SwapRequest() {
     try {
       await api('/swaps', { body: { dates, assignTo: target, note } });
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-      toast(`Request sent to ${other?.name ?? 'your co-parent'}.`);
+      toast(t('Request sent to {name}.', { name: other?.name ?? t('your co-parent') }));
       router.back();
     } catch (e) { toast((e as Error).message); setBusy(false); }
   }
 
   return (
-    <Sheet title="Swap days" footer={
-      <Button title={dates.length ? `Ask for ${dates.length} day${dates.length > 1 ? 's' : ''}` : 'Pick days'} kind="accent" loading={busy} disabled={!dates.length || !other} onPress={send} />
+    <Sheet title={t('Swap days')} footer={
+      <Button title={dates.length ? tn(dates.length, 'Ask for {n} day', 'Ask for {n} days') : t('Pick days')} kind="accent" loading={busy} disabled={!dates.length || !other} onPress={send} />
     }>
-      <T muted>Tap the days you want to trade. Nothing changes until {other?.name ?? 'your co-parent'} says yes.</T>
+      <T muted>{t('Tap the days you want to trade. Nothing changes until {name} says yes.', { name: other?.name ?? t('your co-parent') })}</T>
       <View style={{ gap: 6 }}>
         <Row style={{ justifyContent: 'space-between' }}>
-          <T v="h2">{new Date(view.y, view.m, 1).toLocaleDateString(undefined, { month: 'long', year: 'numeric' })}</T>
+          <T v="h2">{monthTitle(view.y, view.m)}</T>
           <Row>
-            <Tap onPress={() => step(-1)} accessibilityLabel="Previous month"><Icon ios="chevron.left" android="chevron_left" size={18} /></Tap>
-            <Tap onPress={() => step(1)} accessibilityLabel="Next month"><Icon ios="chevron.right" android="chevron_right" size={18} /></Tap>
+            <Tap onPress={() => step(-1)} accessibilityLabel={t('Previous month')}><Icon ios="chevron.left" android="chevron_left" size={18} /></Tap>
+            <Tap onPress={() => step(1)} accessibilityLabel={t('Next month')}><Icon ios="chevron.right" android="chevron_right" size={18} /></Tap>
           </Row>
         </Row>
         <MonthGrid year={view.y} month={view.m} meId={meId} custody={custody} selected={dates} onPress={toggle} />
       </View>
       <View style={{ gap: 10 }}>
-        <T v="label">Who has the kids those days?</T>
+        <T v="label">{t('Who has the kids those days?')}</T>
         <Row>
-          <Chip label="Me" on={target === meId} color={c.me} onPress={() => setAssignTo(meId)} />
+          <Chip label={t('Me')} on={target === meId} color={c.me} onPress={() => setAssignTo(meId)} />
           {other && <Chip label={other.name} on={target === other.id} color={c.them} onPress={() => setAssignTo(other.id)} />}
         </Row>
       </View>
-      <Field label="Note (optional)" value={note} onChangeText={setNote} placeholder="Work trip — happy to trade next weekend" maxLength={300} />
+      <Field label={t('Note (optional)')} value={note} onChangeText={setNote} placeholder={t('Work trip — happy to trade next weekend')} maxLength={300} />
     </Sheet>
   );
 }

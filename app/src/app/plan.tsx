@@ -9,19 +9,20 @@ import { Mark } from '@/components/brand';
 import { Button, Field, Icon, Row, T, Tap, toast } from '@/components/ui';
 import { api, openPage, type Family } from '@/lib/api';
 import { buy, getOffers, manageUrl, restore, testMode, type Offer } from '@/lib/billing';
+import { locale, t } from '@/lib/i18n';
 import { useSession } from '@/lib/session';
 import { brand, font, tint, useColors } from '@/lib/theme';
 
-const store = Platform.OS === 'ios' ? 'Apple Account' : 'Google Play account';
+const store = Platform.OS === 'ios' ? t('Apple Account') : t('Google Play account');
 
 const PERKS: [string, string, string, string][] = [
-  ['person.2.fill', 'group', 'Connect your co-parent', 'One plan for both homes — whoever pays, you both get everything.'],
-  ['calendar.badge.plus', 'event', 'Events, swaps & every kid', 'Add appointments, trade days and all your kids.'],
-  ['doc.richtext', 'picture_as_pdf', 'Court-ready PDF records', 'Messages, handoffs, expenses and swaps in one sealed report.'],
-  ['creditcard.fill', 'payments', 'Expenses, splits & settle-ups', 'Every receipt logged, every share clear.'],
-  ['wind', 'air', 'Unlimited calmer rewrites', 'ToneGuard turns heat into “let’s figure this out.”'],
-  ['calendar.badge.clock', 'event_repeat', 'Sync to Apple & Google Calendar', 'Custody days show up where you already look.'],
-  ['bolt.heart.fill', 'support_agent', 'Priority support', 'Real humans, fast — when it matters most.'],
+  ['person.2.fill', 'group', t('Connect your co-parent'), t('One plan for both homes — whoever pays, you both get everything.')],
+  ['calendar.badge.plus', 'event', t('Events, swaps & every kid'), t('Add appointments, trade days and all your kids.')],
+  ['doc.richtext', 'picture_as_pdf', t('Court-ready PDF records'), t('Messages, handoffs, expenses and swaps in one sealed report.')],
+  ['creditcard.fill', 'payments', t('Expenses, splits & settle-ups'), t('Every receipt logged, every share clear.')],
+  ['wind', 'air', t('Unlimited calmer rewrites'), t('ToneGuard turns heat into “let’s figure this out.”')],
+  ['calendar.badge.clock', 'event_repeat', t('Sync to Apple & Google Calendar'), t('Custody days show up where you already look.')],
+  ['bolt.heart.fill', 'support_agent', t('Priority support'), t('Real humans, fast — when it matters most.')],
 ];
 
 export default function Plan() {
@@ -73,8 +74,8 @@ export default function Plan() {
       <View style={[st.done, { backgroundImage: `linear-gradient(160deg, ${brand.ink2}, ${brand.ink})` }]}>
         {lightBar}
         <Animated.View entering={ZoomIn.springify().damping(10)}><Mark size={150} animated /></Animated.View>
-        <Animated.Text entering={FadeInDown.delay(500)} style={st.doneTitle}>Welcome to{'\n'}Ambodo Family.</Animated.Text>
-        <Animated.Text entering={FadeIn.delay(800)} style={st.doneSub}>Both homes are unlocked.</Animated.Text>
+        <Animated.Text entering={FadeInDown.delay(500)} style={st.doneTitle}>{t('Welcome to\nAmbodo Family.')}</Animated.Text>
+        <Animated.Text entering={FadeIn.delay(800)} style={st.doneSub}>{t('Both homes are unlocked.')}</Animated.Text>
       </View>
     );
   }
@@ -89,29 +90,29 @@ export default function Plan() {
           <View style={[st.glow, { backgroundImage: `radial-gradient(circle, ${tint(brand.sun, 0.35)} 0%, ${tint(brand.sun, 0)} 70%)` }]} />
           <Row style={{ justifyContent: 'space-between' }}>
             <Mark size={70} animated />
-            <Tap onPress={() => router.back()} accessibilityLabel="Close" style={st.close}>
+            <Tap onPress={() => router.back()} accessibilityLabel={t('Close')} style={st.close}>
               <Icon ios="xmark" android="close" size={15} color="#FFFFFF" />
             </Tap>
           </Row>
           <Text style={st.kicker}>AMBODO FAMILY</Text>
-          <Animated.Text entering={FadeInDown.delay(150).springify()} style={st.title}>One plan.{'\n'}Both homes.</Animated.Text>
+          <Animated.Text entering={FadeInDown.delay(150).springify()} style={st.title}>{t('One plan.\nBoth homes.')}</Animated.Text>
           <Animated.Text entering={FadeInDown.delay(250)} style={st.sub}>
-            Covers you and {other?.name ?? 'your co-parent'} — other apps bill each parent separately. We don’t.
+            {t('Covers you and {name} — other apps bill each parent separately. We don’t.', { name: other?.name ?? t('your co-parent') })}
           </Animated.Text>
         </View>
 
         <View style={{ padding: 22, gap: 16 }}>
           {plan?.active ? (
             <Animated.View entering={FadeInDown} style={[st.active, { backgroundColor: tint(c.good, 0.12), borderColor: tint(c.good, 0.4) }]}>
-              <Row><Icon ios="checkmark.seal.fill" android="verified" size={22} color={c.good} /><T v="strong">You’re on Ambodo Family</T></Row>
+              <Row><Icon ios="checkmark.seal.fill" android="verified" size={22} color={c.good} /><T v="strong">{t('You’re on Ambodo Family')}</T></Row>
               <T v="small" muted>
-                {plan.source === 'waiver' ? 'Fee waiver approved — no charge.' : plan.expiresAt ? `Covered through ${new Date(plan.expiresAt).toLocaleDateString(undefined, { day: 'numeric', month: 'short', year: 'numeric' })}.` : ''}
-                {plan.source === 'dev' ? ' Test plan — no real charge.' : ''}
+                {plan.source === 'waiver' ? t('Fee waiver approved — no charge.') : plan.expiresAt ? t('Covered through {date}.', { date: new Date(plan.expiresAt).toLocaleDateString(locale, { day: 'numeric', month: 'short', year: 'numeric' }) }) : ''}
+                {plan.source === 'dev' ? ` ${t('Test plan — no real charge.')}` : ''}
               </T>
-              {plan.source === 'store' && <Button title="Manage subscription" kind="soft" style={{ height: 46 }} onPress={() => Linking.openURL(manageUrl)} />}
+              {plan.source === 'store' && <Button title={t('Manage subscription')} kind="soft" style={{ height: 46 }} onPress={() => Linking.openURL(manageUrl)} />}
               {plan.source === 'dev' && testMode && (
-                <Button title="End test plan" kind="soft" style={{ height: 46 }}
-                  onPress={async () => { setFamily(await api<Family>('/billing/dev-grant', { body: { period: 'off' } })); toast('Back on Free.'); }} />
+                <Button title={t('End test plan')} kind="soft" style={{ height: 46 }}
+                  onPress={async () => { setFamily(await api<Family>('/billing/dev-grant', { body: { period: 'off' } })); toast(t('Back on Free.')); }} />
               )}
             </Animated.View>
           ) : null}
@@ -136,57 +137,59 @@ export default function Plan() {
                 {offers.map((o) => {
                   const on = o.period === chosen?.period;
                   return (
-                    <Tap key={o.period} onPress={() => setPeriod(o.period)} accessibilityState={{ selected: on }} accessibilityLabel={`${o.period} plan ${o.price}`}
+                    <Tap key={o.period} onPress={() => setPeriod(o.period)} accessibilityState={{ selected: on }} accessibilityLabel={o.period === 'annual' ? t('Yearly plan {price}', { price: o.price }) : t('Monthly plan {price}', { price: o.price })}
                       style={[st.option, { backgroundColor: c.card, borderColor: on ? c.text : c.line, borderWidth: on ? 2 : 1 }]}>
                       <View style={[st.radio, { borderColor: on ? c.text : c.line }]}>{on && <View style={[st.dot, { backgroundColor: c.text }]} />}</View>
                       <View style={{ flex: 1 }}>
-                        <T v="strong">{o.period === 'annual' ? 'Yearly' : 'Monthly'}</T>
-                        <T v="small" muted>{o.period === 'annual' ? `${o.price} a year${o.perMonth ? ` · ${o.perMonth}/mo` : ''}` : `${o.price} a month`}</T>
+                        <T v="strong">{o.period === 'annual' ? t('Yearly') : t('Monthly')}</T>
+                        <T v="small" muted>{o.period === 'annual'
+                          ? t('{price} a year', { price: o.price }) + (o.perMonth ? ` · ${t('{price}/mo', { price: o.perMonth })}` : '')
+                          : t('{price} a month', { price: o.price })}</T>
                       </View>
                       {o.period === 'annual' && save ? (
-                        <View style={[st.save, { backgroundColor: c.me }]}><Text style={st.saveText}>SAVE {save}%</Text></View>
+                        <View style={[st.save, { backgroundColor: c.me }]}><Text style={st.saveText}>{t('SAVE {n}%', { n: save })}</Text></View>
                       ) : null}
                     </Tap>
                   );
                 })}
               </View>
 
-              <Button title={chosen ? `Start Family · ${chosen.price}${chosen.period === 'annual' ? '/yr' : '/mo'}` : 'Start Ambodo Family'} kind="accent"
-                loading={busy === 'buy' || !offers.length} disabled={!chosen || !!busy} onPress={() => chosen && run('buy', () => buy(chosen), 'Not active yet — try Restore.')} />
+              <Button title={!chosen ? t('Start Ambodo Family') : chosen.period === 'annual' ? t('Start Family · {price}/yr', { price: chosen.price }) : t('Start Family · {price}/mo', { price: chosen.price })} kind="accent"
+                loading={busy === 'buy' || !offers.length} disabled={!chosen || !!busy} onPress={() => chosen && run('buy', () => buy(chosen), t('Not active yet — try Restore.'))} />
 
               {testMode && (
                 <View style={[st.test, { backgroundColor: tint(c.sun, 0.14) }]}>
                   <Icon ios="testtube.2" android="science" size={16} color={c.sun} />
-                  <T v="small" style={{ flex: 1 }}>Test mode — no charge. Add your RevenueCat keys to sell for real.</T>
+                  <T v="small" style={{ flex: 1 }}>{t('Test mode — no charge. Add your RevenueCat keys to sell for real.')}</T>
                 </View>
               )}
             </>
           )}
 
           <Row style={{ justifyContent: 'center', gap: 22 }}>
-            <Tap haptic={false} disabled={!!busy} onPress={() => run('restore', restore, 'No purchases to restore on this account.')}>
-              <T v="small" color={c.text}>{busy === 'restore' ? 'Restoring…' : 'Restore purchases'}</T>
+            <Tap haptic={false} disabled={!!busy} onPress={() => run('restore', restore, t('No purchases to restore on this account.'))}>
+              <T v="small" color={c.text}>{busy === 'restore' ? t('Restoring…') : t('Restore purchases')}</T>
             </Tap>
             {!plan?.active && family?.plan?.waiver !== 'pending' && (
-              <Tap haptic={false} onPress={() => setWaiverOpen(!waiverOpen)}><T v="small" color={c.text}>Need a fee waiver?</T></Tap>
+              <Tap haptic={false} onPress={() => setWaiverOpen(!waiverOpen)}><T v="small" color={c.text}>{t('Need a fee waiver?')}</T></Tap>
             )}
           </Row>
 
-          {family?.plan?.waiver === 'pending' && <T v="small" muted style={{ textAlign: 'center' }}>Your fee-waiver request is being reviewed.</T>}
+          {family?.plan?.waiver === 'pending' && <T v="small" muted style={{ textAlign: 'center' }}>{t('Your fee-waiver request is being reviewed.')}</T>}
           {waiverOpen && family?.plan?.waiver !== 'pending' && (
             <Animated.View entering={FadeInDown} style={{ gap: 10 }}>
-              <T v="small" muted>Money shouldn’t stop a family from co-parenting calmly. Tell us briefly — court fee waiver, hardship, or safety.</T>
-              <Field label="Your situation" value={reason} onChangeText={setReason} multiline maxLength={500} placeholder="e.g. court fee waiver granted in October" />
-              <Button title="Request waiver" kind="soft" loading={busy === 'waiver'} disabled={!reason.trim()}
-                onPress={() => run('waiver', () => api<Family>('/billing/waiver', { body: { reason } }), 'Request sent. We’ll reply within 2 days.').then(() => setWaiverOpen(false))} />
+              <T v="small" muted>{t('Money shouldn’t stop a family from co-parenting calmly. Tell us briefly — court fee waiver, hardship, or safety.')}</T>
+              <Field label={t('Your situation')} value={reason} onChangeText={setReason} multiline maxLength={500} placeholder={t('e.g. court fee waiver granted in October')} />
+              <Button title={t('Request waiver')} kind="soft" loading={busy === 'waiver'} disabled={!reason.trim()}
+                onPress={() => run('waiver', () => api<Family>('/billing/waiver', { body: { reason } }), t('Request sent. We’ll reply within 2 days.')).then(() => setWaiverOpen(false))} />
             </Animated.View>
           )}
 
           <T v="small" muted style={{ textAlign: 'center', fontSize: 11, lineHeight: 16 }}>
-            Billed to your {store}. Auto-renews at the price above until cancelled. Cancel anytime at least 24 hours before renewal in your {store} settings.{' '}
-            <Text style={{ textDecorationLine: 'underline' }} onPress={() => openPage('terms')}>Terms</Text>
+            {t('Billed to your {store}. Auto-renews at the price above until cancelled. Cancel anytime at least 24 hours before renewal in your {store} settings.', { store })}{' '}
+            <Text style={{ textDecorationLine: 'underline' }} onPress={() => openPage('terms')}>{t('Terms')}</Text>
             {' · '}
-            <Text style={{ textDecorationLine: 'underline' }} onPress={() => openPage('privacy')}>Privacy</Text>
+            <Text style={{ textDecorationLine: 'underline' }} onPress={() => openPage('privacy')}>{t('Privacy')}</Text>
           </T>
         </View>
       </Animated.ScrollView>

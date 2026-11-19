@@ -3,14 +3,19 @@
 
 export type Tone = { level: 'calm' | 'tense' | 'heated'; issues: string[]; calmer: string };
 
+// The reasons are English keys that the Talk screen translates. This `t` only marks them for `npm run i18n`,
+// so this file stays free of app imports for its node test. ponytail: the word rules are English-only;
+// other languages still get the all-caps and stacked-punctuation checks.
+const t = (s: string) => s;
+
 const RULES: [RegExp, string][] = [
-  [/\byou (always|never)\b/i, '"Always/never" reads as an attack'],
-  [/\b(stupid|idiot|liar|pathetic|useless|crazy|psycho|loser|bitch|asshole|bastard|dumb)\b/i, 'Name-calling'],
-  [/\b(your fault|because of you|thanks to you|you ruined)\b/i, 'Blame lands hard'],
-  [/\b(whatever|i don'?t care|grow up|get a life|shut up|deal with it)\b/i, 'Sounds dismissive'],
-  [/\b(or else|you'?ll regret|see you in court|my lawyer will)\b/i, 'Sounds like a threat'],
-  [/\b(ridiculous|absurd|unbelievable|insane|unacceptable|disgusting|a joke)\b/i, 'Judging words sting — say how it feels'],
-  [/[!?]{3,}|!{2,}/, 'Stacked punctuation'],
+  [/\byou (always|never)\b/i, t('"Always/never" reads as an attack')],
+  [/\b(stupid|idiot|liar|pathetic|useless|crazy|psycho|loser|bitch|asshole|bastard|dumb)\b/i, t('Name-calling')],
+  [/\b(your fault|because of you|thanks to you|you ruined)\b/i, t('Blame lands hard')],
+  [/\b(whatever|i don'?t care|grow up|get a life|shut up|deal with it)\b/i, t('Sounds dismissive')],
+  [/\b(or else|you'?ll regret|see you in court|my lawyer will)\b/i, t('Sounds like a threat')],
+  [/\b(ridiculous|absurd|unbelievable|insane|unacceptable|disgusting|a joke)\b/i, t('Judging words sting — say how it feels')],
+  [/[!?]{3,}|!{2,}/, t('Stacked punctuation')],
 ];
 
 const SWAPS: [RegExp, string][] = [
@@ -28,7 +33,7 @@ const SWAPS: [RegExp, string][] = [
 export function checkTone(text: string): Tone {
   const issues = RULES.filter(([re]) => re.test(text)).map(([, why]) => why);
   const shouty = text.split(/\s+/).filter((w) => w.length > 2 && /[A-Z]/.test(w) && w === w.toUpperCase()).length;
-  if (shouty >= 2) issues.push('All caps reads as yelling');
+  if (shouty >= 2) issues.push(t('All caps reads as yelling'));
 
   let calmer = text.replace(/\b[A-Z]{3,}\b/g, (w) => w.toLowerCase());
   for (const [re, to] of SWAPS) calmer = calmer.replace(re, to);

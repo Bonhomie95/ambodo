@@ -6,7 +6,8 @@ import { MonthGrid } from '@/components/month';
 import { SwapCard } from '@/components/swap-card';
 import { Button, Card, Icon, Row, Screen, T, Tap } from '@/components/ui';
 import { api, calendarFeedUrl, type CalEvent, type Day, type Swap } from '@/lib/api';
-import { monthGrid, nice, parse, today } from '@/lib/dates';
+import { monthGrid, monthTitle, nice, parse, today } from '@/lib/dates';
+import { t } from '@/lib/i18n';
 import { KIND_ICON } from '@/lib/meta';
 import { patternName } from '@/lib/patterns';
 import { useLoad, useSession } from '@/lib/session';
@@ -50,7 +51,7 @@ export default function Calendar() {
     if (!pro) return router.push('/plan');
     const url = calendarFeedUrl(family.ics);
     if (await Linking.canOpenURL(url).catch(() => false)) Linking.openURL(url);
-    else Share.share({ message: `Subscribe to our Ambodo calendar: ${url}`, url });
+    else Share.share({ message: t('Subscribe to our Ambodo calendar: {url}', { url }), url });
   }
 
   return (
@@ -59,12 +60,12 @@ export default function Calendar() {
         <View>
           <T v="label">{family ? patternName(family.schedule.pattern) : ''}</T>
           <Animated.View key={`${view.y}-${view.m}`} entering={FadeIn.duration(220)}>
-            <T v="title">{new Date(view.y, view.m, 1).toLocaleDateString(undefined, { month: 'long', year: 'numeric' })}</T>
+            <T v="title">{monthTitle(view.y, view.m)}</T>
           </Animated.View>
         </View>
         <Row style={{ gap: 6 }}>
-          <Tap onPress={() => shift(-1)} style={[st.nav, { backgroundColor: c.soft }]} accessibilityLabel="Previous month"><Icon ios="chevron.left" android="chevron_left" size={18} /></Tap>
-          <Tap onPress={() => shift(1)} style={[st.nav, { backgroundColor: c.soft }]} accessibilityLabel="Next month"><Icon ios="chevron.right" android="chevron_right" size={18} /></Tap>
+          <Tap onPress={() => shift(-1)} style={[st.nav, { backgroundColor: c.soft }]} accessibilityLabel={t('Previous month')}><Icon ios="chevron.left" android="chevron_left" size={18} /></Tap>
+          <Tap onPress={() => shift(1)} style={[st.nav, { backgroundColor: c.soft }]} accessibilityLabel={t('Next month')}><Icon ios="chevron.right" android="chevron_right" size={18} /></Tap>
         </Row>
       </Row>
 
@@ -74,10 +75,10 @@ export default function Calendar() {
           <MonthGrid year={view.y} month={view.m} custody={custody} meId={meId} dots={dots} selected={[selected]} onPress={setSelected} />
         </Animated.View>
         <Row style={{ justifyContent: 'center', gap: 18, paddingTop: 6 }}>
-          <Row style={{ gap: 6 }}><View style={[st.key, { backgroundColor: c.me }]} /><T v="small">You</T></Row>
-          <Row style={{ gap: 6 }}><View style={[st.key, { backgroundColor: c.them }]} /><T v="small">{other?.name ?? 'Co-parent'}</T></Row>
+          <Row style={{ gap: 6 }}><View style={[st.key, { backgroundColor: c.me }]} /><T v="small">{t('You')}</T></Row>
+          <Row style={{ gap: 6 }}><View style={[st.key, { backgroundColor: c.them }]} /><T v="small">{other?.name ?? t('Co-parent')}</T></Row>
           {(view.y !== now.getFullYear() || view.m !== now.getMonth()) && (
-            <Tap onPress={() => { setView({ y: now.getFullYear(), m: now.getMonth(), dir: 0 }); setSelected(today()); }}><T v="small" color={c.me}>Today</T></Tap>
+            <Tap onPress={() => { setView({ y: now.getFullYear(), m: now.getMonth(), dir: 0 }); setSelected(today()); }}><T v="small" color={c.me}>{t('Today')}</T></Tap>
           )}
         </Row>
       </Card>
@@ -88,7 +89,7 @@ export default function Calendar() {
             <T v="h2">{nice(selected)}</T>
             {who !== undefined && (
               <View style={[st.who, { backgroundColor: tint(who === meId ? c.me : c.them, 0.16) }]}>
-                <T v="small" color={who === meId ? c.me : c.them}>{who === meId ? 'With you' : who ? `With ${nameOf(who)}` : 'Not set'}</T>
+                <T v="small" color={who === meId ? c.me : c.them}>{who === meId ? t('With you') : who ? t('With {name}', { name: nameOf(who) }) : t('Not set')}</T>
               </View>
             )}
           </Row>
@@ -102,24 +103,24 @@ export default function Calendar() {
               </Row>
             );
           })}
-          {!dayEvents.length && <T muted>No plans yet.</T>}
+          {!dayEvents.length && <T muted>{t('No plans yet.')}</T>}
           <Row>
-            <Button title="Add event" kind="soft" style={{ flex: 1, height: 46 }} onPress={() => router.push({ pathname: '/event', params: { date: selected } })} />
-            <Button title="Ask to swap" kind="soft" style={{ flex: 1, height: 46 }} disabled={!other}
+            <Button title={t('Add event')} kind="soft" style={{ flex: 1, height: 46 }} onPress={() => router.push({ pathname: '/event', params: { date: selected } })} />
+            <Button title={t('Ask to swap')} kind="soft" style={{ flex: 1, height: 46 }} disabled={!other}
               onPress={() => router.push({ pathname: '/swap', params: { date: selected } })} />
           </Row>
         </Card>
       </Animated.View>
 
-      {!!swaps.length && <T v="label">Swap requests</T>}
+      {!!swaps.length && <T v="label">{t('Swap requests')}</T>}
       {swaps.map((s, i) => <SwapCard key={s.id} swap={s} onChange={reload} index={i} />)}
 
       <Tap onPress={subscribe}>
         <Card style={{ flexDirection: 'row', alignItems: 'center', gap: 14 }}>
           <Icon ios="calendar.badge.clock" android="event_repeat" size={24} color={c.them} />
           <View style={{ flex: 1 }}>
-            <T v="strong">Sync to your calendar</T>
-            <T v="small" muted>Custody days & events in Apple or Google Calendar.{pro ? '' : ' · Family'}</T>
+            <T v="strong">{t('Sync to your calendar')}</T>
+            <T v="small" muted>{t('Custody days & events in Apple or Google Calendar.')}{pro ? '' : ' · Ambodo Family'}</T>
           </View>
           <Icon ios="chevron.right" android="chevron_right" size={16} color={c.muted} />
         </Card>

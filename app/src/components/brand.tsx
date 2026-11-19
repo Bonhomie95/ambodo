@@ -1,5 +1,6 @@
 import { StyleSheet, Text, View, useWindowDimensions } from 'react-native';
 import Animated, { cubicBezier, type CSSAnimationKeyframes } from 'react-native-reanimated';
+import { t } from '@/lib/i18n';
 import { brand, font, tint } from '@/lib/theme';
 
 export type MarkColors = { b: string; o: string; d: string };
@@ -82,8 +83,8 @@ const PALETTES: Palette[] = [
 ];
 const PATTERNS: Pattern[] = ['aurora', 'sonar', 'orbit', 'beams', 'ripple'];
 const TAGLINES = [
-  'Two homes. One team.', 'Same kids. Same page.', 'Plans, not fights.', 'Less drama. More dinner.',
-  'Kind words. Clear days.', 'Both homes, one heartbeat.', 'Co-parent like a pro.',
+  t('Two homes. One team.'), t('Same kids. Same page.'), t('Plans, not fights.'), t('Less drama. More dinner.'),
+  t('Kind words. Clear days.'), t('Both homes, one heartbeat.'), t('Co-parent like a pro.'),
 ];
 const pick = <T,>(a: readonly T[]) => a[Math.floor(Math.random() * a.length)];
 

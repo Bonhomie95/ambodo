@@ -8,12 +8,14 @@ import { Mark } from '@/components/brand';
 import { Button, Icon, Row, T, Tap, toast } from '@/components/ui';
 import { api, needsPlan, unreadBadge, type Message } from '@/lib/api';
 import { relative, time, ymd } from '@/lib/dates';
+import { t, tn } from '@/lib/i18n';
 import { shareInvite } from '@/lib/meta';
 import { useSession } from '@/lib/session';
 import { font, tint, useColors } from '@/lib/theme';
 import { checkTone, type Tone } from '@/lib/tone';
 
 const dayOf = (iso: string) => ymd(new Date(iso));
+const TONE = { calm: t('TONE · CALM'), tense: t('TONE · TENSE'), heated: t('TONE · HEATED') };
 
 export default function Talk() {
   const c = useColors();
@@ -50,19 +52,19 @@ export default function Talk() {
     try {
       const { left } = await api<{ left: number | null }>('/tone/rewrite', { method: 'POST' });
       await send(calmer, true);
-      if (left !== null) toast(left ? `${left} free rewrite${left === 1 ? '' : 's'} left this month` : 'That was your last free rewrite this month');
+      if (left !== null) toast(left ? tn(left, '{n} free rewrite left this month', '{n} free rewrites left this month') : t('That was your last free rewrite this month'));
     } catch (e) {
       if (!needsPlan(e)) return toast((e as Error).message);
-      toast('You’ve used this month’s free rewrites');
+      toast(t('You’ve used this month’s free rewrites'));
       router.push('/plan');
     }
   }
 
   async function send(body: string, force = false) {
-    const t = checkTone(body);
-    if (!force && t.level !== 'calm') {
+    const tone = checkTone(body);
+    if (!force && tone.level !== 'calm') {
       Keyboard.dismiss(); // give the pause card the whole screen
-      setReview(t);
+      setReview(tone);
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning);
       return;
     }
@@ -82,10 +84,10 @@ export default function Talk() {
 
   // Messages can't be edited or deleted, so crossing a line gets a report (App Store 1.2). We review within 24h.
   function report(m: Message) {
-    Alert.alert(`Sealed · #${m.hash.slice(0, 8)}`, 'Messages can’t be edited or deleted. If this one crosses a line, report it — we review every report within 24 hours.', [
-      { text: 'Cancel', style: 'cancel' },
-      { text: 'Report message', style: 'destructive', onPress: () => api(`/messages/${m.id}/report`, { method: 'POST' })
-        .then(() => toast('Reported. Thanks for telling us.'), (e) => toast((e as Error).message)) },
+    Alert.alert(t('Sealed · #{hash}', { hash: m.hash.slice(0, 8) }), t('Messages can’t be edited or deleted. If this one crosses a line, report it — we review every report within 24 hours.'), [
+      { text: t('Cancel'), style: 'cancel' },
+      { text: t('Report message'), style: 'destructive', onPress: () => api(`/messages/${m.id}/report`, { method: 'POST' })
+        .then(() => toast(t('Reported. Thanks for telling us.')), (e) => toast((e as Error).message)) },
     ]);
   }
 
@@ -99,12 +101,12 @@ export default function Talk() {
       <KeyboardAvoidingView behavior="padding" style={{ flex: 1 }}>
         <Row style={[st.header, { borderColor: c.line }]}>
           <View style={{ flex: 1 }}>
-            <T v="title">Talk</T>
-            <T v="small" muted>{other ? `with ${other.name}` : 'Waiting for your co-parent'}</T>
+            <T v="title">{t('Talk')}</T>
+            <T v="small" muted>{other ? t('with {name}', { name: other.name }, 'talk') : t('Waiting for your co-parent')}</T>
           </View>
-          <Tap onPress={() => router.push('/records')} style={[st.sealed, { backgroundColor: tint(c.them, 0.14) }]} accessibilityLabel="Sealed record. Open records">
+          <Tap onPress={() => router.push('/records')} style={[st.sealed, { backgroundColor: tint(c.them, 0.14) }]} accessibilityLabel={t('Sealed record. Open records')}>
             <Icon ios="lock.fill" android="lock" size={14} color={c.them} />
-            <Text style={{ fontFamily: font.heavy, fontSize: 12, color: c.them }}>SEALED</Text>
+            <Text style={{ fontFamily: font.heavy, fontSize: 12, color: c.them }}>{t('SEALED')}</Text>
           </Tap>
         </Row>
 
@@ -117,11 +119,11 @@ export default function Talk() {
           ListEmptyComponent={loaded ? (
             <View style={[st.empty, { transform: [{ scaleY: -1 }] }]}>
               <Mark size={90} />
-              <T v="h2" style={{ textAlign: 'center' }}>{other ? 'Say it kind.\nIt’s on the record.' : 'Talk starts when they join.'}</T>
+              <T v="h2" style={{ textAlign: 'center' }}>{other ? t('Say it kind.\nIt’s on the record.') : t('Talk starts when they join.')}</T>
               <T muted style={{ textAlign: 'center' }}>
-                {other ? 'Every message is timestamped and sealed — nobody can edit or delete it.' : 'Share your family code so your co-parent can join.'}
+                {other ? t('Every message is timestamped and sealed — nobody can edit or delete it.') : t('Share your family code so your co-parent can join.')}
               </T>
-              {!other && family && <Button title={`Share code ${family.invite}`} kind="accent" onPress={() => shareInvite(pro, family.invite, user?.name)} />}
+              {!other && family && <Button title={t('Share code {code}', { code: family.invite })} kind="accent" onPress={() => shareInvite(pro, family.invite, user?.name)} />}
             </View>
           ) : undefined}
           renderItem={({ item: m, index }) => {
@@ -131,15 +133,15 @@ export default function Talk() {
             return (
               <Animated.View entering={FadeInUp.springify().damping(16)} layout={LinearTransition}>
                 {newDay && <T v="label" style={{ textAlign: 'center', marginVertical: 12 }}>{relative(dayOf(m.at))}</T>}
-                <Tap haptic={false} onLongPress={() => { Haptics.selectionAsync(); if (mine) toast(`Sealed · #${m.hash.slice(0, 8)}`); else report(m); }}
-                  accessibilityHint={mine ? undefined : 'Press and hold to report'}
+                <Tap haptic={false} onLongPress={() => { Haptics.selectionAsync(); if (mine) toast(t('Sealed · #{hash}', { hash: m.hash.slice(0, 8) })); else report(m); }}
+                  accessibilityHint={mine ? undefined : t('Press and hold to report')}
                   style={[st.bubble, mine
                     ? { alignSelf: 'flex-end', backgroundColor: c.me, borderBottomRightRadius: 6 }
                     : { alignSelf: 'flex-start', backgroundColor: c.card, borderBottomLeftRadius: 6, borderColor: c.line, borderWidth: StyleSheet.hairlineWidth }]}>
                   <Text style={[st.msg, { color: mine ? '#FFFFFF' : c.text }]}>{m.text}</Text>
                   <Text style={[st.meta, { color: mine ? 'rgba(255,255,255,0.75)' : c.muted }]}>{time(m.at)}</Text>
                 </Tap>
-                {m.id === lastMine && <T v="small" muted style={{ alignSelf: 'flex-end', marginTop: 2 }}>{m.seen ? 'Seen' : 'Delivered'}</T>}
+                {m.id === lastMine && <T v="small" muted style={{ alignSelf: 'flex-end', marginTop: 2 }}>{m.seen ? t('Seen') : t('Delivered')}</T>}
               </Animated.View>
             );
           }}
@@ -149,37 +151,37 @@ export default function Talk() {
           <Animated.View entering={FadeInDown.springify().damping(15)} exiting={FadeOutDown} style={[st.review, { backgroundColor: c.card, borderColor: tint(toneColor(review.level), 0.55) }]}>
             <Row>
               <Icon ios="wind" android="air" size={20} color={toneColor(review.level)} />
-              <T v="strong" style={{ flex: 1 }}>Breathe. This might land hard.</T>
-              <Tap onPress={() => setReview(null)} accessibilityLabel="Close"><Icon ios="xmark" android="close" size={16} color={c.muted} /></Tap>
+              <T v="strong" style={{ flex: 1 }}>{t('Breathe. This might land hard.')}</T>
+              <Tap onPress={() => setReview(null)} accessibilityLabel={t('Close')}><Icon ios="xmark" android="close" size={16} color={c.muted} /></Tap>
             </Row>
-            {review.issues.map((i) => <T key={i} v="small" muted>• {i}</T>)}
-            {!pro && <T v="small" color={c.sun}>Free plan · 5 calmer rewrites a month</T>}
+            {review.issues.map((i) => <T key={i} v="small" muted>• {t(i)}</T>)}
+            {!pro && <T v="small" color={c.sun}>{t('Free plan · 5 calmer rewrites a month')}</T>}
             {!!review.calmer && (
               <View style={[st.calmer, { backgroundColor: c.soft }]}>
-                <T v="label">Calmer version</T>
+                <T v="label">{t('Calmer version')}</T>
                 <T>{review.calmer}</T>
               </View>
             )}
             <Row>
-              <Button title="Send calmer" kind="accent" style={{ flex: 1, height: 46 }} disabled={!review.calmer} loading={sending} onPress={() => sendCalmer(review.calmer)} />
-              <Button title="Edit" kind="soft" style={{ height: 46 }} onPress={() => { if (review.calmer) setText(review.calmer); setReview(null); }} />
+              <Button title={t('Send calmer')} kind="accent" style={{ flex: 1, height: 46 }} disabled={!review.calmer} loading={sending} onPress={() => sendCalmer(review.calmer)} />
+              <Button title={t('Edit')} kind="soft" style={{ height: 46 }} onPress={() => { if (review.calmer) setText(review.calmer); setReview(null); }} />
             </Row>
-            <Tap haptic={false} onPress={() => send(text, true)}><T v="small" muted style={{ textAlign: 'center' }}>Send mine anyway</T></Tap>
+            <Tap haptic={false} onPress={() => send(text, true)}><T v="small" muted style={{ textAlign: 'center' }}>{t('Send mine anyway')}</T></Tap>
           </Animated.View>
         )}
 
         {!!other && (
           <View style={[st.composer, { backgroundColor: c.card, borderColor: c.line }]}>
-            <TextInput value={text} onChangeText={setText} placeholder="Keep it brief, kind and clear…" placeholderTextColor={c.muted}
-              multiline maxLength={4000} selectionColor={c.me} accessibilityLabel="Message" style={[st.input, { color: c.text }]} />
+            <TextInput value={text} onChangeText={setText} placeholder={t('Keep it brief, kind and clear…')} placeholderTextColor={c.muted}
+              multiline maxLength={4000} selectionColor={c.me} accessibilityLabel={t('Message')} style={[st.input, { color: c.text }]} />
             <Row style={{ justifyContent: 'space-between' }}>
               <Animated.View style={[st.tone, { backgroundColor: live ? tint(toneColor(live.level), 0.16) : 'transparent', transitionProperty: 'backgroundColor', transitionDuration: 250 }]}>
                 {live && <View style={{ width: 7, height: 7, borderRadius: 4, backgroundColor: toneColor(live.level) }} />}
                 <Text style={{ fontFamily: font.heavy, fontSize: 11, letterSpacing: 0.8, color: live ? toneColor(live.level) : c.muted }}>
-                  {live ? `TONE · ${live.level.toUpperCase()}` : 'TONEGUARD ON'}
+                  {live ? TONE[live.level] : t('TONEGUARD ON')}
                 </Text>
               </Animated.View>
-              <Tap onPress={() => send(text)} disabled={!text.trim() || sending} accessibilityLabel="Send" style={[st.send, { backgroundColor: c.me }]}>
+              <Tap onPress={() => send(text)} disabled={!text.trim() || sending} accessibilityLabel={t('Send')} style={[st.send, { backgroundColor: c.me }]}>
                 <Icon ios="arrow.up" android="arrow_upward" size={20} color="#FFFFFF" />
               </Tap>
             </Row>

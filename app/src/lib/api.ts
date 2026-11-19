@@ -1,6 +1,7 @@
 import * as SecureStore from 'expo-secure-store';
 import * as WebBrowser from 'expo-web-browser';
 import { Platform } from 'react-native';
+import { lang, t } from './i18n';
 
 // Simulators reach the Mac at localhost (iOS) / 10.0.2.2 (Android). Set EXPO_PUBLIC_API_URL for devices & prod.
 export const API_URL =
@@ -34,22 +35,23 @@ export async function api<T = { ok: true }>(path: string, opts: { method?: strin
       body: opts.body ? JSON.stringify(opts.body) : undefined,
     });
   } catch {
-    throw new ApiError("Can't reach Ambodo right now. Check your connection.", 0);
+    throw new ApiError(t("Can't reach Ambodo right now. Check your connection."), 0);
   }
   const data = await res.json().catch(() => ({}));
-  if (!res.ok) throw new ApiError(data.error ?? 'Something went wrong', res.status);
+  // The API speaks English; its messages are keys in the language packs too.
+  if (!res.ok) throw new ApiError(t(data.error ?? 'Something went wrong'), res.status);
   return data as T;
 }
 
 /** The tab badge registers its refresher here so Talk can clear it the moment messages are read. */
 export const unreadBadge = { refresh: () => {} };
 
-export const calendarFeedUrl = (icsToken: string) => `${API_URL.replace(/^https?/, 'webcal')}/ics/${icsToken}`;
+export const calendarFeedUrl = (icsToken: string) => `${API_URL.replace(/^https?/, 'webcal')}/ics/${icsToken}?lang=${lang}`;
 
 export type User = { id: string; name: string; email: string };
 export type Kid = { id: string; name: string; birthday: string | null; school: string; doctor: string; allergies: string; sizes: string; notes: string };
 export type Family = {
-  id: string; invite: string; ics: string; kids: Kid[];
+  id: string; invite: string; ics: string; kids: Kid[]; currency: string;
   schedule: { pattern: string; anchor: string; first: string | null };
   members: { id: string; name: string }[];
   plan: { active: boolean; source: 'store' | 'dev' | 'waiver' | null; expiresAt: string | null; waiver: 'pending' | 'approved' | 'declined' | null };

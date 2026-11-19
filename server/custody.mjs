@@ -1,5 +1,6 @@
 // Pure logic: custody patterns, the tamper-evident message chain, and the calendar feed.
 import { createHash } from 'node:crypto';
+import { readFileSync } from 'node:fs';
 
 // 14-day cycles starting on the anchor date. A = schedule.first, B = the other parent.
 export const PATTERNS = {
@@ -35,8 +36,13 @@ export function custodyFor(family, from, to) {
 export const chainHash = (prev, author, at, text) =>
   createHash('sha256').update(`${prev}|${author}|${new Date(at).toISOString()}|${text}`).digest('hex');
 
-/** iCalendar feed: custody blocks + family events, subscribable from Apple/Google Calendar. */
-export function icsFeed(family, names, events, now = Date.now()) {
+// "Kids with {name}" in each app language, written by the app's `npm run i18n merge`.
+const ICS_LANG = JSON.parse(readFileSync(new URL('./ics-lang.json', import.meta.url), 'utf8'));
+
+/** iCalendar feed: custody blocks + family events, subscribable from Apple/Google Calendar. `lang` is the app's language pack. */
+export function icsFeed(family, names, events, now = Date.now(), lang = 'en') {
+  const say = ICS_LANG[lang] ?? {};
+  const kidsWith = (name) => (say['Kids with {name}'] ?? 'Kids with {name}').replace('{name}', name);
   const days = custodyFor(family, dayKey(now - 30 * DAY), dayKey(now + 180 * DAY));
   const d8 = (s) => s.replaceAll('-', '');
   const next = (s) => dayKey(utc(s) + DAY);
@@ -49,7 +55,7 @@ export function icsFeed(family, names, events, now = Date.now()) {
   for (let i = 0; i < days.length;) {
     let j = i;
     while (j + 1 < days.length && days[j + 1].parent === days[i].parent) j++;
-    add(`c-${days[i].date}`, days[i].date, next(days[j].date), `Kids with ${names[days[i].parent] ?? 'co-parent'}`);
+    add(`c-${days[i].date}`, days[i].date, next(days[j].date), kidsWith(names[days[i].parent] ?? say['Co-parent'] ?? 'co-parent'));
     i = j + 1;
   }
   for (const e of events) add(`e-${e._id}`, e.date, next(e.date), e.title);

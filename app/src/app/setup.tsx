@@ -7,6 +7,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Button, Card, Chip, Field, Icon, Row, T, Tap } from '@/components/ui';
 import { api, type Family } from '@/lib/api';
 import { addDays, monday, nice, today } from '@/lib/dates';
+import { phoneCurrency, t } from '@/lib/i18n';
 import { shareInvite } from '@/lib/meta';
 import { PATTERNS } from '@/lib/patterns';
 import { useSession } from '@/lib/session';
@@ -45,7 +46,7 @@ export default function Setup() {
     finally { setBusy(false); }
   }
   const create = () => run(
-    () => api<Family>('/family', { body: { kids: (kids.length ? kids : [kidName.trim()]).filter(Boolean).map((name) => ({ name })), pattern, anchor, youFirst } }),
+    () => api<Family>('/family', { body: { kids: (kids.length ? kids : [kidName.trim()]).filter(Boolean).map((name) => ({ name })), pattern, anchor, youFirst, currency: phoneCurrency } }),
     (f) => setMade(f),
   );
   const join = () => run(() => api<Family>('/family/join', { body: { code } }), (f) => { setFamily(f); router.replace('/(tabs)'); });
@@ -70,18 +71,18 @@ export default function Setup() {
           <Icon ios="house.and.flag.fill" android="family_restroom" size={44} color={c.them} />
         </Animated.View>
         <Animated.View entering={FadeInDown.delay(150)} style={{ gap: 10, alignItems: 'center' }}>
-          <T v="title" style={{ textAlign: 'center' }}>Your family is ready.</T>
+          <T v="title" style={{ textAlign: 'center' }}>{t('Your family is ready.')}</T>
           <T muted style={{ textAlign: 'center' }}>
-            {pro ? 'Send this code to your co-parent. One code, both homes.' : 'Connecting your co-parent comes with Ambodo Family. One plan covers both homes.'}
+            {pro ? t('Send this code to your co-parent. One code, both homes.') : t('Connecting your co-parent comes with Ambodo Family. One plan covers both homes.')}
           </T>
         </Animated.View>
         <Animated.View entering={ZoomIn.delay(300).springify()}>
           <Text selectable style={[st.code, { color: c.text, backgroundColor: c.card, borderColor: c.line }]}>{made.invite}</Text>
         </Animated.View>
         <View style={{ alignSelf: 'stretch', gap: 12 }}>
-          <Button title={pro ? 'Share code' : 'Connect your co-parent'} kind="accent" onPress={() => shareInvite(pro, made.invite, user?.name)}
+          <Button title={pro ? t('Share code') : t('Connect your co-parent')} kind="accent" onPress={() => shareInvite(pro, made.invite, user?.name)}
             icon={<Icon ios="square.and.arrow.up" android="share" size={18} color="#fff" />} />
-          <Button title="Go to Today" kind="ghost" onPress={() => { setFamily(made); router.replace('/(tabs)'); }} />
+          <Button title={t('Go to Today')} kind="ghost" onPress={() => { setFamily(made); router.replace('/(tabs)'); }} />
         </View>
       </View>
     );
@@ -92,33 +93,33 @@ export default function Setup() {
       <ScrollView keyboardShouldPersistTaps="handled" contentContainerStyle={{ paddingTop: insets.top + 16, paddingBottom: insets.bottom + 32, paddingHorizontal: 22, gap: 20 }}>
         {user ? (
           <Row style={{ justifyContent: 'space-between' }}>
-            <T v="label">Hi {user.name}</T>
-            <Tap onPress={async () => { await signOut(); router.replace('/welcome'); }} haptic={false}><T v="small" muted>Sign out</T></Tap>
+            <T v="label">{t('Hi {name}', { name: user.name })}</T>
+            <Tap onPress={async () => { await signOut(); router.replace('/welcome'); }} haptic={false}><T v="small" muted>{t('Sign out')}</T></Tap>
           </Row>
         ) : (
-          <Tap onPress={() => router.back()} accessibilityLabel="Back" style={[st.back, { backgroundColor: c.soft }]}>
+          <Tap onPress={() => router.back()} accessibilityLabel={t('Back')} style={[st.back, { backgroundColor: c.soft }]}>
             <Icon ios="chevron.left" android="arrow_back" size={18} />
           </Tap>
         )}
-        <T v="hero">Set up your family.</T>
+        <T v="hero">{t('Set up your family.')}</T>
         <Row>
-          <Chip label="Start fresh" on={mode === 'new'} onPress={() => setMode('new')} />
-          <Chip label="I have a code" on={mode === 'join'} onPress={() => setMode('join')} />
+          <Chip label={t('Start fresh')} on={mode === 'new'} onPress={() => setMode('new')} />
+          <Chip label={t('I have a code')} on={mode === 'join'} onPress={() => setMode('join')} />
         </Row>
 
         {mode === 'join' ? (
           <Animated.View key="join" entering={FadeIn} style={{ gap: 16 }}>
-            <T muted>Your co-parent shared a 6-character code. Pop it in.</T>
+            <T muted>{t('Your co-parent shared a 6-character code. Pop it in.')}</T>
             <TextInput value={code} onChangeText={(t) => setCode(t.toUpperCase())} placeholder="ABC-123" placeholderTextColor={c.muted}
-              autoCapitalize="characters" autoCorrect={false} maxLength={7} accessibilityLabel="Invite code"
+              autoCapitalize="characters" autoCorrect={false} maxLength={7} accessibilityLabel={t('Invite code')}
               style={[st.code, { color: c.text, backgroundColor: c.card, borderColor: c.line }]} />
-            <Button title="Join family" kind="accent" loading={busy} disabled={code.replace(/[^A-Z0-9]/gi, '').length < 6} onPress={finish(join)} />
+            <Button title={t('Join family')} kind="accent" loading={busy} disabled={code.replace(/[^A-Z0-9]/gi, '').length < 6} onPress={finish(join)} />
           </Animated.View>
         ) : (
           <Animated.View key="new" entering={FadeIn} style={{ gap: 22 }}>
             <View style={{ gap: 10 }}>
-              {kids.length ? <T v="label">Your kid</T> : (
-                <Field label="Your kid" value={kidName} onChangeText={setKidName} placeholder="Name, then return" onSubmitEditing={addKid}
+              {kids.length ? <T v="label">{t('Your kid')}</T> : (
+                <Field label={t('Your kid')} value={kidName} onChangeText={setKidName} placeholder={t('Name, then return')} onSubmitEditing={addKid}
                   returnKeyType="done" submitBehavior="submit" autoCapitalize="words" />
               )}
               <Row style={{ flexWrap: 'wrap' }}>
@@ -127,13 +128,13 @@ export default function Setup() {
                     <Chip label={`${k}  ✕`} on color={c.me} onPress={() => setKids(kids.filter((x) => x !== k))} />
                   </Animated.View>
                 ))}
-                {!!kidName.trim() && <Chip label={`+ Add ${kidName.trim()}`} onPress={addKid} />}
+                {!!kidName.trim() && <Chip label={t('+ Add {name}', { name: kidName.trim() })} onPress={addKid} />}
               </Row>
-              {!!kids.length && <T v="small" muted>More kids come with Ambodo Family. Add them after setup.</T>}
+              {!!kids.length && <T v="small" muted>{t('More kids come with Ambodo Family. Add them after setup.')}</T>}
             </View>
 
             <View style={{ gap: 10 }}>
-              <T v="label">Custody schedule</T>
+              <T v="label">{t('Custody schedule')}</T>
               {PATTERNS.map((p, i) => {
                 const on = pattern === p.key;
                 return (
@@ -158,19 +159,19 @@ export default function Setup() {
             </View>
 
             <View style={{ gap: 10 }}>
-              <T v="label">Starts</T>
+              <T v="label">{t('Starts')}</T>
               <Row style={{ flexWrap: 'wrap' }}>
-                <Chip label={`This Monday · ${nice(thisMonday)}`} on={anchor === thisMonday} onPress={() => setAnchor(thisMonday)} />
-                <Chip label={`Next Monday · ${nice(addDays(thisMonday, 7))}`} on={anchor === addDays(thisMonday, 7)} onPress={() => setAnchor(addDays(thisMonday, 7))} />
+                <Chip label={t('This Monday · {date}', { date: nice(thisMonday) })} on={anchor === thisMonday} onPress={() => setAnchor(thisMonday)} />
+                <Chip label={t('Next Monday · {date}', { date: nice(addDays(thisMonday, 7)) })} on={anchor === addDays(thisMonday, 7)} onPress={() => setAnchor(addDays(thisMonday, 7))} />
               </Row>
-              <T v="label" style={{ marginTop: 6 }}>Who has them first?</T>
+              <T v="label" style={{ marginTop: 6 }}>{t('Who has them first?')}</T>
               <Row>
-                <Chip label="Me" on={youFirst} color={c.me} onPress={() => setYouFirst(true)} />
-                <Chip label="My co-parent" on={!youFirst} color={c.them} onPress={() => setYouFirst(false)} />
+                <Chip label={t('Me')} on={youFirst} color={c.me} onPress={() => setYouFirst(true)} />
+                <Chip label={t('My co-parent')} on={!youFirst} color={c.them} onPress={() => setYouFirst(false)} />
               </Row>
             </View>
 
-            <Button title="Create our family" kind="accent" loading={busy} disabled={!kids.length && !kidName.trim()} onPress={finish(create)} />
+            <Button title={t('Create our family')} kind="accent" loading={busy} disabled={!kids.length && !kidName.trim()} onPress={finish(create)} />
           </Animated.View>
         )}
         {!!err && <T v="strong" color={c.danger}>{err}</T>}

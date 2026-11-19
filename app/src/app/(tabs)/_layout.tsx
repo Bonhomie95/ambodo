@@ -3,6 +3,7 @@ import { NativeTabs } from 'expo-router/native-tabs';
 import { useEffect, useState } from 'react';
 import { AppState, Platform } from 'react-native';
 import { api, unreadBadge } from '@/lib/api';
+import { t } from '@/lib/i18n';
 import { useSession } from '@/lib/session';
 import { tint, useColors } from '@/lib/theme';
 
@@ -37,24 +38,24 @@ export default function Tabs() {
       backgroundColor={Platform.OS === 'android' ? c.card : undefined}
       labelVisibilityMode="labeled">
       <NativeTabs.Trigger name="index">
-        <NativeTabs.Trigger.Label>Today</NativeTabs.Trigger.Label>
+        <NativeTabs.Trigger.Label>{t('Today')}</NativeTabs.Trigger.Label>
         <NativeTabs.Trigger.Icon sf={{ default: 'sun.max', selected: 'sun.max.fill' }} md="wb_sunny" />
       </NativeTabs.Trigger>
       <NativeTabs.Trigger name="talk">
-        <NativeTabs.Trigger.Label>Talk</NativeTabs.Trigger.Label>
+        <NativeTabs.Trigger.Label>{t('Talk')}</NativeTabs.Trigger.Label>
         <NativeTabs.Trigger.Icon sf={{ default: 'bubble.left.and.bubble.right', selected: 'bubble.left.and.bubble.right.fill' }} md="forum" />
         {unread > 0 && <NativeTabs.Trigger.Badge>{unread > 9 ? '9+' : String(unread)}</NativeTabs.Trigger.Badge>}
       </NativeTabs.Trigger>
       <NativeTabs.Trigger name="calendar">
-        <NativeTabs.Trigger.Label>Calendar</NativeTabs.Trigger.Label>
+        <NativeTabs.Trigger.Label>{t('Calendar')}</NativeTabs.Trigger.Label>
         <NativeTabs.Trigger.Icon sf="calendar" md="calendar_month" />
       </NativeTabs.Trigger>
       <NativeTabs.Trigger name="money">
-        <NativeTabs.Trigger.Label>Expenses</NativeTabs.Trigger.Label>
+        <NativeTabs.Trigger.Label>{t('Expenses')}</NativeTabs.Trigger.Label>
         <NativeTabs.Trigger.Icon sf={{ default: 'creditcard', selected: 'creditcard.fill' }} md="payments" />
       </NativeTabs.Trigger>
       <NativeTabs.Trigger name="more">
-        <NativeTabs.Trigger.Label>Family</NativeTabs.Trigger.Label>
+        <NativeTabs.Trigger.Label>{t('Family')}</NativeTabs.Trigger.Label>
         <NativeTabs.Trigger.Icon sf={{ default: 'person.2', selected: 'person.2.fill' }} md="family_restroom" />
       </NativeTabs.Trigger>
     </NativeTabs>
