@@ -27,7 +27,8 @@ export function Mark({ size = 120, colors = BRAND, animated = false, delay = 0 }
     </Animated.View>
   );
   return (
-    <View style={{ width: 696 * s, height: 422 * s }} accessible accessibilityRole="image" accessibilityLabel="Ambodo">
+    // The logo never mirrors, even in right-to-left languages.
+    <View style={{ width: 696 * s, height: 422 * s, direction: 'ltr' }} accessible accessibilityRole="image" accessibilityLabel="Ambodo">
       {animated && (
         <Animated.View style={{
           position: 'absolute', left: 88 * s, top: 40 * s, width: 520 * s, height: 520 * s, borderRadius: 260 * s,
@@ -55,7 +56,7 @@ export function Wordmark({ size = 44, color, colors = BRAND, animated = false, d
 }) {
   const tone = [color, color, colors.b, colors.o, colors.d, color];
   return (
-    <View style={{ flexDirection: 'row' }} accessible accessibilityLabel="ambodo">
+    <View style={{ flexDirection: 'row', direction: 'ltr' }} accessible accessibilityLabel="ambodo">
       {[...'ambodo'].map((l, i) => (
         <Animated.Text key={i} style={[{ fontFamily: font.display, fontSize: size, lineHeight: size * 1.2, color: tone[i], letterSpacing: -0.5 }, animated && {
           animationName: { from: { opacity: 0, transform: [{ translateY: size * 0.55 }] }, to: { opacity: 1, transform: [{ translateY: 0 }] } },

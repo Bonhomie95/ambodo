@@ -1,0 +1,25 @@
+{
+ "name": "Ambodo: Yhteisvanhemmuus",
+ "subtitle": "Puhu rauhassa, sovi reilusti",
+ "promo": "Yksi tilaus molemmille kodeille. ToneGuard pitää viestit rauhallisina, yhteinen kalenteri pitää kaikki ajan tasalla, ja kaikki on sinetöity ja oikeuteen kelpaavaa.",
+ "keywords": "ero,huoltajuus,vuoroasuminen,kalenteri,lapset,tapaamiset,elatusapu,eroperhe,vanhemmat",
+ "short": "Rauhallinen yhteisvanhemmuus: sinetöidyt viestit, yhteinen kalenteri, raportit.",
+ "body": "Kaksi kotia. Yksi tiimi.\n\nAmbodo pitää yhteisvanhemmuuden rauhallisena, reiluna ja dokumentoituna — teille molemmille, yhdellä perhetilauksella.\n\n• Puhu rauhassa — ToneGuard tarkistaa jokaisen viestin ennen kuin se lähtee ja ehdottaa ystävällisempää versiota. Jokainen viesti sinetöidään edelliseen, joten historiaa ei voi muokata salaa.\n• Suunnittele reilusti — yhteinen kalenteri, jonka näette molemmat samalla tavalla. 2-2-3, viikko–viikko, 2-2-5-5 ja muita rytmejä. Päivien vaihto kahdella napautuksella; mikään ei muutu ennen kuin olette molemmat samaa mieltä.\n• Säilytä todisteet — lasten viennit ja haut, yhteiset kulut ja vaihtohistoria oikeuteen kelpaavana PDF-raporttina sinetin tarkistuksella.\n• Tunne lapset — koulu, lääkäri, allergiat ja koot yhdessä yhteisessä paikassa.\n• Synkronoi kaikkialle — lasten vuorot Apple- tai Google-kalenterissa.\n\nIlmainen: luo perheen tila yhden lapsen profiililla, asumisrytmillä ja vaihtojen kirjauksella.\nAmbodo Family (yksi tilaus molemmille vanhemmille, kuukausittain tai vuosittain): yhdistä toinen vanhempi sinetöityjä viestejä, yhteisiä tapahtumia ja vaihtopyyntöjä varten, lisää kaikki lapsesi ja saat oikeuteen kelpaavat PDF-raportit, kulut ja tasaukset, kalenterisynkronoinnin sekä rajattomat ToneGuard-muotoilut. Maksuvapautus on saatavilla perheille, jotka sitä tarvitsevat.",
+ "payApple": "Maksu veloitetaan Apple-tililtäsi, kun vahvistat oston. Tilaus uusiutuu automaattisesti, ellei sitä peruta vähintään 24 tuntia ennen jakson päättymistä. Voit hallinnoida tai perua tilauksen Apple-tilisi asetuksissa.",
+ "payPlay": "Maksu veloitetaan Google Play -tililtäsi. Tilaus uusiutuu automaattisesti, kunnes perut sen; voit hallinnoida tai perua sen milloin tahansa kohdassa Google Play → Maksut ja tilaukset.",
+ "termsLabel": "Käyttöehdot",
+ "privacyLabel": "Tietosuojakäytäntö",
+ "whatsNewApple": "Ambodo puhuu nyt sinun kieltäsi: 75 kieltä, jotka seuraavat puhelimesi asetuksia, ja päivämäärät ja summat kirjoitetaan niin kuin itse ne kirjoitat. Uutta on myös se, että luot ensin perheesi ja vasta lopuksi tilin.",
+ "whatsNewPlay": "Ambodo puhuu nyt sinun kieltäsi: 75 kieltä, jotka seuraavat puhelimesi asetuksia, ja päivämäärät ja summat kirjoitetaan niin kuin itse ne kirjoitat.",
+ "subMonthlyName": "Ambodo Family — kuukausi",
+ "subMonthlyDesc": "Yksi tilaus kahdelle kodille, kuukausittain.",
+ "subYearlyName": "Ambodo Family — vuosi",
+ "subYearlyDesc": "Yksi tilaus kahdelle kodille, vuosittain.",
+ "playSubDesc": "Ambodo Family: toinen vanhempi mukaan, tapahtumat, päivien vaihdot ja kaikki lapset, oikeuteen kelpaavat PDF-raportit, kulut, kalenterisynkronointi ja rajaton ToneGuard. Yksi tilaus molemmille.",
+ "playBenefits": [
+  "Yhdistä toinen vanhempi",
+  "Oikeuteen kelpaavat PDF-raportit",
+  "Yhteiset tapahtumat, vaihdot ja kulut",
+  "Rajattomat ToneGuard-muotoilut"
+ ]
+}

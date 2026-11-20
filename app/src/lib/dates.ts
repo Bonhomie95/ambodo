@@ -23,7 +23,7 @@ export const weekLetters = () => Array.from({ length: 7 }, (_, i) => new Date(20
 /** "November 2026", capitalised for a heading. */
 export const monthTitle = (y: number, m: number) => {
   const s = new Date(y, m, 1).toLocaleDateString(locale, { month: 'long', year: 'numeric' });
-  return s.charAt(0).toUpperCase() + s.slice(1);
+  return s.charAt(0).toLocaleUpperCase(locale) + s.slice(1);
 };
 
 /** Today / Tomorrow / a weekday / a date. `midSentence` gives the lower-case words for use inside a sentence. */

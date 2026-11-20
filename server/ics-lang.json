@@ -27,6 +27,10 @@
   "Kids with {name}": "বাচ্চারা {name}-এর কাছে",
   "Co-parent": "কো-প্যারেন্ট"
  },
+ "ca": {
+  "Kids with {name}": "Nens amb {name}",
+  "Co-parent": "L’altre progenitor"
+ },
  "cs": {
   "Kids with {name}": "Děti má {name}",
   "Co-parent": "Druhý rodič"
@@ -59,6 +63,10 @@
   "Kids with {name}": "بچه‌ها پیش {name}",
   "Co-parent": "والد دیگر"
  },
+ "fi": {
+  "Kids with {name}": "{name} lasten kanssa",
+  "Co-parent": "Toinen vanhempi"
+ },
  "fil": {
   "Kids with {name}": "Kay {name} ang mga bata",
   "Co-parent": "Co-parent"
@@ -83,9 +91,17 @@
   "Kids with {name}": "{name} van a gyerekekkel",
   "Co-parent": "Szülőtárs"
  },
+ "hy": {
+  "Kids with {name}": "Երեխաների հետ՝ {name}",
+  "Co-parent": "Մյուս ծնող"
+ },
  "id": {
   "Kids with {name}": "Anak bersama {name}",
   "Co-parent": "Orang tua lainnya"
+ },
+ "is": {
+  "Kids with {name}": "{name} er með börnin",
+  "Co-parent": "Hitt foreldrið"
  },
  "it": {
   "Kids with {name}": "Bambini da {name}",
@@ -139,9 +155,17 @@
   "Kids with {name}": "Хүүхдүүд {name} дээр",
   "Co-parent": "Нөгөө эцэг эх"
  },
+ "mr": {
+  "Kids with {name}": "मुले {name}कडे",
+  "Co-parent": "को-पेरेंट"
+ },
  "ms": {
   "Kids with {name}": "Anak bersama {name}",
   "Co-parent": "Ibu bapa satu lagi"
+ },
+ "my": {
+  "Kids with {name}": "ကလေးများ {name} နှင့်အတူ",
+  "Co-parent": "တစ်ဖက်မိဘ"
  },
  "nb": {
   "Kids with {name}": "Barna hos {name}",
@@ -175,9 +199,17 @@
   "Kids with {name}": "{name} с детьми",
   "Co-parent": "Второй родитель"
  },
+ "sk": {
+  "Kids with {name}": "Deti má {name}",
+  "Co-parent": "Druhý rodič"
+ },
  "sq": {
   "Kids with {name}": "Fëmijët te {name}",
   "Co-parent": "Bashkëprindi"
+ },
+ "sr": {
+  "Kids with {name}": "{name} је са децом",
+  "Co-parent": "Други родитељ"
  },
  "sv": {
   "Kids with {name}": "Barnen hos {name}",

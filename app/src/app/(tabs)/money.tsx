@@ -6,7 +6,7 @@ import Animated, { FadeInDown, LinearTransition } from 'react-native-reanimated'
 import { Button, Card, Chip, Icon, Row, Screen, T, Tap, toast } from '@/components/ui';
 import { api, type Expense } from '@/lib/api';
 import { relative, ymd } from '@/lib/dates';
-import { t } from '@/lib/i18n';
+import { locale, t } from '@/lib/i18n';
 import { CATEGORY_ICON, money } from '@/lib/meta';
 import { useLoad, useSession } from '@/lib/session';
 import { font, tint, useColors } from '@/lib/theme';
@@ -58,7 +58,7 @@ export default function Money() {
       <Animated.View entering={FadeInDown.springify().damping(15)}
         style={[st.hero, { backgroundImage: `linear-gradient(140deg, ${c.text}, ${tint(c.text, 0.82)})` }]}>
         <Text style={[st.heroLabel, { color: tint(c.bg, 0.7) }]}>
-          {balance > 0 ? t('{name} OWES YOU', { name: otherName.toUpperCase() }) : balance < 0 ? t('YOU OWE {name}', { name: otherName.toUpperCase() }) : t('BALANCE')}
+          {balance > 0 ? t('{name} OWES YOU', { name: otherName.toLocaleUpperCase(locale) }) : balance < 0 ? t('YOU OWE {name}', { name: otherName.toLocaleUpperCase(locale) }) : t('BALANCE')}
         </Text>
         <Text style={[st.heroAmount, { color: c.bg }]}>{!data ? '…' : balance === 0 ? t('All square') : money(shown, cur)}</Text>
         <Text style={[st.heroSub, { color: tint(c.bg, 0.7) }]}>

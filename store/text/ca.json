@@ -1,0 +1,25 @@
+{
+ "name": "Ambodo: Coparentalitat",
+ "subtitle": "Parla amb calma. Planifica bé.",
+ "promo": "Un sol pla per a les dues cases. ToneGuard manté els missatges calmats, el calendari de custòdia us posa d’acord i cada registre queda segellat i a punt per al jutjat.",
+ "keywords": "custòdia,compartida,guarda,divorci,separació,calendari,pares,fills,família,progenitor,despeses",
+ "short": "Criar en calma: missatges segellats, calendari compartit, proves per al jutjat.",
+ "body": "Dues cases. Un equip.\n\nAmbodo fa que la coparentalitat sigui tranquil·la, justa i amb constància de tot – per a tots dos, amb un sol pla familiar.\n\n• Parla amb calma – ToneGuard revisa cada missatge abans que arribi i et proposa una versió més amable. Cada missatge queda segellat a l’anterior, així ningú no pot modificar l’historial d’amagat.\n• Planifica amb justícia – un calendari de custòdia que tots dos veieu igual. 2-2-3, setmanes alternes, 2-2-5-5 i més. Intercanvia dies amb dos tocs; no canvia res fins que tots dos hi esteu d’acord.\n• Conserva les proves – canvis de casa, despeses compartides i historial d’intercanvis, exportats en un PDF a punt per al jutjat, amb verificació del segell.\n• Tot sobre els fills – escola, pediatre, al·lèrgies i talles en un sol lloc compartit.\n• Sincronitzat a tot arreu – els dies de custòdia al calendari d’Apple o a Google Calendar.\n\nGratuït: crea l’espai de la teva família amb el perfil d’un infant, el model de custòdia i el registre dels canvis de casa.\nAmbodo Family (un pla per als dos progenitors, mensual o anual): connecta l’altre progenitor per tenir missatges segellats, esdeveniments compartits i sol·licituds d’intercanvi, afegeix tots els teus fills i obtén registres en PDF a punt per al jutjat, despeses i liquidacions, sincronització del calendari i reformulacions ToneGuard il·limitades. Les famílies que ho necessitin poden demanar una exempció.",
+ "payApple": "El pagament es carrega al teu Apple Account en confirmar la compra. La subscripció es renova automàticament si no es cancel·la com a mínim 24 hores abans del final del període en curs. Gestiona-la o cancel·la-la a la configuració del teu Apple Account.",
+ "payPlay": "El pagament es carrega al teu compte de Google Play. La subscripció es renova automàticament fins que la cancel·lis; gestiona-la o cancel·la-la quan vulguis a Google Play → Pagaments i subscripcions.",
+ "termsLabel": "Condicions d’ús",
+ "privacyLabel": "Política de privadesa",
+ "whatsNewApple": "Ambodo ara parla la teva llengua: 75 idiomes que segueixen la configuració del mòbil, amb dates i imports escrits tal com els escrius tu. A més, ara primer crees la família i, al final, el compte.",
+ "whatsNewPlay": "Ambodo ara parla la teva llengua: 75 idiomes que segueixen la configuració del mòbil, amb dates i imports escrits tal com els escrius tu.",
+ "subMonthlyName": "Ambodo Family – Mensual",
+ "subMonthlyDesc": "Un pla per a les dues cases, cada mes.",
+ "subYearlyName": "Ambodo Family – Anual",
+ "subYearlyDesc": "Un pla per a les dues cases, cada any.",
+ "playSubDesc": "Ambodo Family: connecta l’altre progenitor, esdeveniments, intercanvis i tots els fills, PDF per al jutjat, despeses, sincronització del calendari i reformulacions il·limitades. Un pla per a tots dos.",
+ "playBenefits": [
+  "Connecta l’altre progenitor",
+  "Registres en PDF per al jutjat",
+  "Esdeveniments, intercanvis i despeses",
+  "Reformulacions ToneGuard il·limitades"
+ ]
+}

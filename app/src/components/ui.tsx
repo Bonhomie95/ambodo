@@ -8,6 +8,7 @@ import {
 import Animated, { FadeInUp, FadeOutUp } from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { FullWindowOverlay } from 'react-native-screens';
+import { locale } from '@/lib/i18n';
 import { font, tint, useColors } from '@/lib/theme';
 
 const ios = Platform.OS === 'ios';
@@ -138,7 +139,7 @@ export function Chip({ label, on, onPress, color }: { label: string; on?: boolea
 export function Avatar({ name, color, size = 40 }: { name: string; color: string; size?: number }) {
   return (
     <View style={{ width: size, height: size, borderRadius: size / 2, backgroundColor: color, alignItems: 'center', justifyContent: 'center' }}>
-      <Text style={{ fontFamily: font.heavy, fontSize: size * 0.42, color: '#FFFFFF' }}>{name.slice(0, 1).toUpperCase()}</Text>
+      <Text style={{ fontFamily: font.heavy, fontSize: size * 0.42, color: '#FFFFFF' }}>{name.slice(0, 1).toLocaleUpperCase(locale)}</Text>
     </View>
   );
 }
