@@ -199,6 +199,10 @@
   "Kids with {name}": "ପିଲାମାନେ {name}ଙ୍କ ପାଖରେ",
   "Co-parent": "ସହ-ଅଭିଭାବକ"
  },
+ "pa": {
+  "Kids with {name}": "ਬੱਚੇ {name} ਕੋਲ",
+  "Co-parent": "ਕੋ-ਪੇਰੈਂਟ"
+ },
  "pl": {
   "Kids with {name}": "Dzieci ma {name}",
   "Co-parent": "Drugi rodzic"
