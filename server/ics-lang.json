@@ -1,1 +1,86 @@
-{}
+{
+ "af": {
+  "Kids with {name}": "Kinders by {name}",
+  "Co-parent": "Mede-ouer"
+ },
+ "az": {
+  "Kids with {name}": "Uşaqlar {name} ilə",
+  "Co-parent": "Digər valideyn"
+ },
+ "de": {
+  "Kids with {name}": "Kinder bei {name}",
+  "Co-parent": "Co-Elternteil"
+ },
+ "fil": {
+  "Kids with {name}": "Kay {name} ang mga bata",
+  "Co-parent": "Co-parent"
+ },
+ "fr": {
+  "Kids with {name}": "Enfants chez {name}",
+  "Co-parent": "Coparent"
+ },
+ "hu": {
+  "Kids with {name}": "{name} van a gyerekekkel",
+  "Co-parent": "Szülőtárs"
+ },
+ "id": {
+  "Kids with {name}": "Anak bersama {name}",
+  "Co-parent": "Orang tua lainnya"
+ },
+ "it": {
+  "Kids with {name}": "Bambini da {name}",
+  "Co-parent": "Altro genitore"
+ },
+ "ja": {
+  "Kids with {name}": "子どもは{name}と",
+  "Co-parent": "もう一人の親"
+ },
+ "kk": {
+  "Kids with {name}": "{name} балалармен",
+  "Co-parent": "Екінші ата-ана"
+ },
+ "km": {
+  "Kids with {name}": "កូននៅជាមួយ {name}",
+  "Co-parent": "ឪពុកម្ដាយម្ខាងទៀត"
+ },
+ "lo": {
+  "Kids with {name}": "ລູກຢູ່ກັບ {name}",
+  "Co-parent": "ພໍ່ແມ່ອີກຝ່າຍ"
+ },
+ "lt": {
+  "Kids with {name}": "Su vaikais: {name}",
+  "Co-parent": "Kitas iš tėvų"
+ },
+ "lv": {
+  "Kids with {name}": "Ar bērniem: {name}",
+  "Co-parent": "Otrs vecāks"
+ },
+ "ms": {
+  "Kids with {name}": "Anak bersama {name}",
+  "Co-parent": "Ibu bapa satu lagi"
+ },
+ "ro": {
+  "Kids with {name}": "Copiii la {name}",
+  "Co-parent": "Celălalt părinte"
+ },
+ "ru": {
+  "Kids with {name}": "{name} с детьми",
+  "Co-parent": "Второй родитель"
+ },
+ "ta": {
+  "Kids with {name}": "குழந்தைகள் {name} வீட்டில்",
+  "Co-parent": "இணைப் பெற்றோர்"
+ },
+ "te": {
+  "Kids with {name}": "పిల్లలు {name} దగ్గర",
+  "Co-parent": "సహ తల్లిదండ్రి"
+ },
+ "th": {
+  "Kids with {name}": "ลูกอยู่กับ {name}",
+  "Co-parent": "พ่อแม่อีกฝ่าย"
+ },
+ "uk": {
+  "Kids with {name}": "{name} з дітьми",
+  "Co-parent": "Інший з батьків"
+ }
+}

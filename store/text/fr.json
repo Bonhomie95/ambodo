@@ -1,0 +1,25 @@
+{
+ "name": "Ambodo : Coparentalité",
+ "subtitle": "Messages apaisés, garde claire",
+ "promo": "Une formule pour les deux foyers. ToneGuard apaise les messages, le calendrier de garde met tout le monde d’accord et chaque dossier est scellé, prêt pour le tribunal.",
+ "keywords": "garde,alternée,coparent,divorce,séparation,calendrier,parents,famille,enfants,juge,planning",
+ "short": "Coparentalité sereine : messages scellés, calendrier de garde, dossiers fiables.",
+ "body": "Deux foyers. Une équipe.\n\nAmbodo rend la coparentalité plus sereine, plus juste et traçable – pour vous deux, avec une seule formule familiale.\n\n• Parlez calmement – ToneGuard vérifie chaque message avant son envoi et propose une version plus bienveillante. Chaque message est scellé au précédent : l’historique ne peut pas être modifié en douce.\n• Planifiez équitablement – un calendrier de garde identique pour vous deux. 2-2-3, une semaine sur deux, 2-2-5-5 et d’autres rythmes. Échangez des jours en deux touches ; rien ne change sans votre accord à tous les deux.\n• Gardez des preuves – passages des enfants, dépenses partagées et historique des échanges, exportés dans un PDF prêt pour le tribunal, avec vérification du sceau.\n• Tout savoir sur les enfants – école, médecin, allergies et tailles, réunis dans un espace partagé.\n• Synchronisé partout – les jours de garde dans le calendrier Apple ou Google Agenda.\n\nGratuit : créez votre espace famille avec le profil d’un enfant, le rythme de garde et le suivi des passages.\nAmbodo Family (une formule pour les deux parents, mensuelle ou annuelle) : connectez votre coparent pour les messages scellés, les événements partagés et les demandes d’échange, ajoutez tous vos enfants, et profitez des dossiers PDF prêts pour le tribunal, du suivi des dépenses et des remboursements, de la synchronisation des calendriers et des reformulations ToneGuard illimitées. Une exonération est possible pour les familles qui en ont besoin.",
+ "payApple": "Le paiement est débité de votre Apple Account lors de la confirmation de l’achat. L’abonnement se renouvelle automatiquement, sauf résiliation au moins 24 heures avant la fin de la période en cours. Gérez ou résiliez votre abonnement dans les réglages de votre Apple Account.",
+ "payPlay": "Le paiement est débité de votre compte Google Play. L’abonnement se renouvelle automatiquement jusqu’à résiliation ; gérez-le ou résiliez-le à tout moment dans Google Play → Paiements et abonnements.",
+ "termsLabel": "Conditions d’utilisation",
+ "privacyLabel": "Politique de confidentialité",
+ "whatsNewApple": "Ambodo parle maintenant votre langue : 75 langues qui suivent les réglages de votre téléphone, avec des dates et des montants écrits comme vous les écrivez. Autre nouveauté : créez d’abord votre famille, puis votre compte, à la toute fin.",
+ "whatsNewPlay": "Ambodo parle maintenant votre langue : 75 langues qui suivent les réglages de votre téléphone, avec des dates et des montants écrits comme vous les écrivez.",
+ "subMonthlyName": "Ambodo Family – Mensuel",
+ "subMonthlyDesc": "Une formule, deux foyers, facturée au mois.",
+ "subYearlyName": "Ambodo Family – Annuel",
+ "subYearlyDesc": "Une formule, deux foyers, facturée à l’année.",
+ "playSubDesc": "Ambodo Family : connectez votre coparent, événements, échanges et tous vos enfants, PDF pour le tribunal, dépenses, synchro agenda, ToneGuard illimité. Une formule pour les deux parents.",
+ "playBenefits": [
+  "Connectez votre coparent",
+  "Dossiers PDF prêts pour le tribunal",
+  "Agenda, échanges et dépenses partagés",
+  "Reformulations ToneGuard illimitées"
+ ]
+}

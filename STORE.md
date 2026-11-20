@@ -148,6 +148,33 @@ npx eas-cli@latest build --platform android --profile production
 
 ---
 
+## Languages
+Ambodo speaks 75 languages: English plus 74 packs in `app/src/locales/`.
+- **What follows the phone:**
+  - The app uses the phone's language, and per-app language works on iOS and Android 13+.
+  - Dates, times and money use the phone's format.
+  - A new family's expenses use the creator's phone currency. Families made before 1.0.2 stay on USD.
+  - Arabic, Hebrew, Persian and Urdu lay out right to left.
+- **App text:**
+  - Write new text as `t('English text')`. Use `tn()` for counts and `rich()` for inline links. The API's error
+    messages are keys too, so the app translates them.
+  - In `app/`, `npm run i18n` lists what each language is missing.
+  - `npm run i18n todo <dir>` writes the missing strings by id. Translations come back as `<dir>/<lang>.json`
+    (`{ id: text }`).
+  - `npm run i18n merge <dir>` merges them in and refreshes `server/ics-lang.json`, which the calendar feed uses
+    via `?lang=`.
+- **Store text:** `store/text/<lang>.json` holds it.
+  - English is `en.json`. There's also `fr-CA`, plus `en-GB`, `en-AU` and `en-CA` with local keywords.
+  - `store/text/locales.mjs` maps each file to the stores' codes: Apple has 50 languages, Google about 85.
+  - **Google Play:** `node store/push-play.mjs --commit` pushes the listings and the subscription text.
+    `--release <versionCode>` also rolls that build out to production with release notes in every language.
+  - **App Store:** `node --env-file=store/.env store/push-apple.mjs <version> [--build <n>]` pushes the version text,
+    name, subtitle and subscription names. `--build` also attaches the build and submits it.
+  - `store/.env` is local only: `ASC_KEY_ID`, `ASC_ISSUER_ID`, `ASC_KEY_PATH`.
+- **Screenshots** stay in English. Both stores show them for every language.
+- **Prices** are no longer in the descriptions, because each country sees its own currency.
+- **ToneGuard's word checks** are English-only. Other languages get the all-caps and punctuation checks.
+
 ## App Store listing
 Already entered in App Store Connect: everything below except screenshots, age rating and App Privacy. Price is
 Free in 175 regions; iPhone only, with Mac and Vision Pro availability off.

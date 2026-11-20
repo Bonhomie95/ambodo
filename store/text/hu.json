@@ -1,0 +1,25 @@
+{
+ "name": "Ambodo: Különélő szülőknek",
+ "subtitle": "Nyugodt üzenetek, közös naptár",
+ "promo": "Egy csomag mindkét otthonnak. A ToneGuard nyugodtan tartja az üzeneteket, a közös naptárral mindenki képben van, és minden lepecsételve, bíróság elé vihetően.",
+ "keywords": "válás,láthatás,elvált,gyerekelhelyezés,kapcsolattartás,tartásdíj,szülőtárs,felügyelet",
+ "short": "Közös nevelés nyugodtan: lepecsételt üzenetek, közös naptár, bizonyítékok.",
+ "body": "Két otthon. Egy csapat.\n\nAz Ambodo segít, hogy a közös gyereknevelés nyugodt, igazságos és dokumentált maradjon — mindkettőtöknek, egyetlen családi csomaggal.\n\n• Beszélj nyugodtan — a ToneGuard minden üzenetet átnéz, mielőtt célba ér, és kedvesebb változatot ajánl. Minden üzenet az előzőhöz van pecsételve, így a múltat senki sem írhatja át csendben.\n• Tervezz igazságosan — egy közös naptár, amelyet mindketten ugyanúgy láttok. 2-2-3, egyik hét itt, másik ott, 2-2-5-5 és még sok más. Napcsere két koppintással; semmi sem változik, amíg mindketten rá nem bólintotok.\n• Legyen bizonyítékod — átadások, közös kiadások és cserék, bíróság elé vihető PDF-ben, pecsétellenőrzéssel.\n• Ismerd a gyerekeket — iskola, orvos, allergiák és méretek egy közös helyen.\n• Szinkron mindenhol — a beosztás az Apple vagy a Google Naptárban.\n\nIngyenes: hozd létre a családi teret egy gyerek profiljával, a beosztással és az átadások rögzítésével.\nAmbodo Family (egy csomag mindkét szülőnek, havi vagy éves): kapcsolódj a szülőtársadhoz a lepecsételt üzenetekhez, a közös eseményekhez és a cserekérésekhez, vedd fel az összes gyereked, és tiéd a bíróság elé vihető PDF-napló, a kiadáskezelés és elszámolás, a naptárszinkron és a korlátlan ToneGuard-átfogalmazás. Akinek szüksége van rá, díjelengedést kérhet.",
+ "payApple": "A fizetés a vásárlás megerősítésekor az Apple-fiókodat terheli. Az előfizetés automatikusan megújul, hacsak legalább 24 órával az időszak vége előtt le nem mondod. Az előfizetést az Apple-fiókod beállításaiban kezelheted és mondhatod le.",
+ "payPlay": "A díjat a Google Play-fiókodra terheljük. Az előfizetés a lemondásig automatikusan megújul; bármikor kezelheted vagy lemondhatod a Google Play → Fizetések és előfizetések menüpontban.",
+ "termsLabel": "Felhasználási feltételek",
+ "privacyLabel": "Adatvédelmi szabályzat",
+ "whatsNewApple": "Az Ambodo mostantól a te nyelveden beszél: 75 nyelven, a telefonod beállításait követve, a dátumokat és összegeket pedig úgy írja, ahogy te szoktad. Újdonság az is, hogy előbb beállíthatod a családot, és csak a végén hozod létre a fiókodat.",
+ "whatsNewPlay": "Az Ambodo mostantól a te nyelveden beszél: 75 nyelven, a telefonod beállításait követve, a dátumokat és összegeket pedig úgy írja, ahogy te szoktad.",
+ "subMonthlyName": "Ambodo Family — havi",
+ "subMonthlyDesc": "Egy csomag mindkét otthonnak, havi díjjal.",
+ "subYearlyName": "Ambodo Family — éves",
+ "subYearlyDesc": "Egy csomag mindkét otthonnak, éves díjjal.",
+ "playSubDesc": "Ambodo Family: kapcsolódj a szülőtársadhoz, vegyél fel eseményeket, cseréket és minden gyereket; bíróság elé vihető PDF, kiadások, naptárszinkron, korlátlan ToneGuard. Egy csomag mindkét szülőnek.",
+ "playBenefits": [
+  "Kapcsolódj a szülőtársadhoz",
+  "Bíróság elé vihető PDF-napló",
+  "Közös események, cserék, kiadások",
+  "Korlátlan ToneGuard-átfogalmazás"
+ ]
+}
