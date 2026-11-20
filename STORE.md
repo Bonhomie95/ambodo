@@ -89,6 +89,10 @@ npx eas-cli@latest build --platform android --profile production
   with an App Store Connect API key in the environment (`EXPO_ASC_API_KEY_PATH`, `EXPO_ASC_KEY_ID`,
   `EXPO_ASC_ISSUER_ID`, `EXPO_APPLE_TEAM_ID=S9XX65426W`, `EXPO_APPLE_TEAM_TYPE=COMPANY_OR_ORGANIZATION`) and answer
   **yes** to "reuse the original profile?". EAS then updates the profile.
+- **Out of EAS build credits** (the free plan's monthly builds; they reset on the 1st): build on the Mac instead, which
+  costs nothing and still uses EAS's signing keys and build numbers. Add `--local --output <file>` to the build
+  command. It needs Xcode, CocoaPods and fastlane for iOS, and Java 17 (`JAVA_HOME`) plus the Android SDK for
+  Android. `eas submit -p <platform> --path <file>` then uploads the result.
 - **Status (Nov 15):** **1.0.1 (5) is live on Google Play** (178 countries; IARC rating issued; build 3 was live
   from Nov 13, build 4 from Nov 14). Build 4 (Android) / 7 (iOS) adds Continue with Apple and Continue with Google.
   - iOS: the build-3 review was pulled; version **1.0.0 (7)**, the subscription group and both subscriptions were
@@ -171,6 +175,10 @@ Ambodo speaks 75 languages: English plus 74 packs in `app/src/locales/`.
   - **App Store:** `node --env-file=store/.env store/push-apple.mjs <version> [--build <n>]` pushes the version text,
     name, subtitle and subscription names. `--build` also attaches the build and submits it.
   - `store/.env` is local only: `ASC_KEY_ID`, `ASC_ISSUER_ID`, `ASC_KEY_PATH`.
+- **Tall scripts:** line heights go through `lh()` and big headline sizes through `big()` (both in
+  `app/src/lib/i18n.tsx`). Thai, Khmer, Lao, Sinhala and the Indic scripts get 30% more line height. Burmese and
+  Urdu (Nastaliq) keep the font's own line height and get 20% smaller headlines. Otherwise the marks above and
+  below the letters get clipped.
 - **Screenshots** stay in English. Both stores show them for every language.
 - **Prices** are no longer in the descriptions, because each country sees its own currency.
 - **ToneGuard's word checks** are English-only. Other languages get the all-caps and punctuation checks.
