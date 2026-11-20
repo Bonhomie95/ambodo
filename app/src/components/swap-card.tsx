@@ -46,7 +46,7 @@ export function SwapCard({ swap, onChange, index = 0 }: { swap: Swap; onChange: 
         <T v="h2">{first === last ? nice(first) : `${nice(first)} – ${nice(last)}`}</T>
         <T muted>
           {swap.assignTo === meId ? t('Kids with you') : t('Kids with {name}', { name: nameOf(swap.assignTo) })}
-          {swap.dates.length > 1 ? ` · ${t('{n} days', { n: swap.dates.length })}` : ''}{swap.note ? ` · “${swap.note}”` : ''}
+          {swap.dates.length > 1 ? ` · ${t('{n} days', { n: swap.dates.length })}` : ''}{swap.note ? ` · “\u2068${swap.note}\u2069”` : ''}
         </T>
         {incoming && (
           <Row style={{ marginTop: 4 }}>

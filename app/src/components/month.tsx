@@ -1,6 +1,6 @@
 import { StyleSheet, Text, View } from 'react-native';
 import { Tap, T } from '@/components/ui';
-import { monthGrid, nice, parse, today, weekLetters } from '@/lib/dates';
+import { dayNum, monthGrid, nice, parse, today, weekLetters } from '@/lib/dates';
 import { font, tint, useColors } from '@/lib/theme';
 
 /** Month view where each parent's days join into one continuous band. */
@@ -40,7 +40,7 @@ export function MonthGrid({ year, month, custody, meId, dots = {}, selected = []
                   }]} />
                 )}
                 <View style={[g.num, { backgroundColor: sel ? c.text : 'transparent', borderWidth: d === td && !sel ? 2 : 0, borderColor: c.text }]}>
-                  <Text style={{ fontFamily: font.bold, fontSize: 15, color: sel ? c.bg : c.text }}>{parse(d).getDate()}</Text>
+                  <Text style={{ fontFamily: font.bold, fontSize: 15, color: sel ? c.bg : c.text }}>{dayNum(d)}</Text>
                 </View>
                 {!!dots[d] && <View style={[g.dot, { backgroundColor: col ?? c.text }]} />}
               </Tap>

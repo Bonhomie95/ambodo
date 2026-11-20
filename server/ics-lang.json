@@ -3,13 +3,61 @@
   "Kids with {name}": "Kinders by {name}",
   "Co-parent": "Mede-ouer"
  },
+ "am": {
+  "Kids with {name}": "ልጆቹ ከ{name} ጋር",
+  "Co-parent": "አብሮ ወላጅ"
+ },
+ "ar": {
+  "Kids with {name}": "الأطفال مع {name}",
+  "Co-parent": "شريك التربية"
+ },
  "az": {
   "Kids with {name}": "Uşaqlar {name} ilə",
   "Co-parent": "Digər valideyn"
  },
+ "be": {
+  "Kids with {name}": "{name} з дзецьмі",
+  "Co-parent": "Другі з бацькоў"
+ },
+ "bg": {
+  "Kids with {name}": "Децата са при {name}",
+  "Co-parent": "Другият родител"
+ },
+ "bn": {
+  "Kids with {name}": "বাচ্চারা {name}-এর কাছে",
+  "Co-parent": "কো-প্যারেন্ট"
+ },
+ "cs": {
+  "Kids with {name}": "Děti má {name}",
+  "Co-parent": "Druhý rodič"
+ },
+ "da": {
+  "Kids with {name}": "Børnene hos {name}",
+  "Co-parent": "Medforælder"
+ },
  "de": {
   "Kids with {name}": "Kinder bei {name}",
   "Co-parent": "Co-Elternteil"
+ },
+ "el": {
+  "Kids with {name}": "{name} με τα παιδιά",
+  "Co-parent": "Άλλος γονέας"
+ },
+ "es": {
+  "Kids with {name}": "Los niños con {name}",
+  "Co-parent": "Coparente"
+ },
+ "es-419": {
+  "Kids with {name}": "Los niños con {name}",
+  "Co-parent": "Coparente"
+ },
+ "eu": {
+  "Kids with {name}": "{name} haurrekin",
+  "Co-parent": "Beste gurasoa"
+ },
+ "fa": {
+  "Kids with {name}": "بچه‌ها پیش {name}",
+  "Co-parent": "والد دیگر"
  },
  "fil": {
   "Kids with {name}": "Kay {name} ang mga bata",
@@ -18,6 +66,18 @@
  "fr": {
   "Kids with {name}": "Enfants chez {name}",
   "Co-parent": "Coparent"
+ },
+ "gl": {
+  "Kids with {name}": "Os nenos con {name}",
+  "Co-parent": "Coproxenitor"
+ },
+ "he": {
+  "Kids with {name}": "הילדים אצל {name}",
+  "Co-parent": "ההורה השני"
+ },
+ "hi": {
+  "Kids with {name}": "बच्चे {name} के पास",
+  "Co-parent": "को-पेरेंट"
  },
  "hu": {
   "Kids with {name}": "{name} van a gyerekekkel",
@@ -35,6 +95,10 @@
   "Kids with {name}": "子どもは{name}と",
   "Co-parent": "もう一人の親"
  },
+ "ka": {
+  "Kids with {name}": "{name} ბავშვებთან",
+  "Co-parent": "მეორე მშობელი"
+ },
  "kk": {
   "Kids with {name}": "{name} балалармен",
   "Co-parent": "Екінші ата-ана"
@@ -42,6 +106,18 @@
  "km": {
   "Kids with {name}": "កូននៅជាមួយ {name}",
   "Co-parent": "ឪពុកម្ដាយម្ខាងទៀត"
+ },
+ "kn": {
+  "Kids with {name}": "ಮಕ್ಕಳು {name} ಬಳಿ",
+  "Co-parent": "ಸಹ-ಪೋಷಕರು"
+ },
+ "ko": {
+  "Kids with {name}": "아이들은 {name}님과",
+  "Co-parent": "상대 부모"
+ },
+ "ky": {
+  "Kids with {name}": "Балдар {name} менен",
+  "Co-parent": "Экинчи ата-эне"
  },
  "lo": {
   "Kids with {name}": "ລູກຢູ່ກັບ {name}",
@@ -55,9 +131,41 @@
   "Kids with {name}": "Ar bērniem: {name}",
   "Co-parent": "Otrs vecāks"
  },
+ "mk": {
+  "Kids with {name}": "Децата кај {name}",
+  "Co-parent": "Другиот родител"
+ },
+ "mn": {
+  "Kids with {name}": "Хүүхдүүд {name} дээр",
+  "Co-parent": "Нөгөө эцэг эх"
+ },
  "ms": {
   "Kids with {name}": "Anak bersama {name}",
   "Co-parent": "Ibu bapa satu lagi"
+ },
+ "nb": {
+  "Kids with {name}": "Barna hos {name}",
+  "Co-parent": "Medforelder"
+ },
+ "ne": {
+  "Kids with {name}": "बच्चा {name}सँग",
+  "Co-parent": "सह-अभिभावक"
+ },
+ "nl": {
+  "Kids with {name}": "Kinderen bij {name}",
+  "Co-parent": "Co-ouder"
+ },
+ "pl": {
+  "Kids with {name}": "Dzieci ma {name}",
+  "Co-parent": "Drugi rodzic"
+ },
+ "pt-BR": {
+  "Kids with {name}": "Crianças com {name}",
+  "Co-parent": "Coparente"
+ },
+ "pt-PT": {
+  "Kids with {name}": "Miúdos com {name}",
+  "Co-parent": "Coparente"
  },
  "ro": {
   "Kids with {name}": "Copiii la {name}",
@@ -66,6 +174,18 @@
  "ru": {
   "Kids with {name}": "{name} с детьми",
   "Co-parent": "Второй родитель"
+ },
+ "sq": {
+  "Kids with {name}": "Fëmijët te {name}",
+  "Co-parent": "Bashkëprindi"
+ },
+ "sv": {
+  "Kids with {name}": "Barnen hos {name}",
+  "Co-parent": "Medförälder"
+ },
+ "sw": {
+  "Kids with {name}": "Watoto wako kwa {name}",
+  "Co-parent": "Mzazi mwenza"
  },
  "ta": {
   "Kids with {name}": "குழந்தைகள் {name} வீட்டில்",
@@ -82,5 +202,21 @@
  "uk": {
   "Kids with {name}": "{name} з дітьми",
   "Co-parent": "Інший з батьків"
+ },
+ "vi": {
+  "Kids with {name}": "Con ở với {name}",
+  "Co-parent": "Phụ huynh còn lại"
+ },
+ "zh-Hans": {
+  "Kids with {name}": "孩子跟{name}",
+  "Co-parent": "另一位家长"
+ },
+ "zh-Hant": {
+  "Kids with {name}": "孩子跟{name}",
+  "Co-parent": "另一位家長"
+ },
+ "zu": {
+  "Kids with {name}": "Izingane → {name}",
+  "Co-parent": "Umzali okhulisa nawe"
  }
 }

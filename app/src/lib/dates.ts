@@ -1,5 +1,5 @@
 // Calendar days are plain 'YYYY-MM-DD' strings in local time — no timezone drift.
-import { lang, locale, t } from './i18n';
+import { lang, locale, num, t } from './i18n';
 
 export const ymd = (d: Date) =>
   `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
@@ -13,6 +13,8 @@ export const monday = (s: string) => { const d = parse(s); return addDays(s, -((
 export const fmt = (s: string, o: Intl.DateTimeFormatOptions) => parse(s).toLocaleDateString(locale, o);
 export const weekday = (s: string) => fmt(s, { weekday: 'short' });
 export const nice = (s: string) => fmt(s, { weekday: 'short', month: 'short', day: 'numeric' });
+/** Day of the month in the language's digits. */
+export const dayNum = (s: string) => num(parse(s).getDate());
 export const time = (iso: string) => new Date(iso).toLocaleTimeString(locale, { hour: 'numeric', minute: '2-digit' });
 /** Day pill tag: two letters in English (Mo, Tu); other languages keep the short form Intl gives them. */
 export const dayTag = (s: string) => { const w = weekday(s).replace(/\.$/, ''); return lang === 'en' ? w.slice(0, 2) : w; };

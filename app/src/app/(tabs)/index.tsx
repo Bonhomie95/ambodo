@@ -5,7 +5,7 @@ import Animated, { FadeInDown, ZoomIn } from 'react-native-reanimated';
 import { SwapCard } from '@/components/swap-card';
 import { Avatar, Button, Card, Icon, Row, Screen, T, Tap, toast } from '@/components/ui';
 import { api, type CalEvent, type Day, type Swap } from '@/lib/api';
-import { addDays, dayTag, fmt, greeting, parse, relative, time, today } from '@/lib/dates';
+import { addDays, dayNum, dayTag, fmt, greeting, relative, time, today } from '@/lib/dates';
 import { rich, t } from '@/lib/i18n';
 import { useLoad, useSession } from '@/lib/session';
 import { KIND_ICON, shareInvite } from '@/lib/meta';
@@ -92,7 +92,7 @@ export default function Today() {
           return (
             <Animated.View key={d.date} entering={ZoomIn.delay(100 + k * 45).springify()} style={[st.dayPill, { backgroundColor: tint(col, 0.16), borderColor: k === 0 ? col : 'transparent' }]}>
               <Text style={[st.dayName, { color: col }]}>{dayTag(d.date)}</Text>
-              <Text style={[st.dayNum, { color: c.text }]}>{parse(d.date).getDate()}</Text>
+              <Text style={[st.dayNum, { color: c.text }]}>{dayNum(d.date)}</Text>
               <View style={{ width: 6, height: 6, borderRadius: 3, backgroundColor: col }} />
             </Animated.View>
           );

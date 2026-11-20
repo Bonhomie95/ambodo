@@ -1,6 +1,6 @@
 import { router } from 'expo-router';
 import { useState } from 'react';
-import { Linking, PanResponder, Share, StyleSheet, View } from 'react-native';
+import { I18nManager, Linking, PanResponder, Share, StyleSheet, View } from 'react-native';
 import Animated, { FadeIn, FadeInDown, SlideInLeft, SlideInRight } from 'react-native-reanimated';
 import { MonthGrid } from '@/components/month';
 import { SwapCard } from '@/components/swap-card';
@@ -36,7 +36,8 @@ export default function Calendar() {
   };
   const [pan] = useState(() => PanResponder.create({
     onMoveShouldSetPanResponder: (_, g) => Math.abs(g.dx) > 24 && Math.abs(g.dx) > Math.abs(g.dy) * 2,
-    onPanResponderRelease: (_, g) => { if (Math.abs(g.dx) > 60) shift(g.dx < 0 ? 1 : -1); },
+    // The next month sits on the trailing side: to the right in LTR, to the left in RTL.
+    onPanResponderRelease: (_, g) => { if (Math.abs(g.dx) > 60) shift((g.dx < 0) !== I18nManager.isRTL ? 1 : -1); },
   }));
 
   const custody = Object.fromEntries((data?.days ?? []).map((d) => [d.date, d.parent]));
@@ -70,7 +71,7 @@ export default function Calendar() {
       </Row>
 
       <Card style={{ padding: 10 }}>
-        <Animated.View key={`${view.y}-${view.m}`} entering={view.dir > 0 ? SlideInRight.springify().damping(18) : view.dir < 0 ? SlideInLeft.springify().damping(18) : FadeIn}
+        <Animated.View key={`${view.y}-${view.m}`} entering={!view.dir ? FadeIn : (view.dir > 0) !== I18nManager.isRTL ? SlideInRight.springify().damping(18) : SlideInLeft.springify().damping(18)}
           {...pan.panHandlers}>
           <MonthGrid year={view.y} month={view.m} custody={custody} meId={meId} dots={dots} selected={[selected]} onPress={setSelected} />
         </Animated.View>

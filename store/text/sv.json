@@ -1,0 +1,25 @@
+{
+ "name": "Ambodo: Delat föräldraskap",
+ "subtitle": "Lugna samtal. Rättvisa planer.",
+ "promo": "Ett abonnemang för båda hemmen. ToneGuard håller tonen lugn, boendekalendern ger alla samma bild och all dokumentation är förseglad och redo för domstol.",
+ "keywords": "växelvis,boende,vårdnad,umgänge,separation,skilsmässa,kalender,medförälder,barn,schema,familj",
+ "short": "Lugnt delat föräldraskap: förseglade meddelanden, en kalender, domstolsunderlag.",
+ "body": "Två hem. Ett lag.\n\nAmbodo gör delat föräldraskap lugnt, rättvist och dokumenterat – för er båda, med ett gemensamt familjeabonnemang.\n\n• Prata lugnt – ToneGuard kollar varje meddelande innan det kommer fram och föreslår en vänligare version. Varje meddelande förseglas till det föregående, så ingen kan ändra historiken i smyg.\n• Planera rättvist – en boendekalender som ni båda ser likadant. 2-2-3, varannan vecka, 2-2-5-5 och fler. Byt dagar med två tryck; inget ändras förrän ni båda är överens.\n• Spara bevis – överlämningar, delade utgifter och bytesförfrågningar, exporterade som en PDF redo för domstol, med kontroll av sigillet.\n• Koll på barnen – skola, vårdcentral, allergier och storlekar på ett gemensamt ställe.\n• Synkat överallt – boendedagarna i Apple Kalender eller Google Kalender.\n\nGratis: skapa er familj med ett barns profil, boendeschemat och loggning av överlämningar.\nAmbodo Family (ett abonnemang för båda föräldrarna, per månad eller år): koppla din medförälder för förseglade meddelanden, delade händelser och bytesförfrågningar, lägg till alla dina barn och få PDF-underlag för domstol, utgifter och uppgörelser, kalendersynk och obegränsade ToneGuard-omskrivningar. Familjer som behöver det kan ansöka om avgiftsbefrielse.",
+ "payApple": "Betalningen debiteras ditt Apple Account när köpet bekräftas. Abonnemanget förnyas automatiskt om det inte sägs upp senast 24 timmar före periodens slut. Hantera eller säg upp abonnemanget i inställningarna för ditt Apple Account.",
+ "payPlay": "Betalningen debiteras ditt Google Play-konto. Abonnemanget förnyas automatiskt tills du säger upp det; hantera eller säg upp det när som helst i Google Play → Betalningar och prenumerationer.",
+ "termsLabel": "Användarvillkor",
+ "privacyLabel": "Integritetspolicy",
+ "whatsNewApple": "Ambodo talar nu ditt språk: 75 språk som följer telefonens inställningar, med datum och belopp skrivna som du skriver dem. Också nytt: du skapar familjen först och ditt konto allra sist.",
+ "whatsNewPlay": "Ambodo talar nu ditt språk: 75 språk som följer telefonens inställningar, med datum och belopp skrivna som du skriver dem.",
+ "subMonthlyName": "Ambodo Family – Månadsvis",
+ "subMonthlyDesc": "Ett abonnemang för båda hemmen, per månad.",
+ "subYearlyName": "Ambodo Family – Årsvis",
+ "subYearlyDesc": "Ett abonnemang för båda hemmen, per år.",
+ "playSubDesc": "Ambodo Family: koppla din medförälder, händelser, byten och alla dina barn, PDF-underlag för domstol, utgifter, kalendersynk och obegränsade ToneGuard-omskrivningar. Ett abonnemang för båda hemmen.",
+ "playBenefits": [
+  "Koppla din medförälder",
+  "PDF-underlag för domstol",
+  "Delade händelser, byten och utgifter",
+  "Obegränsade ToneGuard-omskrivningar"
+ ]
+}

@@ -52,8 +52,15 @@ export function packFor(l: Pick<Locale, 'languageCode' | 'languageScriptCode' | 
 const phone = getLocales();
 const hit = phone.map((l) => ({ l, pack: packFor(l) })).find((x) => x.pack);
 export const lang = hit?.pack ?? 'en';
-/** BCP-47 tag for dates, times and money: the matched language, or English in the phone's region. */
-export const locale = hit?.l.languageTag ?? `en-${phone[0]?.regionCode ?? 'US'}`;
+const tag = hit?.l.languageTag ?? `en-${phone[0]?.regionCode ?? 'US'}`;
+/**
+ * BCP-47 tag for dates, times, numbers and money: the matched language, or English in the phone's region.
+ * Always the Gregorian calendar, because custody days are Gregorian (ar-SA would default to Hijri, fa to Persian).
+ */
+export const locale = `${tag.split('-u-')[0]}-u-ca-gregory`;
+const digits = new Intl.NumberFormat(locale);
+/** A number in the language's own digits (Arabic-Indic in Arabic, Bengali in Bangla…). */
+export const num = (n: number) => digits.format(n);
 /** The phone's currency, used for a new family's expenses. */
 export const phoneCurrency = phone[0]?.currencyCode ?? 'USD';
 
@@ -65,7 +72,8 @@ const pack: Pack = lang === 'en' ? {} : PACKS[lang]();
  */
 export function t(s: string, vars?: Record<string, string | number>, ctx?: string): string {
   const out = pack[ctx ? `${ctx}|${s}` : s] ?? s;
-  return vars ? out.replace(/\{(\w+)\}/g, (m, k: string) => (k in vars ? String(vars[k]) : m)) : out;
+  const fill = (v: string | number) => (typeof v === 'number' ? num(v) : v);
+  return vars ? out.replace(/\{(\w+)\}/g, (m, k: string) => (k in vars ? fill(vars[k]) : m)) : out;
 }
 
 /** Count-dependent text: `one` when n is 1, `other` otherwise; both get {n}. */

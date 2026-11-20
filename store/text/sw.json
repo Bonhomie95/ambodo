@@ -1,0 +1,20 @@
+{
+ "name": "Ambodo: Malezi ya Pamoja",
+ "subtitle": "Utulivu, haki na ushahidi",
+ "promo": "Mpango mmoja kwa nyumba zote mbili. ToneGuard huweka ujumbe kwa utulivu, kalenda ya malezi huwaweka wote pamoja, na kila rekodi imetiwa muhuri, tayari kwa mahakama.",
+ "keywords": "coparenting,custody,talaka,ulezi,kalenda,wazazi,familia,watoto,gharama,mahakama,ratiba,mzazi mwenza",
+ "short": "Lea pamoja kwa utulivu: ujumbe wenye muhuri, kalenda moja, rekodi za mahakama.",
+ "body": "Nyumba mbili. Timu moja.\n\nAmbodo huweka malezi ya pamoja katika utulivu, haki na kwenye rekodi — kwa ajili yenu nyote wawili, kwa mpango mmoja wa familia.\n\n• Ongea kwa utulivu — ToneGuard hukagua kila ujumbe kabla haujafika na kupendekeza toleo la upole zaidi. Kila ujumbe umefungwa kwa muhuri na ule uliotangulia, kwa hivyo historia haiwezi kubadilishwa kimyakimya.\n• Panga kwa haki — kalenda moja ya malezi mnayoiona nyote kwa njia ileile. 2-2-3, wiki kwa wiki kwa zamu, 2-2-5-5 na mingineyo. Badilishana siku kwa miguso miwili; hakuna kinachobadilika hadi nyote mkubali.\n• Hifadhi ushahidi — rekodi za makabidhiano, gharama mnazoshiriki na historia ya mabadilishano, zikihamishwa kama PDF iliyo tayari kwa mahakama pamoja na uthibitisho wa muhuri.\n• Wajue watoto — shule, daktari, mizio na saizi mahali pamoja panaposhirikiwa.\n• Sawazisha kila mahali — siku za malezi kwenye Kalenda ya Apple au Google.\n\nBure: andaa nafasi ya familia yako ukiwa na wasifu wa mtoto mmoja, ratiba ya malezi na rekodi za makabidhiano.\nAmbodo Family (mpango mmoja kwa wazazi wote wawili, kila mwezi au kila mwaka): unganisha mzazi mwenzako kwa ujumbe wenye muhuri, matukio ya pamoja na maombi ya kubadilishana siku, ongeza watoto wako wote, rekodi za PDF tayari kwa mahakama, gharama na kulipana, usawazishaji wa kalenda na kuandika upya kwa ToneGuard bila kikomo. Msamaha wa ada unapatikana kwa familia zinazouhitaji.",
+ "payApple": "Malipo yatatozwa kwenye Apple Account yako unapothibitisha. Usajili husasishwa kiotomatiki usipoghairiwa angalau saa 24 kabla ya kipindi kuisha. Dhibiti au ghairi katika mipangilio ya Apple Account yako.",
+ "payPlay": "Malipo yanatozwa kwenye akaunti yako ya Google Play. Usajili husasishwa kiotomatiki hadi utakapoghairi; dhibiti au ghairi wakati wowote kwenye Google Play → Malipo na usajili.",
+ "termsLabel": "Masharti ya Matumizi",
+ "privacyLabel": "Sera ya Faragha",
+ "whatsNewApple": "Ambodo sasa inazungumza lugha yako: lugha 75 zinazofuata mipangilio ya simu yako, huku tarehe na kiasi cha pesa vikiandikwa jinsi unavyoviandika. Pia mpya: andaa familia yako kwanza, kisha ufungue akaunti mwishoni.",
+ "whatsNewPlay": "Ambodo sasa inazungumza lugha yako: lugha 75 zinazofuata mipangilio ya simu yako, huku tarehe na kiasi cha pesa vikiandikwa jinsi unavyoviandika.",
+ "subMonthlyName": "Ambodo Family — Kila Mwezi",
+ "subMonthlyDesc": "Mpango mmoja, nyumba mbili. Lipa kila mwezi.",
+ "subYearlyName": "Ambodo Family — Kila Mwaka",
+ "subYearlyDesc": "Mpango mmoja, nyumba mbili. Lipa kila mwaka.",
+ "playSubDesc": "Ambodo Family: unganisha mzazi mwenzako, ongeza matukio, mabadilishano na watoto wote, PDF za mahakama, gharama, usawazishaji wa kalenda na ToneGuard bila kikomo. Mpango mmoja kwa wazazi wote wawili.",
+ "playBenefits": ["Unganisha mzazi mwenzako", "Rekodi za PDF tayari kwa mahakama", "Matukio, mabadilishano na gharama", "Kuandika upya kwa ToneGuard bila kikomo"]
+}

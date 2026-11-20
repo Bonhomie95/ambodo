@@ -2,7 +2,7 @@ import * as Haptics from 'expo-haptics';
 import { SymbolView, type SymbolViewProps } from 'expo-symbols';
 import { useEffect, useState, type ReactNode } from 'react';
 import {
-  ActivityIndicator, Platform, Pressable, RefreshControl, ScrollView, StyleSheet, Text, TextInput, View,
+  ActivityIndicator, I18nManager, Platform, Pressable, RefreshControl, ScrollView, StyleSheet, Text, TextInput, View,
   type PressableProps, type StyleProp, type TextInputProps, type TextProps, type ViewStyle,
 } from 'react-native';
 import Animated, { FadeInUp, FadeOutUp } from 'react-native-reanimated';
@@ -28,9 +28,12 @@ export function T({ v = 'body', muted, color, style, ...p }: TextProps & { v?: k
 }
 
 // ---------- icons: SF Symbols on iOS, Material Symbols on Android ----------
-export function Icon({ ios, android, size = 22, color, ...p }: Omit<SymbolViewProps, 'name'> & { ios: SymbolViewProps['name'] & string; android: string; color?: string }) {
+export function Icon({ ios, android, size = 22, color, style, ...p }: Omit<SymbolViewProps, 'name'> & { ios: SymbolViewProps['name'] & string; android: string; color?: string }) {
   const c = useColors();
-  return <SymbolView name={{ ios, android, web: android } as SymbolViewProps['name']} size={size} tintColor={color ?? c.text} {...p} />;
+  // Left/right glyphs (back, next, disclosure, sign-out) point the other way in right-to-left languages.
+  const mirror = I18nManager.isRTL && /\b(left|right)\b/.test(ios);
+  return <SymbolView name={{ ios, android, web: android } as SymbolViewProps['name']} size={size} tintColor={color ?? c.text}
+    style={mirror ? [{ transform: [{ scaleX: -1 }] }, style] : style} {...p} />;
 }
 
 // ---------- press feedback ----------
