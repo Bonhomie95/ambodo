@@ -85,24 +85,19 @@ if (build) {
     await asc('/v1/appStoreReviewDetails', { method: 'POST', body: { data: { type: 'appStoreReviewDetails', attributes: src,
       relationships: { appStoreVersion: { data: { type: 'appStoreVersions', id: v.id } } } } } });
   }
+  // Subscriptions not yet approved must go to review with an app version, and the API can't add them to a submission
+  // ("'subscription' is not a relationship"), so stop here rather than submit the app without them.
+  const due = [];
+  for (const g of (await asc(`/v1/apps/${APP}/subscriptionGroups`)).data)
+    for (const s of (await asc(`/v1/subscriptionGroups/${g.id}/subscriptions`)).data)
+      if (['READY_TO_SUBMIT', 'DEVELOPER_ACTION_NEEDED', 'REJECTED'].includes(s.attributes.state)) due.push(s.attributes.productId);
+  if (due.length) throw new Error(`build ${build} is attached, but ${due.join(' and ')} must go to review with ${version}: on the App Store Connect website, use Add for Review on each subscription, the subscription group and the version, then Submit for Review`);
   let sub = (await asc(`/v1/reviewSubmissions?filter[app]=${APP}&filter[state]=READY_FOR_REVIEW&filter[platform]=IOS`)).data[0];
   sub ??= (await asc('/v1/reviewSubmissions', { method: 'POST', body: { data: { type: 'reviewSubmissions', attributes: { platform: 'IOS' },
     relationships: { app: { data: { type: 'apps', id: APP } } } } } })).data;
   await asc('/v1/reviewSubmissionItems', { method: 'POST', body: { data: { type: 'reviewSubmissionItems',
     relationships: { reviewSubmission: { data: { type: 'reviewSubmissions', id: sub.id } }, appStoreVersion: { data: { type: 'appStoreVersions', id: v.id } } } } } })
     .catch((e) => { if (!/already/i.test(e.message)) throw e; });
-  // Subscriptions not yet approved or in review go with this version (Apple requires it for the first ones).
-  for (const g of (await asc(`/v1/apps/${APP}/subscriptionGroups`)).data) {
-    const due = (await asc(`/v1/subscriptionGroups/${g.id}/subscriptions`)).data
-      .filter((s) => ['READY_TO_SUBMIT', 'DEVELOPER_ACTION_NEEDED', 'REJECTED'].includes(s.attributes.state));
-    if (!due.length) continue;
-    await asc('/v1/subscriptionGroupSubmissions', { method: 'POST', body: { data: { type: 'subscriptionGroupSubmissions',
-      relationships: { subscriptionGroup: { data: { type: 'subscriptionGroups', id: g.id } } } } } })
-      .catch((e) => console.log(`group ${g.attributes.referenceName}: ${e.message}`));
-    for (const s of due) await asc('/v1/subscriptionSubmissions', { method: 'POST', body: { data: { type: 'subscriptionSubmissions',
-      relationships: { subscription: { data: { type: 'subscriptions', id: s.id } } } } } });
-    console.log(`with subscriptions: ${due.map((s) => s.attributes.productId).join(', ')}`);
-  }
   await asc(`/v1/reviewSubmissions/${sub.id}`, { method: 'PATCH', body: { data: { type: 'reviewSubmissions', id: sub.id, attributes: { submitted: true } } } });
   console.log(`submitted ${version} (${build}) for review`, new Date().toISOString());
 }

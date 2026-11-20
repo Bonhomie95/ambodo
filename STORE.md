@@ -101,15 +101,18 @@ npx eas-cli@latest build --platform android --profile production
     - **Play: live.** 1.0.2 (7) was approved on Nov 20 and is live in 178 countries, with release notes in 81
       languages. The same API edit published the store listing in 81 languages, and the subscription text went
       out in 81 languages.
-    - **App Store:** 1.0.0 (build 7) had been waiting for review since Nov 14. On Nov 20 it was pulled, and the
-      same App Store version was renamed **1.0.2**. It has build 10 and the text in 50 App Store languages (name,
-      subtitle, description, keywords, and the subscription group and both subscriptions).
-      - **Blocked by two China mainland forms.** New submissions are blocked until both are answered: App
-        Store Connect → Ambodo → App Information → **App Compliance**, "Security Assessment" and "AI Generated or
-        Synthetic Content". The alternative is to take China mainland off sale. It already shows "Cannot sell",
-        and selling there also needs an ICP filing.
-      - Then `node --env-file=store/.env store/push-apple.mjs 1.0.2 --build 10` submits the version together with
-        both subscriptions and the group. The first subscriptions must go to review with an app version.
+    - **App Store: 1.0.2 (build 10), the subscription group and both subscriptions are waiting for review**,
+      submitted on Nov 20 at 14:02 UTC. It releases itself on approval.
+      - 1.0.0 (build 7) had been waiting since Nov 14. It was pulled, and the same App Store version was renamed
+        1.0.2, with build 10 and the text in 50 App Store languages (name, subtitle, description, keywords, and the
+        subscription group and both subscriptions).
+      - **China mainland is off sale** (174 storefronts), as of Nov 20. Selling there needs two China-only
+        compliance forms on App Store Connect → App Information → App Compliance: "Security Assessment" and "AI
+        Generated or Synthetic Content". Those forms block new submissions. It also needs an ICP filing.
+      - **Subscriptions that haven't been approved yet** must go to review with an app version, and the API can't
+        add them to a submission. On the App Store Connect website, use **Add for Review** on each subscription,
+        then the subscription group, then the version. The draft can then be submitted from the website or
+        through the API. `push-apple.mjs --build` stops with these steps when that's needed.
       - 1.0.1 (build 8) and build 9 are never used.
   - **1.0.1** (Android build 5 / iOS build 8, built Nov 14):
     - Apple's "unknown reason" sign-in error now reads "Sign in to your Apple Account in Settings".
