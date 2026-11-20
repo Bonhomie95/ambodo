@@ -191,6 +191,10 @@
   "Kids with {name}": "Kinderen bij {name}",
   "Co-parent": "Co-ouder"
  },
+ "or": {
+  "Kids with {name}": "ପିଲାମାନେ {name}ଙ୍କ ପାଖରେ",
+  "Co-parent": "ସହ-ଅଭିଭାବକ"
+ },
  "pl": {
   "Kids with {name}": "Dzieci ma {name}",
   "Co-parent": "Drugi rodzic"
