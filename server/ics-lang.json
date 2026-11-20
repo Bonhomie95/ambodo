@@ -95,6 +95,10 @@
   "Kids with {name}": "बच्चे {name} के पास",
   "Co-parent": "को-पेरेंट"
  },
+ "hr": {
+  "Kids with {name}": "{name} ima djecu",
+  "Co-parent": "Drugi roditelj"
+ },
  "hu": {
   "Kids with {name}": "{name} van a gyerekekkel",
   "Co-parent": "Szülőtárs"
