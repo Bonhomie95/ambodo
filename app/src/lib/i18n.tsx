@@ -61,6 +61,15 @@ export const locale = `${tag.split('-u-')[0]}-u-ca-gregory`;
 const digits = new Intl.NumberFormat(locale);
 /** A number in the language's own digits (Arabic-Indic in Arabic, Bengali in Bangla…). */
 export const num = (n: number) => digits.format(n);
+// Khmer, Lao, Thai, Sinhala and the Indic scripts stack marks above and below the letters, so the tight line heights
+// tuned for Latin type clip them: they get 30% more room. Burmese and Urdu's Nastaliq are taller still, so they keep
+// the font's own line height. (React Native centres a line by the declared Latin font, not by the script's own font.)
+const TALL = ['bn', 'gu', 'hi', 'km', 'kn', 'lo', 'ml', 'mr', 'ne', 'or', 'pa', 'si', 'ta', 'te', 'th'];
+const TALLEST = ['my', 'ur'];
+/** A line height tuned for Latin type, with more room in the scripts that need it. */
+export const lh = (n: number) => (TALLEST.includes(lang) ? undefined : TALL.includes(lang) ? Math.round(n * 1.3) : n);
+/** A headline size; 20% smaller in Burmese and Urdu, whose letters run much larger than Latin at the same size. */
+export const big = (n: number) => (TALLEST.includes(lang) ? Math.round(n * 0.8) : n);
 /** The phone's currency, used for a new family's expenses. */
 export const phoneCurrency = phone[0]?.currencyCode ?? 'USD';
 

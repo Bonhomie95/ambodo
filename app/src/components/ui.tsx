@@ -8,20 +8,20 @@ import {
 import Animated, { FadeInUp, FadeOutUp } from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { FullWindowOverlay } from 'react-native-screens';
-import { locale } from '@/lib/i18n';
+import { big, lh, locale } from '@/lib/i18n';
 import { font, tint, useColors } from '@/lib/theme';
 
 const ios = Platform.OS === 'ios';
 
 // ---------- type ----------
 const variants = {
-  hero: { fontFamily: font.display, fontSize: 40, lineHeight: 46, letterSpacing: -0.8 },
-  title: { fontFamily: font.display, fontSize: 30, lineHeight: 36, letterSpacing: -0.4 },
-  h2: { fontFamily: font.display, fontSize: 21, lineHeight: 27 },
+  hero: { fontFamily: font.display, fontSize: big(40), lineHeight: lh(46), letterSpacing: -0.8 },
+  title: { fontFamily: font.display, fontSize: big(30), lineHeight: lh(36), letterSpacing: -0.4 },
+  h2: { fontFamily: font.display, fontSize: 21, lineHeight: lh(27) },
   label: { fontFamily: font.heavy, fontSize: 12, letterSpacing: 1.1, textTransform: 'uppercase' as const },
-  body: { fontFamily: font.body, fontSize: 16, lineHeight: 23 },
-  strong: { fontFamily: font.bold, fontSize: 16, lineHeight: 22 },
-  small: { fontFamily: font.semi, fontSize: 13, lineHeight: 18 },
+  body: { fontFamily: font.body, fontSize: 16, lineHeight: lh(23) },
+  strong: { fontFamily: font.bold, fontSize: 16, lineHeight: lh(22) },
+  small: { fontFamily: font.semi, fontSize: 13, lineHeight: lh(18) },
 };
 export function T({ v = 'body', muted, color, style, ...p }: TextProps & { v?: keyof typeof variants; muted?: boolean; color?: string }) {
   const c = useColors();

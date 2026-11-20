@@ -6,7 +6,7 @@ import { SwapCard } from '@/components/swap-card';
 import { Avatar, Button, Card, Icon, Row, Screen, T, Tap, toast } from '@/components/ui';
 import { api, type CalEvent, type Day, type Swap } from '@/lib/api';
 import { addDays, dayNum, dayTag, fmt, greeting, relative, time, today } from '@/lib/dates';
-import { rich, t } from '@/lib/i18n';
+import { big, lh, rich, t } from '@/lib/i18n';
 import { useLoad, useSession } from '@/lib/session';
 import { KIND_ICON, shareInvite } from '@/lib/meta';
 import { brand, font, tint, useColors } from '@/lib/theme';
@@ -165,7 +165,7 @@ const st = StyleSheet.create({
   hero: { borderRadius: 32, padding: 22, gap: 10, overflow: 'hidden', boxShadow: '0 18px 40px rgba(20,26,51,0.18)' },
   heroGlow: { position: 'absolute', width: 260, height: 260, borderRadius: 130, right: -80, top: -90 },
   heroLabel: { fontFamily: font.heavy, fontSize: 12, letterSpacing: 1.2, color: 'rgba(255,255,255,0.85)' },
-  heroTitle: { fontFamily: font.display, fontSize: 44, lineHeight: 50, color: '#FFFFFF', letterSpacing: -0.8 },
+  heroTitle: { fontFamily: font.display, fontSize: big(44), lineHeight: lh(50), color: '#FFFFFF', letterSpacing: -0.8 },
   heroSmall: { fontFamily: font.bold, fontSize: 13, color: '#FFFFFF' },
   kid: { backgroundColor: 'rgba(255,255,255,0.22)', paddingHorizontal: 12, paddingVertical: 6, borderRadius: 14 },
   kidText: { fontFamily: font.bold, fontSize: 14, color: '#FFFFFF' },

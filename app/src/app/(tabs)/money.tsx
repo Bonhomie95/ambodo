@@ -6,7 +6,7 @@ import Animated, { FadeInDown, LinearTransition } from 'react-native-reanimated'
 import { Button, Card, Chip, Icon, Row, Screen, T, Tap, toast } from '@/components/ui';
 import { api, type Expense } from '@/lib/api';
 import { relative, ymd } from '@/lib/dates';
-import { locale, t } from '@/lib/i18n';
+import { big, lh, locale, t } from '@/lib/i18n';
 import { CATEGORY_ICON, money } from '@/lib/meta';
 import { useLoad, useSession } from '@/lib/session';
 import { font, tint, useColors } from '@/lib/theme';
@@ -126,7 +126,7 @@ export default function Money() {
 const st = StyleSheet.create({
   hero: { borderRadius: 30, padding: 22, gap: 6, boxShadow: '0 18px 40px rgba(20,26,51,0.18)' },
   heroLabel: { fontFamily: font.heavy, fontSize: 12, letterSpacing: 1.2 },
-  heroAmount: { fontFamily: font.display, fontSize: 46, lineHeight: 54, letterSpacing: -1 },
+  heroAmount: { fontFamily: font.display, fontSize: big(46), lineHeight: lh(54), letterSpacing: -1 },
   heroSub: { fontFamily: font.semi, fontSize: 13 },
   icon: { width: 44, height: 44, borderRadius: 15, alignItems: 'center', justifyContent: 'center' },
   upsell: { flexDirection: 'row', alignItems: 'center', gap: 14, padding: 16, borderRadius: 22, borderWidth: 1 },

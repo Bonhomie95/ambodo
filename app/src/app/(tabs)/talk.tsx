@@ -8,7 +8,7 @@ import { Mark } from '@/components/brand';
 import { Button, Icon, Row, T, Tap, toast } from '@/components/ui';
 import { api, needsPlan, unreadBadge, type Message } from '@/lib/api';
 import { relative, time, ymd } from '@/lib/dates';
-import { t, tn } from '@/lib/i18n';
+import { lh, t, tn } from '@/lib/i18n';
 import { shareInvite } from '@/lib/meta';
 import { useSession } from '@/lib/session';
 import { font, tint, useColors } from '@/lib/theme';
@@ -197,7 +197,7 @@ const st = StyleSheet.create({
   sealed: { flexDirection: 'row', alignItems: 'center', gap: 6, paddingHorizontal: 12, paddingVertical: 8, borderRadius: 14 },
   empty: { flex: 1, alignItems: 'center', justifyContent: 'center', gap: 14, padding: 24 },
   bubble: { maxWidth: '82%', paddingHorizontal: 15, paddingTop: 10, paddingBottom: 8, borderRadius: 22 },
-  msg: { fontFamily: font.body, fontSize: 16, lineHeight: 22 },
+  msg: { fontFamily: font.body, fontSize: 16, lineHeight: lh(22) },
   meta: { fontFamily: font.semi, fontSize: 11, alignSelf: 'flex-end', marginTop: 3 },
   review: { marginHorizontal: 14, marginBottom: 8, padding: 16, borderRadius: 24, borderWidth: 1.5, gap: 8, boxShadow: '0 10px 30px rgba(20,26,51,0.12)' },
   calmer: { borderRadius: 16, padding: 12, gap: 4 },

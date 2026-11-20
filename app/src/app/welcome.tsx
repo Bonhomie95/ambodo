@@ -5,7 +5,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Mark } from '@/components/brand';
 import { Button, Icon, T } from '@/components/ui';
 import { weekLetters } from '@/lib/dates';
-import { t } from '@/lib/i18n';
+import { lh, t } from '@/lib/i18n';
 import { font, tint, useColors, type Palette } from '@/lib/theme';
 
 const bob = (ms: number, px: number, delay = 0) => ({
@@ -95,7 +95,7 @@ function Slide({ x, i, width, c, slide }: { x: SharedValue<number>; i: number; w
     <View style={{ width, paddingHorizontal: 28, justifyContent: 'center', gap: 18, overflow: 'hidden' }}>
       <Animated.View style={[{ alignItems: 'center', marginBottom: 12 }, parallax]}><slide.Art c={c} /></Animated.View>
       <T v="hero">{slide.title}</T>
-      <T v="body" muted style={{ fontSize: 18, lineHeight: 26 }}>{slide.body}</T>
+      <T v="body" muted style={{ fontSize: 18, lineHeight: lh(26) }}>{slide.body}</T>
     </View>
   );
 }

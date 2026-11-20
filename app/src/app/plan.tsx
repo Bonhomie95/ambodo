@@ -9,7 +9,7 @@ import { Mark } from '@/components/brand';
 import { Button, Field, Icon, Row, T, Tap, toast } from '@/components/ui';
 import { api, openPage, type Family } from '@/lib/api';
 import { buy, getOffers, manageUrl, restore, testMode, type Offer } from '@/lib/billing';
-import { locale, t } from '@/lib/i18n';
+import { big, lh, locale, t } from '@/lib/i18n';
 import { useSession } from '@/lib/session';
 import { brand, font, tint, useColors } from '@/lib/theme';
 
@@ -185,7 +185,7 @@ export default function Plan() {
             </Animated.View>
           )}
 
-          <T v="small" muted style={{ textAlign: 'center', fontSize: 11, lineHeight: 16 }}>
+          <T v="small" muted style={{ textAlign: 'center', fontSize: 11, lineHeight: lh(16) }}>
             {t('Billed to your {store}. Auto-renews at the price above until cancelled. Cancel anytime at least 24 hours before renewal in your {store} settings.', { store })}{' '}
             <Text style={{ textDecorationLine: 'underline' }} onPress={() => openPage('terms')}>{t('Terms')}</Text>
             {' · '}
@@ -204,8 +204,8 @@ const st = StyleSheet.create({
   scrim: { position: 'absolute', top: 0, left: 0, right: 0, backgroundColor: brand.ink },
   close: { width: 36, height: 36, borderRadius: 18, backgroundColor: 'rgba(255,255,255,0.14)', alignItems: 'center', justifyContent: 'center' },
   kicker: { fontFamily: font.heavy, fontSize: 12, letterSpacing: 1.6, color: brand.sun, marginTop: 10 },
-  title: { fontFamily: font.display, fontSize: 42, lineHeight: 48, color: '#FFFFFF', letterSpacing: -0.8 },
-  sub: { fontFamily: font.semi, fontSize: 15, lineHeight: 22, color: 'rgba(255,255,255,0.78)' },
+  title: { fontFamily: font.display, fontSize: big(42), lineHeight: lh(48), color: '#FFFFFF', letterSpacing: -0.8 },
+  sub: { fontFamily: font.semi, fontSize: 15, lineHeight: lh(22), color: 'rgba(255,255,255,0.78)' },
   perk: { width: 40, height: 40, borderRadius: 13, alignItems: 'center', justifyContent: 'center' },
   option: { flexDirection: 'row', alignItems: 'center', gap: 14, padding: 16, borderRadius: 20 },
   radio: { width: 22, height: 22, borderRadius: 11, borderWidth: 2, alignItems: 'center', justifyContent: 'center' },
@@ -215,6 +215,6 @@ const st = StyleSheet.create({
   active: { borderRadius: 22, borderWidth: 1.5, padding: 16, gap: 8 },
   test: { flexDirection: 'row', alignItems: 'center', gap: 10, padding: 12, borderRadius: 14 },
   done: { flex: 1, alignItems: 'center', justifyContent: 'center', gap: 18, padding: 24 },
-  doneTitle: { fontFamily: font.display, fontSize: 36, lineHeight: 42, color: '#FFFFFF', textAlign: 'center' },
+  doneTitle: { fontFamily: font.display, fontSize: big(36), lineHeight: lh(42), color: '#FFFFFF', textAlign: 'center' },
   doneSub: { fontFamily: font.semi, fontSize: 16, color: 'rgba(255,255,255,0.8)' },
 });
