@@ -44,6 +44,9 @@ const NOTES = {
   'Soccer cleats, school trip…': 'placeholder example of kid expenses',
   '{n} open': 'count of open (unsettled) expenses',
   'BALANCE': 'all caps label above the money balance',
+  'Apple Account': 'only used as {store} in “Billed to your {store}…” on iPhone: Apple’s own term for the language (what iPhone Settings shows), in the form that sentence needs',
+  'Google Play account': 'only used as {store} in “Billed to your {store}…” on Android, in the form that sentence needs',
+  'Sign in to your Apple Account in Settings, then try again.': 'iPhone only: use Apple’s own words for “Apple Account” and for the Settings app',
 };
 
 const languages = () => readdirSync(LOCALES).filter((f) => f.endsWith('.json')).map((f) => f.slice(0, -5)).sort();
