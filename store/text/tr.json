@@ -1,0 +1,25 @@
+{
+ "name": "Ambodo: Ortak Ebeveynlik",
+ "subtitle": "Sakin sohbet, adil plan, kanıt",
+ "promo": "Tek plan iki evi de kapsar. ToneGuard mesajları sakin tutar, ortak takvim herkesi aynı sayfada buluşturur, her kayıt mühürlü ve mahkemeye hazırdır.",
+ "keywords": "velayet,boşanma,takvim,nafaka,aile,çocuk,anne,baba,mahkeme,masraf,ayrılık,görüşme,mesaj",
+ "short": "Sakin ortak ebeveynlik: mühürlü mesajlar, tek takvim, mahkemeye hazır kayıtlar.",
+ "body": "İki ev. Tek takım.\n\nAmbodo ortak ebeveynliği sakin, adil ve kayıt altında tutar — ikiniz için, tek bir aile planıyla.\n\n• Sakin konuş — ToneGuard her mesajı yerine ulaşmadan önce kontrol eder ve daha nazik bir sürüm önerir. Her mesaj bir öncekine mühürlenir; böylece geçmiş sessizce değiştirilemez.\n• Adil planla — ikinizin de aynı şekilde gördüğü tek bir takvim. 2-2-3, bir hafta sende bir hafta onda, 2-2-5-5 ve dahası. Günleri iki dokunuşla takas et; ikiniz de onaylamadan hiçbir şey değişmez.\n• Kanıtı sakla — geçiş kayıtları, ortak masraflar ve takas geçmişi, mühür doğrulamalı ve mahkemeye hazır bir PDF olarak dışa aktarılır.\n• Çocukları tanı — okul, doktor, alerjiler ve bedenler tek bir ortak yerde.\n• Her yerde eşitle — kalış günleri Apple ya da Google Takvim’de.\n\nÜcretsiz: bir çocuğun profili, kalış takvimi ve geçiş kayıtlarıyla aile alanını kur.\nAmbodo Family (iki ebeveyn için tek plan, aylık ya da yıllık): mühürlü mesajlar, ortak etkinlikler ve takas istekleri için ortak ebeveynini bağla, tüm çocuklarını ekle; mahkemeye hazır PDF kayıtları, masraflar ve hesaplaşma, takvim eşitleme ve sınırsız ToneGuard yeniden yazma. İhtiyacı olan aileler için ücret muafiyeti mevcuttur.",
+ "payApple": "Ödeme, onay sırasında Apple Account’undan alınır. Abonelik, dönem bitiminden en az 24 saat önce iptal edilmezse otomatik olarak yenilenir. Aboneliği Apple Account ayarlarından yönetebilir veya iptal edebilirsin.",
+ "payPlay": "Ödeme Google Play hesabından alınır. Abonelik, iptal edene kadar otomatik olarak yenilenir; Google Play → Ödemeler ve abonelikler bölümünden istediğin zaman yönetebilir veya iptal edebilirsin.",
+ "termsLabel": "Kullanım Koşulları",
+ "privacyLabel": "Gizlilik Politikası",
+ "whatsNewApple": "Ambodo artık senin dilini konuşuyor: telefonunun ayarlarını izleyen 75 dil; tarihler ve tutarlar da senin yazdığın gibi. Ayrıca yeni: önce aileni kur, hesabını en sonda oluştur.",
+ "whatsNewPlay": "Ambodo artık senin dilini konuşuyor: telefonunun ayarlarını izleyen 75 dil; tarihler ve tutarlar da senin yazdığın gibi.",
+ "subMonthlyName": "Ambodo Family — Aylık",
+ "subMonthlyDesc": "İki ev için tek plan, aylık ödeme.",
+ "subYearlyName": "Ambodo Family — Yıllık",
+ "subYearlyDesc": "İki ev için tek plan, yıllık ödeme.",
+ "playSubDesc": "Ambodo Family: ortak ebeveynini bağla; etkinlik, takas ve tüm çocuklarını ekle; mahkemeye hazır PDF, masraflar, takvim eşitleme ve sınırsız ToneGuard yeniden yazma. Tek plan iki ebeveyni de kapsar.",
+ "playBenefits": [
+  "Ortak ebeveynini bağla",
+  "Mahkemeye hazır PDF kayıtları",
+  "Ortak etkinlik, takas ve masraflar",
+  "Sınırsız ToneGuard yeniden yazma"
+ ]
+}

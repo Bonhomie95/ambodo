@@ -55,6 +55,10 @@
   "Kids with {name}": "Los niños con {name}",
   "Co-parent": "Coparente"
  },
+ "et": {
+  "Kids with {name}": "{name} lastega",
+  "Co-parent": "Teine vanem"
+ },
  "eu": {
   "Kids with {name}": "{name} haurrekin",
   "Co-parent": "Beste gurasoa"
@@ -78,6 +82,10 @@
  "gl": {
   "Kids with {name}": "Os nenos con {name}",
   "Co-parent": "Coproxenitor"
+ },
+ "gu": {
+  "Kids with {name}": "બાળકો {name} પાસે",
+  "Co-parent": "કો-પેરન્ટ"
  },
  "he": {
   "Kids with {name}": "הילדים אצל {name}",
@@ -151,6 +159,10 @@
   "Kids with {name}": "Децата кај {name}",
   "Co-parent": "Другиот родител"
  },
+ "ml": {
+  "Kids with {name}": "കുട്ടികൾ {name}-ന്റെ കൂടെ",
+  "Co-parent": "സഹരക്ഷിതാവ്"
+ },
  "mn": {
   "Kids with {name}": "Хүүхдүүд {name} дээр",
   "Co-parent": "Нөгөө эцэг эх"
@@ -191,6 +203,10 @@
   "Kids with {name}": "Miúdos com {name}",
   "Co-parent": "Coparente"
  },
+ "rm": {
+  "Kids with {name}": "Uffants tar {name}",
+  "Co-parent": "Co-genitur"
+ },
  "ro": {
   "Kids with {name}": "Copiii la {name}",
   "Co-parent": "Celălalt părinte"
@@ -199,9 +215,17 @@
   "Kids with {name}": "{name} с детьми",
   "Co-parent": "Второй родитель"
  },
+ "si": {
+  "Kids with {name}": "දරුවන් {name} සමඟ",
+  "Co-parent": "අනෙක් දෙමාපියා"
+ },
  "sk": {
   "Kids with {name}": "Deti má {name}",
   "Co-parent": "Druhý rodič"
+ },
+ "sl": {
+  "Kids with {name}": "Otroke ima {name}",
+  "Co-parent": "Drugi starš"
  },
  "sq": {
   "Kids with {name}": "Fëmijët te {name}",
@@ -231,9 +255,17 @@
   "Kids with {name}": "ลูกอยู่กับ {name}",
   "Co-parent": "พ่อแม่อีกฝ่าย"
  },
+ "tr": {
+  "Kids with {name}": "Çocuklar {name} ile",
+  "Co-parent": "Ortak ebeveyn"
+ },
  "uk": {
   "Kids with {name}": "{name} з дітьми",
   "Co-parent": "Інший з батьків"
+ },
+ "ur": {
+  "Kids with {name}": "بچے {name} کے پاس",
+  "Co-parent": "دوسرے والدین"
  },
  "vi": {
   "Kids with {name}": "Con ở với {name}",
