@@ -16,11 +16,12 @@ const bob = (ms: number, px: number, delay = 0) => ({
 
 function TalkArt({ c }: { c: Palette }) {
   return (
-    <View style={{ width: 280, height: 220 }}>
-      <Animated.View style={[a.bubble, { backgroundColor: c.card, left: 0, top: 18, borderBottomLeftRadius: 6 }, bob(2600, 5)]}>
+    // Stacked, not pinned: translations run longer than English and wrap.
+    <View style={{ width: 280, minHeight: 220, justifyContent: 'center', gap: 14 }}>
+      <Animated.View style={[a.bubble, { backgroundColor: c.card, alignSelf: 'flex-start', borderBottomLeftRadius: 6 }, bob(2600, 5)]}>
         <Text style={[a.bubbleText, { color: c.text }]}>{t('Can we swap Friday?')}</Text>
       </Animated.View>
-      <Animated.View style={[a.bubble, { backgroundColor: c.me, right: 0, top: 92, borderBottomRightRadius: 6 }, bob(3000, 6, 400)]}>
+      <Animated.View style={[a.bubble, { backgroundColor: c.me, alignSelf: 'flex-end', borderBottomRightRadius: 6 }, bob(3000, 6, 400)]}>
         <Text style={[a.bubbleText, { color: '#fff' }]}>{t("Sure, I'll do pickup 👍")}</Text>
       </Animated.View>
       <Animated.View style={[a.seal, { backgroundColor: tint(c.them, 0.16) }, bob(2200, 3, 800)]}>
@@ -67,7 +68,7 @@ function ProofArt({ c }: { c: Palette }) {
         animationDuration: 3000, animationIterationCount: 'infinite', animationTimingFunction: 'ease-out',
       }]}>
         <Icon ios="checkmark.seal.fill" android="verified" size={26} color={c.them} />
-        <Text style={{ fontFamily: font.heavy, fontSize: 11, color: c.them, letterSpacing: 1 }}>{t('VERIFIED')}</Text>
+        <Text numberOfLines={1} adjustsFontSizeToFit style={{ fontFamily: font.heavy, fontSize: 11, color: c.them, letterSpacing: 1, maxWidth: 80 }}>{t('VERIFIED')}</Text>
       </Animated.View>
     </View>
   );
@@ -124,9 +125,9 @@ export default function Welcome() {
 }
 
 const a = StyleSheet.create({
-  bubble: { position: 'absolute', paddingHorizontal: 18, paddingVertical: 14, borderRadius: 22, boxShadow: '0 10px 30px rgba(20,26,51,0.12)' },
+  bubble: { maxWidth: 250, paddingHorizontal: 18, paddingVertical: 14, borderRadius: 22, boxShadow: '0 10px 30px rgba(20,26,51,0.12)' },
   bubbleText: { fontFamily: font.bold, fontSize: 16 },
-  seal: { position: 'absolute', left: 30, bottom: 8, flexDirection: 'row', gap: 6, alignItems: 'center', paddingHorizontal: 12, paddingVertical: 8, borderRadius: 14 },
+  seal: { alignSelf: 'flex-start', marginLeft: 30, flexDirection: 'row', gap: 6, alignItems: 'center', paddingHorizontal: 12, paddingVertical: 8, borderRadius: 14 },
   doc: { width: 190, height: 200, borderRadius: 22, borderWidth: StyleSheet.hairlineWidth, padding: 22, gap: 14, boxShadow: '0 14px 40px rgba(20,26,51,0.12)', transform: [{ rotate: '-4deg' }] },
   stamp: { position: 'absolute', right: 30, bottom: 14, width: 96, height: 96, borderRadius: 48, borderWidth: 3, alignItems: 'center', justifyContent: 'center', gap: 2, backgroundColor: 'transparent' },
 });
