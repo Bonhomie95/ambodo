@@ -93,18 +93,24 @@ npx eas-cli@latest build --platform android --profile production
   costs nothing and still uses EAS's signing keys and build numbers. Add `--local --output <file>` to the build
   command. It needs Xcode, CocoaPods and fastlane for iOS, and Java 17 (`JAVA_HOME`) plus the Android SDK for
   Android. `eas submit -p <platform> --path <file>` then uploads the result.
-- **Status (Nov 15):** **1.0.1 (5) is live on Google Play** (178 countries; IARC rating issued; build 3 was live
-  from Nov 13, build 4 from Nov 14). Build 4 (Android) / 7 (iOS) adds Continue with Apple and Continue with Google.
-  - iOS: the build-3 review was pulled; version **1.0.0 (7)**, the subscription group and both subscriptions were
-    submitted on Nov 14 08:00 UTC and were still waiting for review on Nov 15 (not on the App Store yet).
+- **Status (Nov 20):**
+  - **1.0.2: 75 languages** (Android build 7, iOS build 9). Built on the Mac on Nov 20 because the free EAS builds
+    for November were used up.
+    - **Play:** 1.0.2 (7) went to production at 100% on Nov 20, with release notes in 81 languages. The same API
+      edit published the store listing in 81 languages, and the subscription text went out in 81 languages. Play
+      reviews it before it goes live. Until then 1.0.1 (5) stays live (178 countries; IARC rating issued).
+    - **App Store:** build 9 is uploaded and processed. 1.0.0 (7), the subscription group and both subscriptions
+      have been **waiting for review since Nov 14 08:00 UTC**, and still were on Nov 20. 1.0.0 releases itself on
+      approval. After that, run `node --env-file=store/.env store/push-apple.mjs 1.0.2 --build 9`. It creates
+      1.0.2, pushes the text in 50 App Store languages, attaches build 9, copies 1.0.0's review details and submits.
+      1.0.1 (build 8) is skipped, because 1.0.2 includes it.
   - **1.0.1** (Android build 5 / iOS build 8, built Nov 14):
     - Apple's "unknown reason" sign-in error now reads "Sign in to your Apple Account in Settings".
     - Sign-up comes after family setup: welcome → **Get started** → set up your family (or enter a co-parent's code)
       → create the account → the family is created right away. "I already have an account" still goes to sign-in.
-    - Play: 1.0.1 (5) put on production (100%) on Nov 14 through the Play Developer API (service account, no Console
-      clicks); approved and live (the listing shows 1.0.1).
-    - iOS: build 8 is uploaded and processed. Version 1.0.1 can only be created after 1.0.0 leaves review
-      (1.0.0 releases itself on approval); then create 1.0.1, attach build 8, copy 1.0.0's review details and submit.
+    - Play: 1.0.1 (5) went to production (100%) on Nov 14 through the Play Developer API (service account, no
+      Console clicks). It was approved and went live.
+  - Build 4 (Android) / 7 (iOS) added Continue with Apple and Continue with Google. The iOS build-3 review was pulled.
   - RevenueCat → Ambodo (Play Store) → service account credentials: all three checks pass as of Nov 14 (subscription
     purchases, product catalog, subscription catalog).
   - The server's Family gates are live. The Play reviewer's family is on a waiver, so they see everything unlocked.
