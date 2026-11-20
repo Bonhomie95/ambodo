@@ -98,14 +98,19 @@ npx eas-cli@latest build --platform android --profile production
     for November were used up. iOS build 10 also has Apple's own term for "Apple Account" in every iOS language
     and the current Expo SDK 58 patch versions. Android gets those with its next release; they change nothing
     visible there. Build 9 isn't used.
-    - **Play:** 1.0.2 (7) went to production at 100% on Nov 20, with release notes in 81 languages. The same API
-      edit published the store listing in 81 languages, and the subscription text went out in 81 languages. Play
-      reviews it before it goes live. Until then 1.0.1 (5) stays live (178 countries; IARC rating issued).
-    - **App Store:** build 10 is uploaded. 1.0.0 (7), the subscription group and both subscriptions
-      have been **waiting for review since Nov 14 08:00 UTC**, and still were on Nov 20. 1.0.0 releases itself on
-      approval. After that, run `node --env-file=store/.env store/push-apple.mjs 1.0.2 --build 10`. It creates
-      1.0.2, pushes the text in 50 App Store languages, attaches build 10, copies 1.0.0's review details and submits.
-      1.0.1 (build 8) is skipped, because 1.0.2 includes it.
+    - **Play: live.** 1.0.2 (7) was approved on Nov 20 and is live in 178 countries, with release notes in 81
+      languages. The same API edit published the store listing in 81 languages, and the subscription text went
+      out in 81 languages.
+    - **App Store:** 1.0.0 (build 7) had been waiting for review since Nov 14. On Nov 20 it was pulled, and the
+      same App Store version was renamed **1.0.2**. It has build 10 and the text in 50 App Store languages (name,
+      subtitle, description, keywords, and the subscription group and both subscriptions).
+      - **Blocked by two China mainland forms.** New submissions are blocked until both are answered: App
+        Store Connect → Ambodo → App Information → **App Compliance**, "Security Assessment" and "AI Generated or
+        Synthetic Content". The alternative is to take China mainland off sale. It already shows "Cannot sell",
+        and selling there also needs an ICP filing.
+      - Then `node --env-file=store/.env store/push-apple.mjs 1.0.2 --build 10` submits the version together with
+        both subscriptions and the group. The first subscriptions must go to review with an app version.
+      - 1.0.1 (build 8) and build 9 are never used.
   - **1.0.1** (Android build 5 / iOS build 8, built Nov 14):
     - Apple's "unknown reason" sign-in error now reads "Sign in to your Apple Account in Settings".
     - Sign-up comes after family setup: welcome → **Get started** → set up your family (or enter a co-parent's code)
