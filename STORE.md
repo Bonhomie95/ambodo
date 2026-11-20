@@ -94,15 +94,17 @@ npx eas-cli@latest build --platform android --profile production
   command. It needs Xcode, CocoaPods and fastlane for iOS, and Java 17 (`JAVA_HOME`) plus the Android SDK for
   Android. `eas submit -p <platform> --path <file>` then uploads the result.
 - **Status (Nov 20):**
-  - **1.0.2: 75 languages** (Android build 7, iOS build 9). Built on the Mac on Nov 20 because the free EAS builds
-    for November were used up.
+  - **1.0.2: 75 languages** (Android build 7, iOS build 10). Built on the Mac on Nov 20 because the free EAS builds
+    for November were used up. iOS build 10 also has Apple's own term for "Apple Account" in every iOS language
+    and the current Expo SDK 58 patch versions. Android gets those with its next release; they change nothing
+    visible there. Build 9 isn't used.
     - **Play:** 1.0.2 (7) went to production at 100% on Nov 20, with release notes in 81 languages. The same API
       edit published the store listing in 81 languages, and the subscription text went out in 81 languages. Play
       reviews it before it goes live. Until then 1.0.1 (5) stays live (178 countries; IARC rating issued).
-    - **App Store:** build 9 is uploaded and processed. 1.0.0 (7), the subscription group and both subscriptions
+    - **App Store:** build 10 is uploaded. 1.0.0 (7), the subscription group and both subscriptions
       have been **waiting for review since Nov 14 08:00 UTC**, and still were on Nov 20. 1.0.0 releases itself on
-      approval. After that, run `node --env-file=store/.env store/push-apple.mjs 1.0.2 --build 9`. It creates
-      1.0.2, pushes the text in 50 App Store languages, attaches build 9, copies 1.0.0's review details and submits.
+      approval. After that, run `node --env-file=store/.env store/push-apple.mjs 1.0.2 --build 10`. It creates
+      1.0.2, pushes the text in 50 App Store languages, attaches build 10, copies 1.0.0's review details and submits.
       1.0.1 (build 8) is skipped, because 1.0.2 includes it.
   - **1.0.1** (Android build 5 / iOS build 8, built Nov 14):
     - Apple's "unknown reason" sign-in error now reads "Sign in to your Apple Account in Settings".
